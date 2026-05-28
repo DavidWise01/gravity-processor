@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<!-- saved from url=(0165)https://1600705597657682.a.metaaiusercontent.com/html?artifact_uuid=da5bf62e-f53a-4c69-b597-529b20970345&ext=1779388460&hash=Q5fpDAH2fbTJ8JifVi2AxLXaTAT6&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1/4x4=1 State Machine</title>
+<style>
+    :root {
+        --bg: #0a0e1a;
+        --panel: #111827;
+        --panel-light: #1f2937;
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+        --accent: #3b82f6;
+        --accent-glow: rgba(59, 130, 246, 0.4);
+        --up-spin: #ef4444;
+        --down-spin: #10b981;
+        --carrier: #fbbf24;
+        --pulse: #a78bfa;
+        --border: #374151;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 2rem 1rem;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--pulse));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: var(--text-dim);
+        font-size: 1.1rem;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel h2 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .colonies-wrapper {
+        position: relative;
+        aspect-ratio: 1;
+        background: var(--panel-light);
+        border-radius: 12px;
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .colony {
+        background: var(--panel);
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .colony.active {
+        border-color: var(--carrier);
+        box-shadow: 0 0 24px var(--accent-glow), inset 0 0 24px rgba(251, 191, 36, 0.1);
+        transform: scale(1.02);
+    }
+
+    .colony-label {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--text-dim);
+    }
+
+    .colony.active .colony-label {
+        color: var(--carrier);
+    }
+
+    .electrons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 0.5rem;
+        height: 100%;
+        align-content: center;
+        padding-top: 1.5rem;
+    }
+
+    .electron {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .electron.up {
+        background: radial-gradient(circle at 30% 30%, var(--up-spin), #991b1b);
+        box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+    }
+
+    .electron.down {
+        background: radial-gradient(circle at 30% 30%, var(--down-spin), #065f46);
+        box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    .electron.carrier {
+        background: radial-gradient(circle at 30% 30%, var(--carrier), #d97706);
+        box-shadow: 0 0 16px rgba(251, 191, 36, 0.8);
+        animation: carrierPulse 0.6s ease-in-out infinite;
+    }
+
+    @keyframes carrierPulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 16px rgba(251, 191, 36, 0.8); }
+        50% { transform: scale(1.15); box-shadow: 0 0 24px rgba(251, 191, 36, 1); }
+    }
+
+    .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .control-group label {
+        font-size: 0.875rem;
+        color: var(--text-dim);
+        font-weight: 500;
+    }
+
+    button {
+        background: linear-gradient(135deg, var(--accent), #2563eb);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px var(--accent-glow);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    button.secondary {
+        background: var(--panel-light);
+        box-shadow: none;
+        border: 1px solid var(--border);
+    }
+
+    button.secondary:hover {
+        background: var(--border);
+        box-shadow: none;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--panel-light);
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .stat-box {
+        background: var(--panel-light);
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        color: var(--accent);
+    }
+
+    .out-pulse {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--panel-light);
+        border-radius: 8px;
+        border: 2px solid var(--border);
+        transition: all 0.1s ease;
+    }
+
+    .out-pulse.active {
+        background: var(--pulse);
+        border-color: var(--pulse);
+        box-shadow: 0 0 32px rgba(167, 139, 250, 0.6);
+        transform: scale(1.05);
+    }
+
+    .out-pulse-label {
+        font-size: 0.875rem;
+        color: var(--text-dim);
+        margin-bottom: 0.5rem;
+    }
+
+    .out-pulse.active .out-pulse-label {
+        color: white;
+    }
+
+    .out-pulse-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-dim);
+    }
+
+    .out-pulse.active .out-pulse-value {
+        color: white;
+    }
+
+    .legend {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .legend-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+    }
+
+    .downloads {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .downloads button {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .readme {
+        white-space: pre-wrap;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.875rem;
+        background: var(--panel-light);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        max-height: 600px;
+        overflow-y: auto;
+        line-height: 1.8;
+    }
+
+    .readme h3 {
+        color: var(--accent);
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .readme h3:first-child {
+        margin-top: 0;
+    }
+
+    .readme code {
+        background: var(--panel);
+        padding: 0.125rem 0.375rem;
+        border-radius: 4px;
+        color: var(--carrier);
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>1/4×4=1 State Machine</h1>
+        <p class="subtitle">1 Carrier cycles through 4 Colonies = 1 Bit State | 10kHz Operation</p>
+    </header>
+
+    <div class="grid">
+        <div class="panel">
+            <h2>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2"></circle>
+                    <circle cx="10" cy="10" r="3" fill="currentColor"></circle>
+                </svg>
+                Colony Visualization
+            </h2>
+            <div class="colonies-wrapper" id="coloniesWrapper">
+                <div class="colony active" data-colony="0">
+                    <div class="colony-label">Colony 0</div>
+                    <div class="electrons"><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron carrier" style="visibility: visible;">C</div></div>
+                </div>
+                <div class="colony" data-colony="1">
+                    <div class="colony-label">Colony 1</div>
+                    <div class="electrons"><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron carrier-placeholder" style="visibility: hidden;"></div></div>
+                </div>
+                <div class="colony" data-colony="2">
+                    <div class="colony-label">Colony 2</div>
+                    <div class="electrons"><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron carrier-placeholder" style="visibility: hidden;"></div></div>
+                </div>
+                <div class="colony" data-colony="3">
+                    <div class="colony-label">Colony 3</div>
+                    <div class="electrons"><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron up">↑</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron down">↓</div><div class="electron carrier-placeholder" style="visibility: hidden;"></div></div>
+                </div>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--up-spin); box-shadow: 0 0 8px rgba(239,68,68,0.6);"></div>
+                    <span>Up Spin (4)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--down-spin); box-shadow: 0 0 8px rgba(16,185,129,0.6);"></div>
+                    <span>Down Spin (4)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--carrier); box-shadow: 0 0 8px rgba(251,191,36,0.8);"></div>
+                    <span>Carrier (1)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M3 10h4l2-6 4 12 2-6h2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                Controls &amp; Stats
+            </h2>
+            <div class="controls">
+                <div class="control-group">
+                    <button id="toggleBtn">Start Simulation</button>
+                    <button class="secondary" id="resetBtn">Reset</button>
+                </div>
+
+                <div class="control-group">
+                    <label for="speedSlider">Clock Speed: <span id="speedLabel">10,000 Hz</span></label>
+                    <input type="range" id="speedSlider" min="1" max="10000" value="10000" step="1">
+                </div>
+
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Clock Ticks</div>
+                        <div class="stat-value" id="tickCount">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">D Counter</div>
+                        <div class="stat-value" id="dCount">0</div>
+                    </div>
+                </div>
+
+                <div class="out-pulse" id="outPulse">
+                    <div class="out-pulse-label">OUT Pulse</div>
+                    <div class="out-pulse-value" id="outValue">0</div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">Current Colony</div>
+                    <div class="stat-value" id="currentColony">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M7 3h6m-3 0v14m-5-4h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+            Downloads
+        </h2>
+        <div class="downloads">
+            <button id="downloadCBtn">Download 1over4x4.c</button>
+            <button id="downloadReadmeBtn" class="secondary">Download README.md</button>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M4 4h12v12H4z" stroke="currentColor" stroke-width="2"></path>
+                <path d="M7 8h6M7 11h6M7 14h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+            README.md
+        </h2>
+        <div class="readme" id="readmeContent">### 1/4x4=1 State Machine
+
+## Overview
+The 1/4×4=1 state machine models a fundamental unit of state using electron colonies. The core principle: 1 carrier electron cycles through 4 colonies to represent 1 bit of state information.
+
+## Core Logic: 1/4×4=1
+
+```
+1 carrier ÷ 4 colonies × 4 colonies = 1 complete state cycle
+```
+
+Breaking it down:
+- **1/4**: One carrier electron distributed across 4 colonies
+- **×4**: Carrier visits all 4 colonies sequentially  
+- **=1**: After 4 ticks, one complete state cycle (D increments)
+
+Each colony contains 9 total electrons:
+- 4 up-spin electrons (static)
+- 4 down-spin electrons (static)  
+- 1 carrier electron (dynamic - hops between colonies)
+
+## Physics Mapping
+
+| Component | Physical Meaning |
+|-----------|------------------|
+| Colony | Localized electron group, 9 electrons total |
+| Up/Down Electrons | Spin-aligned particles, fixed position |
+| Carrier | Mobile electron that defines active state |
+| D Counter | Counts complete cycles = stable bit states |
+| OUT Pulse | Emitted when D increments = observable state change |
+
+## Operation at 10kHz
+
+1. **Clock Tick**: Every 100μs (10kHz), carrier hops to next colony
+2. **Colony Sequence**: 0 → 1 → 2 → 3 → 0 → 1 → 2 → 3 → ...
+3. **D Increment**: D++ each time carrier returns to Colony 0
+4. **OUT Pulse**: OUT=1 for one tick when D increments
+
+## Mathematical Properties
+
+```
+Ticks per D increment = 4
+Frequency of D = Clock / 4 = 10kHz / 4 = 2.5kHz
+Bit rate = 2.5kbps per carrier
+```
+
+The 1/4 factor accounts for the carrier spending 1/4 of time in each colony. Multiplying by 4 colonies recovers unity: each full rotation = 1 bit.
+
+## C Implementation Details
+
+### Colony Struct
+```c
+typedef struct {
+    uint8_t up_electrons;   // Always 4
+    uint8_t down_electrons; // Always 4
+    uint8_t has_carrier;    // 0 or 1
+    uint8_t colony_id;      // 0-3
+} Colony;
+```
+
+### Tick Function
+```c
+void tick() {
+    colonies[current].has_carrier = 0;
+    current = (current + 1) % 4;
+    colonies[current].has_carrier = 1;
+    tick_count++;
+    
+    if (current == 0) {
+        d_counter++;
+        out_pulse = 1;
+    }
+}
+```
+
+### Main Loop
+```c
+while (1) {
+    usleep(100);  // 100us = 10kHz
+    tick();
+}
+```
+
+## Compilation &amp; Execution
+
+```bash
+gcc -o 1over4x4 1over4x4.c -Wall -O2
+./1over4x4
+```
+
+Expected output shows carrier cycling through colonies with D incrementing every 4 ticks.
+
+## Applications
+
+This architecture models:
+- Quantum dot cellular automata (QCA)
+- Single-electron transistor logic
+- Charge-coupled state machines
+- Fundamental clocked logic gates
+
+The 1/4×4=1 principle ensures conservation: 1 carrier is never created/destroyed, only relocated. After 4 relocations, system returns to ground state with D incremented.
+
+## Timing Diagram
+
+```
+Clock:  ____|ˉ|____|ˉ|____|ˉ|____|ˉ|____|ˉ|____
+Col 0:  [C]   .     .     .    [C]   .     .
+Col 1:   .   [C]    .     .     .   [C]    .
+Col 2:   .    .    [C]    .     .    .    [C]
+Col 3:   .    .     .    [C]    .    .     .
+D:      0_______________1_______________2____
+OUT:    ________________|ˉ|_______________|ˉ|__
+```
+
+## License
+Public domain. Use for education, research, hardware design.
+</div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // State Machine Core Logic
+    const NUM_COLONIES = 4;
+    const ELECTRONS_UP = 4;
+    const ELECTRONS_DOWN = 4;
+    const CARRIERS = 1;
+    const TOTAL_ELECTRONS = ELECTRONS_UP + ELECTRONS_DOWN + CARRIERS; // 9
+
+    // State
+    let state = {
+        running: false,
+        carrierColony: 0,
+        tickCount: 0,
+        dCounter: 0,
+        clockHz: 10000,
+        lastFrameTime: 0,
+        accumulator: 0,
+        outPulseActive: false,
+        outPulseTimer: 0
+    };
+
+    // DOM Elements
+    const toggleBtn = document.getElementById('toggleBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const speedSlider = document.getElementById('speedSlider');
+    const speedLabel = document.getElementById('speedLabel');
+    const tickCountEl = document.getElementById('tickCount');
+    const dCountEl = document.getElementById('dCount');
+    const currentColonyEl = document.getElementById('currentColony');
+    const outPulseEl = document.getElementById('outPulse');
+    const outValueEl = document.getElementById('outValue');
+    const downloadCBtn = document.getElementById('downloadCBtn');
+    const downloadReadmeBtn = document.getElementById('downloadReadmeBtn');
+    const readmeContentEl = document.getElementById('readmeContent');
+
+    // Initialize colony displays
+    function initColonies() {
+        const colonies = document.querySelectorAll('.colony');
+        colonies.forEach((colony, idx) => {
+            const electronsDiv = colony.querySelector('.electrons');
+            electronsDiv.innerHTML = '';
+            
+            // Add 4 up spin electrons
+            for (let i = 0; i < ELECTRONS_UP; i++) {
+                const e = document.createElement('div');
+                e.className = 'electron up';
+                e.textContent = '↑';
+                electronsDiv.appendChild(e);
+            }
+            
+            // Add 4 down spin electrons  
+            for (let i = 0; i < ELECTRONS_DOWN; i++) {
+                const e = document.createElement('div');
+                e.className = 'electron down';
+                e.textContent = '↓';
+                electronsDiv.appendChild(e);
+            }
+            
+            // Add 1 carrier placeholder
+            const carrier = document.createElement('div');
+            carrier.className = 'electron carrier-placeholder';
+            carrier.style.visibility = 'hidden';
+            electronsDiv.appendChild(carrier);
+        });
+        updateDisplay();
+    }
+
+    // Core tick function: move carrier to next colony
+    function tick() {
+        state.carrierColony = (state.carrierColony + 1) % NUM_COLONIES;
+        state.tickCount++;
+        
+        // D increments each time carrier completes full cycle (returns to colony 0)
+        if (state.carrierColony === 0) {
+            state.dCounter++;
+            // OUT pulse on full cycle completion
+            state.outPulseActive = true;
+            state.outPulseTimer = 100; // ms
+        }
+    }
+
+    // Update visual display
+    function updateDisplay() {
+        const colonies = document.querySelectorAll('.colony');
+        
+        colonies.forEach((colony, idx) => {
+            const electrons = colony.querySelectorAll('.electron');
+            const carrierSlot = electrons[electrons.length - 1];
+            
+            if (idx === state.carrierColony) {
+                colony.classList.add('active');
+                carrierSlot.className = 'electron carrier';
+                carrierSlot.textContent = 'C';
+                carrierSlot.style.visibility = 'visible';
+            } else {
+                colony.classList.remove('active');
+                carrierSlot.className = 'electron carrier-placeholder';
+                carrierSlot.textContent = '';
+                carrierSlot.style.visibility = 'hidden';
+            }
+        });
+
+        tickCountEl.textContent = state.tickCount.toLocaleString();
+        dCountEl.textContent = state.dCounter.toLocaleString();
+        currentColonyEl.textContent = state.running || state.tickCount > 0 ? state.carrierColony : '-';
+
+        if (state.outPulseActive) {
+            outPulseEl.classList.add('active');
+            outValueEl.textContent = '1';
+        } else {
+            outPulseEl.classList.remove('active');
+            outValueEl.textContent = '0';
+        }
+    }
+
+    // Animation loop
+    function animate(timestamp) {
+        if (!state.running) return;
+
+        const deltaTime = timestamp - state.lastFrameTime;
+        state.lastFrameTime = timestamp;
+
+        // Decrease OUT pulse timer
+        if (state.outPulseTimer > 0) {
+            state.outPulseTimer -= deltaTime;
+            if (state.outPulseTimer <= 0) {
+                state.outPulseActive = false;
+            }
+        }
+
+        // Calculate how many ticks should have occurred
+        const tickInterval = 1000 / state.clockHz; // ms per tick
+        state.accumulator += deltaTime;
+
+        while (state.accumulator >= tickInterval) {
+            tick();
+            state.accumulator -= tickInterval;
+        }
+
+        updateDisplay();
+        requestAnimationFrame(animate);
+    }
+
+    // Event Handlers
+    toggleBtn.addEventListener('click', () => {
+        state.running = !state.running;
+        toggleBtn.textContent = state.running ? 'Pause Simulation' : 'Start Simulation';
+        
+        if (state.running) {
+            state.lastFrameTime = performance.now();
+            state.accumulator = 0;
+            requestAnimationFrame(animate);
+        }
+    });
+
+    resetBtn.addEventListener('click', () => {
+        state.running = false;
+        state.carrierColony = 0;
+        state.tickCount = 0;
+        state.dCounter = 0;
+        state.outPulseActive = false;
+        state.outPulseTimer = 0;
+        toggleBtn.textContent = 'Start Simulation';
+        updateDisplay();
+    });
+
+    speedSlider.addEventListener('input', (e) => {
+        state.clockHz = parseInt(e.target.value);
+        speedLabel.textContent = state.clockHz.toLocaleString() + ' Hz';
+    });
+
+    // C Source Code
+    const cSourceCode = `#include <stdio.h>
+#include <stdint.h>
+#include <unistd.h>  // for usleep
+
+/*
+ * 1/4x4=1 State Machine
+ * 1 Carrier cycles through 4 Colonies = 1 Bit State
+ * Each Colony: 4 up electrons + 4 down electrons + 1 carrier slot
+ * Clock: 10kHz = 100us period
+ */
+
+#define NUM_COLONIES 4
+#define ELECTRONS_UP 4
+#define ELECTRONS_DOWN 4
+#define TICK_PERIOD_US 100  // 10kHz = 100 microseconds
+
+// Colony structure: represents physical electron grouping
+typedef struct {
+    uint8_t up_electrons;     // 4 up-spin electrons - static
+    uint8_t down_electrons;   // 4 down-spin electrons - static  
+    uint8_t has_carrier;      // 1 carrier electron - dynamic, hops between colonies
+    uint8_t colony_id;        // 0-3
+} Colony;
+
+// Global state machine
+typedef struct {
+    Colony colonies[NUM_COLONIES];
+    uint8_t current_colony;   // Index 0-3 where carrier currently resides
+    uint64_t tick_count;      // Total clock ticks
+    uint32_t d_counter;       // D increments each full cycle
+    uint8_t out_pulse;        // OUT = 1 when D increments
+} StateMachine;
+
+StateMachine sm;
+
+// Initialize the 4 colonies
+void init_state_machine() {
+    for (int i = 0; i < NUM_COLONIES; i++) {
+        sm.colonies[i].up_electrons = ELECTRONS_UP;
+        sm.colonies[i].down_electrons = ELECTRONS_DOWN;
+        sm.colonies[i].has_carrier = 0;
+        sm.colonies[i].colony_id = i;
+    }
+    
+    // Carrier starts in colony 0
+    sm.colonies[0].has_carrier = 1;
+    sm.current_colony = 0;
+    sm.tick_count = 0;
+    sm.d_counter = 0;
+    sm.out_pulse = 0;
+}
+
+// Core tick function: move carrier to next colony
+void tick() {
+    // Clear carrier from current colony
+    sm.colonies[sm.current_colony].has_carrier = 0;
+    
+    // Advance to next colony (modulo 4)
+    sm.current_colony = (sm.current_colony + 1) % NUM_COLONIES;
+    
+    // Set carrier in new colony
+    sm.colonies[sm.current_colony].has_carrier = 1;
+    
+    sm.tick_count++;
+    
+    // D increments when carrier completes full cycle back to colony 0
+    // 1/4x4=1: 1 carrier × 4 colonies = 4 ticks = 1 complete state
+    if (sm.current_colony == 0) {
+        sm.d_counter++;
+        sm.out_pulse = 1;
+    } else {
+        sm.out_pulse = 0;
+    }
+}
+
+// Print current state for debugging
+void print_state() {
+    printf("[T:%8llu] D:%6u | Colonies: ", 
+           (unsigned long long)sm.tick_count, sm.d_counter);
+    
+    for (int i = 0; i < NUM_COLONIES; i++) {
+        printf("[%d:%d%d%d] ", 
+               i,
+               sm.colonies[i].up_electrons,
+               sm.colonies[i].down_electrons,
+               sm.colonies[i].has_carrier);
+    }
+    
+    if (sm.out_pulse) {
+        printf("OUT=1");
+    }
+    printf("\\n");
+}
+
+int main() {
+    printf("=== 1/4x4=1 State Machine ===\\n");
+    printf("1 Carrier cycles through 4 Colonies = 1 Bit State\\n");
+    printf("Clock: 10kHz\\n");
+    printf("Format: [colony:up,down,carrier]\\n\\n");
+    
+    init_state_machine();
+    print_state();
+    
+    // Main loop at 10kHz
+    while (1) {
+        usleep(TICK_PERIOD_US);  // 100us = 10kHz
+        tick();
+        
+        // Print every 4 ticks (full cycle) or when verbose needed
+        if (sm.tick_count % 4 == 0 || sm.out_pulse) {
+            print_state();
+        }
+        
+        // Stop after 40 ticks for demo, remove for continuous operation
+        if (sm.tick_count >= 40) {
+            break;
+        }
+    }
+    
+    printf("\\nFinal: D=%u after %llu ticks\\n", 
+           sm.d_counter, (unsigned long long)sm.tick_count);
+    printf("Average: %.2f ticks per D increment\\n", 
+           (double)sm.tick_count / sm.d_counter);
+    
+    return 0;
+}
+`;
+
+    // README Content
+    const readmeContent = `### 1/4x4=1 State Machine
+
+## Overview
+The 1/4×4=1 state machine models a fundamental unit of state using electron colonies. The core principle: 1 carrier electron cycles through 4 colonies to represent 1 bit of state information.
+
+## Core Logic: 1/4×4=1
+
+\`\`\`
+1 carrier ÷ 4 colonies × 4 colonies = 1 complete state cycle
+\`\`\`
+
+Breaking it down:
+- **1/4**: One carrier electron distributed across 4 colonies
+- **×4**: Carrier visits all 4 colonies sequentially  
+- **=1**: After 4 ticks, one complete state cycle (D increments)
+
+Each colony contains 9 total electrons:
+- 4 up-spin electrons (static)
+- 4 down-spin electrons (static)  
+- 1 carrier electron (dynamic - hops between colonies)
+
+## Physics Mapping
+
+| Component | Physical Meaning |
+|-----------|------------------|
+| Colony | Localized electron group, 9 electrons total |
+| Up/Down Electrons | Spin-aligned particles, fixed position |
+| Carrier | Mobile electron that defines active state |
+| D Counter | Counts complete cycles = stable bit states |
+| OUT Pulse | Emitted when D increments = observable state change |
+
+## Operation at 10kHz
+
+1. **Clock Tick**: Every 100μs (10kHz), carrier hops to next colony
+2. **Colony Sequence**: 0 → 1 → 2 → 3 → 0 → 1 → 2 → 3 → ...
+3. **D Increment**: D++ each time carrier returns to Colony 0
+4. **OUT Pulse**: OUT=1 for one tick when D increments
+
+## Mathematical Properties
+
+\`\`\`
+Ticks per D increment = 4
+Frequency of D = Clock / 4 = 10kHz / 4 = 2.5kHz
+Bit rate = 2.5kbps per carrier
+\`\`\`
+
+The 1/4 factor accounts for the carrier spending 1/4 of time in each colony. Multiplying by 4 colonies recovers unity: each full rotation = 1 bit.
+
+## C Implementation Details
+
+### Colony Struct
+\`\`\`c
+typedef struct {
+    uint8_t up_electrons;   // Always 4
+    uint8_t down_electrons; // Always 4
+    uint8_t has_carrier;    // 0 or 1
+    uint8_t colony_id;      // 0-3
+} Colony;
+\`\`\`
+
+### Tick Function
+\`\`\`c
+void tick() {
+    colonies[current].has_carrier = 0;
+    current = (current + 1) % 4;
+    colonies[current].has_carrier = 1;
+    tick_count++;
+    
+    if (current == 0) {
+        d_counter++;
+        out_pulse = 1;
+    }
+}
+\`\`\`
+
+### Main Loop
+\`\`\`c
+while (1) {
+    usleep(100);  // 100us = 10kHz
+    tick();
+}
+\`\`\`
+
+## Compilation & Execution
+
+\`\`\`bash
+gcc -o 1over4x4 1over4x4.c -Wall -O2
+./1over4x4
+\`\`\`
+
+Expected output shows carrier cycling through colonies with D incrementing every 4 ticks.
+
+## Applications
+
+This architecture models:
+- Quantum dot cellular automata (QCA)
+- Single-electron transistor logic
+- Charge-coupled state machines
+- Fundamental clocked logic gates
+
+The 1/4×4=1 principle ensures conservation: 1 carrier is never created/destroyed, only relocated. After 4 relocations, system returns to ground state with D incremented.
+
+## Timing Diagram
+
+\`\`\`
+Clock:  ____|ˉ|____|ˉ|____|ˉ|____|ˉ|____|ˉ|____
+Col 0:  [C]   .     .     .    [C]   .     .
+Col 1:   .   [C]    .     .     .   [C]    .
+Col 2:   .    .    [C]    .     .    .    [C]
+Col 3:   .    .     .    [C]    .    .     .
+D:      0_______________1_______________2____
+OUT:    ________________|ˉ|_______________|ˉ|__
+\`\`\`
+
+## License
+Public domain. Use for education, research, hardware design.
+`;
+
+    readmeContentEl.textContent = readmeContent;
+
+    // Download handlers
+    function downloadFile(filename, content, mimeType = 'text/plain') {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    downloadCBtn.addEventListener('click', () => {
+        downloadFile('1over4x4.c', cSourceCode, 'text/x-c');
+    });
+
+    downloadReadmeBtn.addEventListener('click', () => {
+        downloadFile('README.md', readmeContent, 'text/markdown');
+    });
+
+    // Initialize
+    initColonies();
+})();
+</script>
+
+</body></html>

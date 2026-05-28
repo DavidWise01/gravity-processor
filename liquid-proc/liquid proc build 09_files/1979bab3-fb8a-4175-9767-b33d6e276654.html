@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<!-- saved from url=(0165)https://1223007333104322.a.metaaiusercontent.com/html?artifact_uuid=1979bab3-fb8a-4175-9767-b33d6e276654&ext=1779379007&hash=Q5fpDAHGIKFfzXDQtDCB2FVvx6hw&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wired 10x10x10 Kernel Board - Ag2S Neuromorphic Array</title>
+<style>
+    :root {
+        --bg: #0a0e1a;
+        --panel: #111827;
+        --panel-2: #1f2937;
+        --border: #374151;
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+        --accent: #3b82f6;
+        --accent-2: #8b5cf6;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --ti: #60a5fa;
+        --ag2s: #a78bfa;
+        --cu: #f97316;
+        --zn: #22d3ee;
+        --au: #fbbf24;
+        --photon: #fef08a;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    .container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 24px;
+        padding: 24px;
+        background: linear-gradient(135deg, var(--panel) 0%, var(--panel-2) 100%);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        color: var(--text-dim);
+        font-size: 0.95rem;
+    }
+
+    .main-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr 320px;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 1280px) {
+        .main-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .panel h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .panel h2::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+        border-radius: 2px;
+    }
+
+    .control-group {
+        margin-bottom: 20px;
+    }
+
+    .control-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.875rem;
+        color: var(--text-dim);
+        font-weight: 500;
+    }
+
+    .control-value {
+        color: var(--accent);
+        font-weight: 600;
+        font-family: 'Courier New', monospace;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px 16px;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        margin-bottom: 10px;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    button.secondary {
+        background: var(--panel-2);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    button.secondary:hover {
+        background: var(--border);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    button.danger {
+        background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        background: var(--panel-2);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+        transition: all 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        background: var(--accent-2);
+    }
+
+    .toggle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: 48px;
+        height: 24px;
+        background: var(--panel-2);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 1px solid var(--border);
+    }
+
+    .toggle-switch.active {
+        background: var(--success);
+    }
+
+    .toggle-switch::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 18px;
+        height: 18px;
+        background: white;
+        border-radius: 50%;
+        transition: all 0.3s;
+    }
+
+    .toggle-switch.active::after {
+        left: 26px;
+    }
+
+    #canvas-container {
+        position: relative;
+        background: #000;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 700px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .stat-box {
+        background: var(--panel-2);
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+        font-family: 'Courier New', monospace;
+    }
+
+    .legend {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.875rem;
+    }
+
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+    }
+
+    .readme {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        margin-top: 20px;
+    }
+
+    .readme h3 {
+        color: var(--accent);
+        margin-bottom: 12px;
+        font-size: 1.3rem;
+    }
+
+    .readme h4 {
+        color: var(--accent-2);
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+    }
+
+    .readme p, .readme li {
+        color: var(--text-dim);
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .readme code {
+        background: var(--panel-2);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        color: var(--accent);
+        font-size: 0.9em;
+    }
+
+    .readme ul {
+        margin-left: 20px;
+        margin-bottom: 12px;
+    }
+
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--panel);
+        border: 1px solid var(--success);
+        border-radius: 8px;
+        padding: 16px 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        display: none;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .tooltip {
+        position: absolute;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        pointer-events: none;
+        z-index: 100;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Wired 10x10x10 Kernel Board</h1>
+        <p class="subtitle">Neuromorphic Photonic Array | Ag₂S Quantum Dots on Ti₃SiC₂ MAX Phase Traces</p>
+    </header>
+
+    <div class="main-grid">
+        <div class="panel">
+            <h2>Controls</h2>
+            <div class="control-group">
+                <button id="buildBtn">Build 10x10x10 Array</button>
+                <button id="inPulseBtn" class="secondary">IN Pulse</button>
+                <button id="resetBtn" class="danger">Reset All</button>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Clock Frequency</span>
+                    <span class="control-value" id="clockVal">10 kHz</span>
+                </div>
+                <input type="range" id="clockSlider" min="1000" max="50000" value="10000" step="1000">
+            </div>
+
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Pressure</span>
+                    <span class="control-value" id="pressureVal">0.0 kPa</span>
+                </div>
+                <input type="range" id="pressureSlider" min="0" max="100" value="0" step="1">
+            </div>
+
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Photon Velocity</span>
+                    <span class="control-value">2.0 m/s</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="toggle">
+                    <span style="flex: 1;">O1 Output Enable</span>
+                    <div class="toggle-switch" id="o1Toggle"></div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="toggle">
+                    <span style="flex: 1;">Auto Clock</span>
+                    <div class="toggle-switch" id="autoClockToggle"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" style="padding: 10px;">
+            <div id="canvas-container">
+                <canvas id="boardCanvas" width="1100" height="150"></canvas>
+                <div class="tooltip" id="tooltip"></div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Live Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">Active Cores</div>
+                    <div class="stat-value" id="activeCores">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">D Total</div>
+                    <div class="stat-value" id="dTotal">0.00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">OUT Current</div>
+                    <div class="stat-value" id="outCurrent">0.0µA</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Photons</div>
+                    <div class="stat-value" id="photonCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Trapped</div>
+                    <div class="stat-value" id="trappedCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Released</div>
+                    <div class="stat-value" id="releasedCount">0</div>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 20px;">Materials</h2>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #a78bfa, #8b5cf6);"></div>
+                    <span>Ag₂S - Quantum Dot Core</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #60a5fa, #3b82f6);"></div>
+                    <span>Ti - Ti₃SiC₂ Traces</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #f97316, #ea580c);"></div>
+                    <span>Cu - Interconnect</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #22d3ee, #06b6d4);"></div>
+                    <span>Zn - ZnO Fill Layer</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);"></div>
+                    <span>Au - Contact Pads</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: radial-gradient(circle, #fef08a, #fde047);"></div>
+                    <span>S - Photon Pulse</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="readme">
+        <h3>README.md - Wired 10x10x10 Kernel Board Layout</h3>
+        
+        <h4>Overview</h4>
+        <p>This simulation models a 3D neuromorphic photonic array with 100 Ag₂S quantum dot cores arranged in a 10x10 grid. Each core is wired via Ti₃SiC₂ MAX phase traces with ZnO dielectric fill between layers. Photons propagate at 2 m/s through Ti waveguides, get trapped in Ag₂S dots for 15µs, then release to modulate output current.</p>
+
+        <h4>Board Architecture</h4>
+        <ul>
+            <li><code>Layer 0 - Substrate:</code> Si wafer base with Cu ground plane</li>
+            <li><code>Layer 1 - Ti₃SiC₂ Traces:</code> 10x10 grid of photonic waveguides, 50nm thick</li>
+            <li><code>Layer 2 - ZnO Fill:</code> Dielectric isolation, 100nm between traces</li>
+            <li><code>Layer 3 - Ag₂S Cores:</code> 100 quantum dots at grid intersections, 20nm diameter</li>
+            <li><code>Layer 4 - Au Contacts:</code> Edge contact pads for IN/OUT/O1 signals</li>
+        </ul>
+
+        <h4>Material Properties</h4>
+        <ul>
+            <li><strong>S - Sulfur:</strong> Photon carrier, 850nm wavelength pulses</li>
+            <li><strong>Ti - Titanium:</strong> Ti₃SiC₂ MAX phase, low-loss photonic waveguide</li>
+            <li><strong>Cu - Copper:</strong> Electrical interconnects, 35µm traces</li>
+            <li><strong>Zn - Zinc:</strong> ZnO piezoelectric fill, modulates with pressure</li>
+            <li><strong>Ag - Silver:</strong> Ag₂S quantum dot, 15µs carrier lifetime</li>
+            <li><strong>Au - Gold:</strong> Contact pads, wirebond interface</li>
+        </ul>
+
+        <h4>Operation</h4>
+        <ul>
+            <li><strong>Build 10x10x10:</strong> Instantiate 100 cores in grid layout with Ti trace routing</li>
+            <li><strong>IN Pulse:</strong> Inject photon into Ti waveguide at grid edge</li>
+            <li><strong>10kHz Clock:</strong> Synchronize photon release from Ag₂S traps</li>
+            <li><strong>O1 Button:</strong> Enable/disable O1 output channel gating</li>
+            <li><strong>Pressure Slider:</strong> Apply 0-100 kPa to ZnO layer, modulates D value 0.0-1.0</li>
+            <li><strong>D Value:</strong> Per-core synaptic weight, pressure + photon history dependent</li>
+            <li><strong>OUT Current:</strong> Summed output: Σ(D_i × I_photon_i)</li>
+        </ul>
+
+        <h4>Physics Model</h4>
+        <p>Photons travel at <code>v = 2 m/s</code> in Ti₃SiC₂. On Ag₂S collision, 85% trapping probability for <code>t_trap = 15µs</code>. Pressure modulates ZnO permittivity affecting coupling efficiency. Current output follows <code>I_OUT = Σ D_i × 0.1µA</code> when O1 enabled.</p>
+    </div>
+</div>
+
+<div class="notification" id="notification"></div>
+
+<script>
+class Ag2SCore {
+    constructor(x, y, idx) {
+        this.x = x;
+        this.y = y;
+        this.idx = idx;
+        this.d = 0.0;
+        this.trapped = false;
+        this.trapStart = 0;
+        this.trapDuration = 15;
+        this.lastPulse = 0;
+        this.activity = 0;
+        this.radius = 8;
+    }
+
+    update(dt, pressure) {
+        const now = performance.now();
+        
+        // Release check
+        if (this.trapped && (now - this.trapStart) > this.trapDuration) {
+            this.trapped = false;
+            this.lastPulse = now;
+            this.activity = 1.0;
+            stats.released++;
+            return true;
+        }
+
+        // D value decay + pressure modulation
+        const pressureMod = pressure / 100;
+        this.d = Math.max(0, this.d * 0.995 + pressureMod * 0.001);
+        
+        // Activity decay
+        this.activity = Math.max(0, this.activity - dt * 0.002);
+        
+        return false;
+    }
+
+    hitPhoton() {
+        const now = performance.now();
+        if (!this.trapped && Math.random() < 0.85) {
+            this.trapped = true;
+            this.trapStart = now;
+            this.d = Math.min(1.0, this.d + 0.15);
+            stats.trapped++;
+            return true;
+        }
+        return false;
+    }
+
+    draw(ctx) {
+        // ZnO fill background
+        ctx.fillStyle = 'rgba(34, 211, 238, 0.05)';
+        ctx.fillRect(this.x - 25, this.y - 25, 50, 50);
+
+        // D value ring
+        if (this.d > 0.01) {
+            ctx.strokeStyle = `rgba(167, 139, 250, ${this.d * 0.6})`;
+            ctx.lineWidth = 2 + this.d * 3;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius + 4, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // Ag2S core
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+        if (this.trapped) {
+            gradient.addColorStop(0, '#fef08a');
+            gradient.addColorStop(0.5, '#a78bfa');
+            gradient.addColorStop(1, '#7c3aed');
+        } else {
+            gradient.addColorStop(0, '#c4b5fd');
+            gradient.addColorStop(1, '#8b5cf6');
+        }
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Activity pulse
+        if (this.activity > 0) {
+            ctx.strokeStyle = `rgba(254, 240, 138, ${this.activity})`;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius + 8, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // D label
+        if (this.d > 0.05) {
+            ctx.fillStyle = '#e5e7eb';
+            ctx.font = '9px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(this.d.toFixed(2), this.x, this.y - this.radius - 6);
+        }
+    }
+}
+
+class Photon {
+    constructor(startX, startY, endX, endY, targetCore) {
+        this.x = startX;
+        this.y = startY;
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+        this.targetCore = targetCore;
+        this.speed = 2; // m/s, scaled to pixels
+        this.alive = true;
+        this.trail = [];
+    }
+
+    update(dt) {
+        if (!this.alive) return false;
+
+        this.trail.push({x: this.x, y: this.y});
+        if (this.trail.length > 8) this.trail.shift();
+
+        const dx = this.endX - this.x;
+        const dy = this.endY - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 5) {
+            if (this.targetCore) {
+                this.targetCore.hitPhoton();
+            }
+            this.alive = false;
+            return false;
+        }
+
+        const moveDist = (this.speed * 100 * dt) / 1000;
+        this.x += (dx / dist) * moveDist;
+        this.y += (dy / dist) * moveDist;
+
+        return true;
+    }
+
+    draw(ctx) {
+        // Trail
+        ctx.strokeStyle = 'rgba(254, 240, 138, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i < this.trail.length - 1; i++) {
+            if (i === 0) ctx.moveTo(this.trail[i].x, this.trail[i].y);
+            else ctx.lineTo(this.trail[i].x, this.trail[i].y);
+        }
+        ctx.stroke();
+
+        // Photon
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 6);
+        gradient.addColorStop(0, '#ffffff');
+        gradient.addColorStop(0.3, '#fef08a');
+        gradient.addColorStop(1, 'rgba(254, 240, 138, 0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+const canvas = document.getElementById('boardCanvas');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+
+let cores = [];
+let photons = [];
+let built = false;
+let o1Enabled = false;
+let autoClock = false;
+let lastClockPulse = 0;
+let clockFreq = 10000;
+let pressure = 0;
+let stats = {
+    active: 0,
+    dTotal: 0,
+    outCurrent: 0,
+    photonCount: 0,
+    trapped: 0,
+    released: 0
+};
+
+function resizeCanvas() {
+    const container = document.getElementById('canvas-container');
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight || 600;
+}
+
+function buildArray() {
+    cores = [];
+    photons = [];
+    const gridSize = 10;
+    const spacing = 50;
+    const offsetX = (canvas.width - (gridSize - 1) * spacing) / 2;
+    const offsetY = (canvas.height - (gridSize - 1) * spacing) / 2;
+
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            const x = offsetX + col * spacing;
+            const y = offsetY + row * spacing;
+            cores.push(new Ag2SCore(x, y, row * gridSize + col));
+        }
+    }
+    
+    built = true;
+    showNotification('10x10x10 Array Built: 100 Ag₂S Cores Active');
+    updateStats();
+}
+
+function injectPhoton() {
+    if (!built || cores.length === 0) {
+        showNotification('Build array first!', true);
+        return;
+    }
+
+    const edgeCore = cores[Math.floor(Math.random() * 10)];
+    const photon = new Photon(0, edgeCore.y, edgeCore.x, edgeCore.y, edgeCore);
+    photons.push(photon);
+    stats.photonCount++;
+}
+
+function resetAll() {
+    cores = [];
+    photons = [];
+    built = false;
+    stats = {
+        active: 0,
+        dTotal: 0,
+        outCurrent: 0,
+        photonCount: 0,
+        trapped: 0,
+        released: 0
+    };
+    updateStats();
+    showNotification('System Reset');
+}
+
+function updateStats() {
+    stats.active = cores.filter(c => c.trapped).length;
+    stats.dTotal = cores.reduce((sum, c) => sum + c.d, 0);
+    stats.outCurrent = o1Enabled ? cores.reduce((sum, c) => sum + c.d * 0.1, 0) : 0;
+
+    document.getElementById('activeCores').textContent = stats.active;
+    document.getElementById('dTotal').textContent = stats.dTotal.toFixed(2);
+    document.getElementById('outCurrent').textContent = stats.outCurrent.toFixed(1) + 'µA';
+    document.getElementById('photonCount').textContent = stats.photonCount;
+    document.getElementById('trappedCount').textContent = stats.trapped;
+    document.getElementById('releasedCount').textContent = stats.released;
+}
+
+function drawBoard(ctx) {
+    // Background
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (!built) {
+        ctx.fillStyle = '#374151';
+        ctx.font = '20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Click "Build 10x10x10 Array" to initialize', canvas.width / 2, canvas.height / 2);
+        return;
+    }
+
+    // Cu interconnect layer
+    ctx.strokeStyle = 'rgba(249, 115, 22, 0.15)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 10; i++) {
+        const y = cores[i * 10].y;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+
+    // Ti3SiC2 traces
+    ctx.strokeStyle = 'rgba(96, 165, 250, 0.3)';
+    ctx.lineWidth = 3;
+    cores.forEach(core => {
+        ctx.beginPath();
+        ctx.moveTo(0, core.y);
+        ctx.lineTo(core.x, core.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(core.x, 0);
+        ctx.lineTo(core.x, core.y);
+        ctx.stroke();
+    });
+
+    // Au contact pads
+    ctx.fillStyle = '#fbbf24';
+    for (let i = 0; i < 10; i++) {
+        ctx.fillRect(0, cores[i * 10].y - 4, 12, 8);
+        ctx.fillRect(cores[i].x - 4, 0, 8, 12);
+    }
+
+    // Draw cores
+    cores.forEach(core => core.draw(ctx));
+
+    // Draw photons
+    photons.forEach(photon => photon.draw(ctx));
+}
+
+let lastTime = performance.now();
+function animate() {
+    const now = performance.now();
+    const dt = now - lastTime;
+    lastTime = now;
+
+    // Auto clock
+    if (autoClock && built) {
+        if (now - lastClockPulse > (1000 / (clockFreq / 1000))) {
+            injectPhoton();
+            lastClockPulse = now;
+        }
+    }
+
+    // Update cores
+    cores.forEach(core => {
+        if (core.update(dt, pressure)) {
+            injectPhoton();
+        }
+    });
+
+    // Update photons
+    photons = photons.filter(p => p.update(dt));
+
+    drawBoard(ctx);
+    updateStats();
+
+    requestAnimationFrame(animate);
+}
+
+function showNotification(msg, isError = false) {
+    const notif = document.getElementById('notification');
+    notif.textContent = msg;
+    notif.style.borderColor = isError ? 'var(--danger)' : 'var(--success)';
+    notif.style.display = 'block';
+    setTimeout(() => {
+        notif.style.display = 'none';
+    }, 3000);
+}
+
+// Event listeners
+document.getElementById('buildBtn').addEventListener('click', buildArray);
+document.getElementById('inPulseBtn').addEventListener('click', injectPhoton);
+document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+document.getElementById('clockSlider').addEventListener('input', (e) => {
+    clockFreq = parseInt(e.target.value);
+    document.getElementById('clockVal').textContent = (clockFreq / 1000).toFixed(0) + ' kHz';
+});
+
+document.getElementById('pressureSlider').addEventListener('input', (e) => {
+    pressure = parseInt(e.target.value);
+    document.getElementById('pressureVal').textContent = pressure.toFixed(1) + ' kPa';
+});
+
+document.getElementById('o1Toggle').addEventListener('click', function() {
+    o1Enabled = !o1Enabled;
+    this.classList.toggle('active', o1Enabled);
+    showNotification(o1Enabled ? 'O1 Output Enabled' : 'O1 Output Disabled');
+});
+
+document.getElementById('autoClockToggle').addEventListener('click', function() {
+    autoClock = !autoClock;
+    this.classList.toggle('active', autoClock);
+    showNotification(autoClock ? 'Auto Clock ON' : 'Auto Clock OFF');
+});
+
+// Hover tooltip
+canvas.addEventListener('mousemove', (e) => {
+    if (!built) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    let found = false;
+    cores.forEach(core => {
+        const dx = x - core.x;
+        const dy = y - core.y;
+        if (Math.sqrt(dx * dx + dy * dy) < core.radius + 5) {
+            tooltip.style.display = 'block';
+            tooltip.style.left = e.clientX + 15 + 'px';
+            tooltip.style.top = e.clientY + 15 + 'px';
+            tooltip.innerHTML = `
+                <strong>Core ${core.idx}</strong><br>
+                D: ${core.d.toFixed(3)}<br>
+                State: ${core.trapped ? 'Trapped' : 'Ready'}<br>
+                Pos: (${core.x.toFixed(0)}, ${core.y.toFixed(0)})
+            `;
+            found = true;
+        }
+    });
+    if (!found) tooltip.style.display = 'none';
+});
+
+canvas.addEventListener('mouseleave', () => {
+    tooltip.style.display = 'none';
+});
+
+window.addEventListener('resize', resizeCanvas);
+
+// Init
+resizeCanvas();
+animate();
+</script>
+
+</body></html>

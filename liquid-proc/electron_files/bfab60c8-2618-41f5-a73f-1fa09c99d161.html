@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<!-- saved from url=(0165)https://1379651830669839.a.metaaiusercontent.com/html?artifact_uuid=bfab60c8-2618-41f5-a73f-1fa09c99d161&ext=1779386709&hash=Q5fpDAFlyuPRGx7Nkk1txS8YJjl0&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minimal 3-Stack Kernel with C Substrate</title>
+<style>
+    :root {
+        --bg: #0a0e14;
+        --panel: #11151d;
+        --panel-light: #1a1f2b;
+        --border: #2a3140;
+        --text: #e6e9ef;
+        --text-dim: #8b94a7;
+        --accent: #5bc0be;
+        --c-color: #3a86ff;
+        --si-color: #ffbe0b;
+        --xe-color: #9b5de5;
+        --s-color: #f15bb5;
+        --ti-color: #00bbf9;
+        --ag-color: #f8f9fa;
+        --laser: #ff006e;
+        --glow: 0 0 20px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--c-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: var(--text-dim);
+        font-size: 1rem;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .panel-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .panel-title::before {
+        content: '';
+        width: 4px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    #kernel-canvas {
+        width: 100%;
+        height: 500px;
+        background: radial-gradient(ellipse at center, #0d1219 0%, #050709 100%);
+        border-radius: 8px;
+        display: block;
+    }
+
+    .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .control-group {
+        background: var(--panel-light);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    .control-label {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        margin-bottom: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .control-value {
+        color: var(--accent);
+        font-weight: 600;
+        font-family: 'Courier New', monospace;
+    }
+
+    button {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--panel-light);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    button:hover {
+        background: var(--border);
+        border-color: var(--accent);
+        box-shadow: var(--glow) rgba(91, 192, 190, 0.2);
+    }
+
+    button:active {
+        transform: scale(0.98);
+    }
+
+    button.active {
+        background: var(--accent);
+        color: var(--bg);
+        border-color: var(--accent);
+    }
+
+    .toggle-group {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        background: var(--panel);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: var(--glow) rgba(91, 192, 190, 0.4);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+    }
+
+    .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .metric {
+        background: var(--panel-light);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .metric-label {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .metric-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+        font-family: 'Courier New', monospace;
+    }
+
+    .metric-unit {
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        margin-left: 0.25rem;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .connections {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .conn-pin {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.5rem;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .conn-led {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #333;
+        transition: all 0.1s;
+    }
+
+    .conn-led.active {
+        background: var(--laser);
+        box-shadow: 0 0 8px var(--laser);
+    }
+
+    .readme {
+        margin-top: 2rem;
+    }
+
+    .readme h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--accent);
+    }
+
+    .readme h3 {
+        font-size: 1.1rem;
+        margin: 1.5rem 0 0.75rem;
+        color: var(--text);
+    }
+
+    .readme p, .readme li {
+        color: var(--text-dim);
+        margin-bottom: 0.75rem;
+        line-height: 1.8;
+    }
+
+    .readme ul {
+        padding-left: 1.5rem;
+    }
+
+    .readme code {
+        background: var(--panel-light);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        color: var(--accent);
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .pulsing {
+        animation: pulse 1s infinite;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Minimal 3-Stack Kernel</h1>
+        <p class="subtitle">Ti₃SiC₂ MAX Phase with C Substrate | Elements: C[6] Si[14] Xe[54] S[16] Ti[22] Ag[47]</p>
+    </header>
+
+    <div class="grid">
+        <div class="panel">
+            <div class="panel-title">Kernel Visualization</div>
+            <canvas id="kernel-canvas" width="1372" height="1000"></canvas>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background: var(--c-color)"></div>C - Carbon 2s²2p²</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--si-color)"></div>Si - Silicon</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--xe-color)"></div>Xe - Xenon Gap</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--s-color)"></div>S - Sulfur Trap</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--ti-color)"></div>Ti - Titanium</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--ag-color)"></div>Ag - Silver Core</div>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-label">Displacement</div>
+                    <div class="metric-value"><span id="metric-d">0.05</span><span class="metric-unit">nm</span></div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">OUT Current</div>
+                    <div class="metric-value"><span id="metric-current">0.00</span><span class="metric-unit">mA</span></div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Delay Time</div>
+                    <div class="metric-value"><span id="metric-delay">9.09</span><span class="metric-unit">μs</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">Control Interface</div>
+            <div class="controls">
+                <div class="control-group">
+                    <div class="control-label">Signal Control</div>
+                    <button id="btn-pulse">IN Pulse Trigger</button>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>10kHz Clock</span>
+                        <span class="control-value" id="clock-state">OFF</span>
+                    </div>
+                    <button id="btn-clock">Toggle Clock</button>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>O1 Output Bias</span>
+                        <span class="control-value" id="o1-value">0.0V</span>
+                    </div>
+                    <input type="range" id="o1-slider" min="0" max="50" value="0">
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Xe Gap Pressure</span>
+                        <span class="control-value" id="pressure-value">1.0 atm</span>
+                    </div>
+                    <input type="range" id="pressure-slider" min="1" max="100" value="10">
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">Substrate Material</div>
+                    <div class="toggle-group">
+                        <button id="btn-c" class="active">C</button>
+                        <button id="btn-si">Si</button>
+                        <button id="btn-max">Ti₃SiC₂</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">Connection Status</div>
+                    <div class="connections">
+                        <div class="conn-pin"><div class="conn-led" id="led-l0"></div>IN L0</div>
+                        <div class="conn-pin"><div class="conn-led" id="led-l1"></div>IN L1</div>
+                        <div class="conn-pin"><div class="conn-led" id="led-outp"></div>OUT+</div>
+                        <div class="conn-pin"><div class="conn-led" id="led-outn"></div>OUT-</div>
+                        <div class="conn-pin"><div class="conn-led active" id="led-gnd"></div>GND</div>
+                        <div class="conn-pin"><div class="conn-led" id="led-xe"></div>Xe Gap</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel readme">
+        <h2>README.md - Role of Carbon in Ti₃SiC₂ MAX Phase</h2>
+        
+        <h3>Overview</h3>
+        <p>This simulation models a minimal 3-stack kernel built on a carbon substrate using Ti₃SiC₂ MAX phase architecture. The structure integrates 6 elements: Carbon [6], Silicon [14], Xenon [54], Sulfur [16], Titanium [22], and Silver [47].</p>
+
+        <h3>Why Carbon is Critical for Ti₃SiC₂ MAX Phase</h3>
+        <ul>
+            <li><strong>Structural Backbone:</strong> Ti₃SiC₂ is a layered hexagonal MAX phase where carbon atoms occupy octahedral sites between Ti₃C₂ layers. The C atoms form strong Ti-C bonds with sp³ hybridization from the 2s²2p² configuration.</li>
+            <li><strong>Electrical Anisotropy:</strong> C layers provide metallic-like conductivity in-plane while maintaining ceramic stability. This enables the dual 2-laser excitation of C 2s²2p² orbitals shown as IN L0/L1.</li>
+            <li><strong>Thermal Stability:</strong> Carbon's high bond energy (348 kJ/mol for C-C, 423 kJ/mol for Ti-C) allows Ti₃SiC₂ to remain stable up to 1400°C, critical for the Xe gas gap operation without decomposition.</li>
+            <li><strong>Damage Tolerance:</strong> Unlike pure TiC, the layered MAX phase allows C planes to slide under stress, giving the kernel mechanical resilience. Si layers act as weak planes enabling kinking and delamination.</li>
+            <li><strong>Electronic Configuration:</strong> C's 2s²2p² valence enables 4-fold coordination, bridging 6 Ti atoms per unit cell. Without C, you lose the MAX phase entirely and revert to Ti₃Si intermetallic with poor oxidation resistance.</li>
+        </ul>
+
+        <h3>Kernel Stack Architecture</h3>
+        <p><code>Bottom to Top:</code></p>
+        <ul>
+            <li><strong>Layer 1 - C Substrate:</strong> Diamond/SiC base with 2-laser addressable C atoms. Provides epitaxial template for Ti₃SiC₂ growth.</li>
+            <li><strong>Layer 2 - Ti Traces:</strong> Hexagonal Ti layers form conductive pathways. Ti bonds to C in octahedral coordination.</li>
+            <li><strong>Layer 3 - S Trap:</strong> Sulfur intercalation layer acts as charge trap/switch. Forms Ti-S-C bridges affecting OUT± differential.</li>
+            <li><strong>Layer 4 - Xe Gas Gap:</strong> Xenon-filled microcavity between stacks. Pressure-tunable dielectric. Breakdown voltage controls delay time.</li>
+            <li><strong>Layer 5 - Ag Core:</strong> Silver central conductor. Ag provides low-resistance path for GND and OUT current collection.</li>
+        </ul>
+
+        <h3>Connection Mapping</h3>
+        <ul>
+            <li><strong>IN L0, IN L1:</strong> Dual 405nm/520nm lasers pumping C 2s²→2p² transition. Orthogonal polarization for state encoding.</li>
+            <li><strong>OUT+, OUT-:</strong> Differential output from Ag core and Ti traces. Amplitude modulated by S trap occupancy.</li>
+            <li><strong>GND:</strong> Ag core reference. Sinks current from Ti₃SiC₂ layers.</li>
+            <li><strong>Xe Gap:</strong> Capacitive gap. Pressure changes ionize Xe, altering permittivity and switching delay.</li>
+        </ul>
+
+        <h3>Material Toggle Comparison</h3>
+        <ul>
+            <li><strong>C (Diamond):</strong> Highest thermal conductivity, wide bandgap. Ideal substrate but no MAX phase.</li>
+            <li><strong>Si:</strong> Standard CMOS compatible, but forms SiO₂ interface states. No carbide bonding with Ti.</li>
+            <li><strong>Ti₃SiC₂:</strong> Optimal. Combines metal-like conductivity, ceramic stability, and self-healing microcracks. C enables all three.</li>
+        </ul>
+
+        <h3>Metrics Explained</h3>
+        <ul>
+            <li><strong>D - Displacement:</strong> Lattice strain in nm from Xe pressure on Ti₃SiC₂ layers. &gt;0.5nm indicates plastic deformation.</li>
+            <li><strong>OUT Current:</strong> Total current through Ag core. Depends on S trap state, laser power, and Xe breakdown.</li>
+            <li><strong>Delay Time:</strong> Signal propagation through Xe gap. Inversely proportional to pressure via Paschen's Law.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+(function() {
+    const canvas = document.getElementById('kernel-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, dpr;
+
+    // State
+    const state = {
+        clock: false,
+        clockPhase: 0,
+        o1: 0,
+        pressure: 1.0,
+        material: 'C',
+        laser0: 0,
+        laser1: 0,
+        pulseTimer: 0,
+        displacement: 0,
+        current: 0,
+        delay: 0,
+        sTrapCharge: 0,
+        xeIonized: 0,
+        time: 0
+    };
+
+    // Connections
+    const leds = {
+        l0: document.getElementById('led-l0'),
+        l1: document.getElementById('led-l1'),
+        outp: document.getElementById('led-outp'),
+        outn: document.getElementById('led-outn'),
+        gnd: document.getElementById('led-gnd'),
+        xe: document.getElementById('led-xe')
+    };
+
+    function resize() {
+        dpr = window.devicePixelRatio || 1;
+        width = canvas.clientWidth;
+        height = canvas.clientHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Controls
+    document.getElementById('btn-pulse').addEventListener('click', () => {
+        state.pulseTimer = 30;
+        state.laser0 = 1;
+        state.laser1 = 1;
+    });
+
+    document.getElementById('btn-clock').addEventListener('click', () => {
+        state.clock = !state.clock;
+        document.getElementById('clock-state').textContent = state.clock ? 'ON' : 'OFF';
+        document.getElementById('btn-clock').classList.toggle('active', state.clock);
+    });
+
+    document.getElementById('o1-slider').addEventListener('input', (e) => {
+        state.o1 = e.target.value / 10;
+        document.getElementById('o1-value').textContent = state.o1.toFixed(1) + 'V';
+    });
+
+    document.getElementById('pressure-slider').addEventListener('input', (e) => {
+        state.pressure = e.target.value / 10;
+        document.getElementById('pressure-value').textContent = state.pressure.toFixed(1) + ' atm';
+    });
+
+    ['c', 'si', 'max'].forEach(mat => {
+        document.getElementById('btn-' + mat).addEventListener('click', () => {
+            state.material = mat === 'c' ? 'C' : mat === 'si' ? 'Si' : 'Ti3SiC2';
+            document.querySelectorAll('.toggle-group button').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + mat).classList.add('active');
+        });
+    });
+
+    function updatePhysics(dt) {
+        state.time += dt;
+
+        // Clock 10kHz
+        if (state.clock) {
+            state.clockPhase += dt * 10000 * Math.PI * 2;
+            state.laser0 = (Math.sin(state.clockPhase) > 0) ? 1 : 0;
+            state.laser1 = (Math.sin(state.clockPhase + Math.PI/2) > 0) ? 1 : 0;
+        } else if (state.pulseTimer > 0) {
+            state.pulseTimer--;
+            if (state.pulseTimer === 0) {
+                state.laser0 = 0;
+                state.laser1 = 0;
+            }
+        }
+
+        // Xe ionization based on pressure and field
+        const fieldStrength = state.o1 + state.laser0 * 2 + state.laser1 * 2;
+        const breakdown = 30 / state.pressure; // Paschen's Law simplified
+        state.xeIonized = Math.max(0, Math.min(1, (fieldStrength - breakdown) / 10));
+
+        // S trap charging
+        const chargeRate = state.laser0 * 0.02 + state.laser1 * 0.02;
+        const dischargeRate = state.o1 * 0.01;
+        state.sTrapCharge += (chargeRate - dischargeRate) * dt * 60;
+        state.sTrapCharge = Math.max(0, Math.min(1, state.sTrapCharge));
+
+        // Displacement from Xe pressure on lattice
+        const targetD = state.pressure * 0.05 * (1 + state.xeIonized);
+        state.displacement += (targetD - state.displacement) * 0.1;
+
+        // Current calculation
+        let conductivity = 1.0;
+        if (state.material === 'C') conductivity = 1.2;
+        if (state.material === 'Si') conductivity = 0.3;
+        if (state.material === 'Ti3SiC2') conductivity = 1.5;
+        
+        const baseCurrent = state.o1 * conductivity;
+        const laserCurrent = (state.laser0 + state.laser1) * 2 * conductivity;
+        const trapModulation = 1 - state.sTrapCharge * 0.5;
+        state.current = (baseCurrent + laserCurrent) * trapModulation * (1 + state.xeIonized * 0.3);
+
+        // Delay time from Xe gap
+        state.delay = 10 / (state.pressure * (1 + state.xeIonized * 2) + 0.1);
+
+        // Update LEDs
+        leds.l0.classList.toggle('active', state.laser0 > 0.5);
+        leds.l1.classList.toggle('active', state.laser1 > 0.5);
+        leds.outp.classList.toggle('active', state.current > 0.1);
+        leds.outn.classList.toggle('active', state.current > 0.1 && state.sTrapCharge < 0.5);
+        leds.gnd.classList.toggle('active', true);
+        leds.xe.classList.toggle('active', state.xeIonized > 0.5);
+
+        // Update metrics
+        document.getElementById('metric-d').textContent = state.displacement.toFixed(2);
+        document.getElementById('metric-current').textContent = state.current.toFixed(2);
+        document.getElementById('metric-delay').textContent = state.delay.toFixed(2);
+    }
+
+    function drawAtom(x, y, r, color, label, glow = false) {
+        ctx.save();
+        if (glow) {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = color;
+        }
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, x, y);
+        ctx.restore();
+    }
+
+    function drawLayer(y, h, color, label) {
+        const gradient = ctx.createLinearGradient(0, y, 0, y + h);
+        gradient.addColorStop(0, color + '22');
+        gradient.addColorStop(1, color + '44');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(50, y, width - 100, h);
+        ctx.strokeStyle = color + '88';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(50, y, width - 100, h);
+        ctx.fillStyle = color;
+        ctx.font = '11px sans-serif';
+        ctx.fillText(label, 55, y + 12);
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, width, height);
+
+        const cx = width / 2;
+        const layerH = 60;
+        const baseY = height - 80;
+
+        // C Substrate - Diamond/SiC with 2s2 2p2 lasers
+        drawLayer(baseY, layerH, '#3a86ff', 'C Substrate: Diamond/SiC - 2s²2p²');
+        for (let i = 0; i < 8; i++) {
+            const x = 80 + i * (width - 160) / 7;
+            drawAtom(x, baseY + 30, 8, '#3a86ff', 'C', state.laser0 > 0.5 || state.laser1 > 0.5);
+        }
+        
+        // Laser beams
+        if (state.laser0 > 0.5) {
+            ctx.strokeStyle = '#ff006e';
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ff006e';
+            ctx.beginPath();
+            ctx.moveTo(cx - 40, 20);
+            ctx.lineTo(cx - 40, baseY);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+        if (state.laser1 > 0.5) {
+            ctx.strokeStyle = '#ff006e';
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ff006e';
+            ctx.beginPath();
+            ctx.moveTo(cx + 40, 20);
+            ctx.lineTo(cx + 40, baseY);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        // Ti Traces Layer
+        const tiY = baseY - layerH - 5;
+        drawLayer(tiY, layerH, '#00bbf9', 'Ti Traces - Ti₃SiC₂ Layer');
+        for (let i = 0; i < 6; i++) {
+            const x = 100 + i * (width - 200) / 5;
+            drawAtom(x, tiY + 30, 9, '#00bbf9', 'Ti');
+        }
+
+        // Material indicator
+        ctx.fillStyle = 'var(--accent)';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(state.material === 'Ti3SiC2' ? 'Ti₃SiC₂ MAX Phase Active' : state.material + ' Substrate', cx, tiY - 10);
+
+        // S Trap Layer
+        const sY = tiY - layerH - 5;
+        drawLayer(sY, layerH, '#f15bb5', 'S Trap - Charge: ' + (state.sTrapCharge * 100).toFixed(0) + '%');
+        for (let i = 0; i < 5; i++) {
+            const x = 120 + i * (width - 240) / 4;
+            drawAtom(x, sY + 30, 8, '#f15bb5', 'S', state.sTrapCharge > 0.5);
+        }
+
+        // Xe Gas Gap
+        const xeY = sY - layerH - 5 - state.displacement * 10;
+        const xeH = layerH + state.displacement * 10;
+        drawLayer(xeY, xeH, '#9b5de5', 'Xe Gas Gap - ' + state.pressure.toFixed(1) + ' atm' + (state.xeIonized > 0.5 ? ' IONIZED' : ''));
+        
+        // Xe atoms
+        const xeAlpha = state.xeIonized * 0.8 + 0.2;
+        for (let i = 0; i < 6; i++) {
+            const x = 110 + i * (width - 220) / 5 + Math.sin(state.time * 2 + i) * 5;
+            const y = xeY + 15 + Math.cos(state.time * 2 + i) * 10;
+            ctx.globalAlpha = xeAlpha;
+            drawAtom(x, y, 7, '#9b5de5', 'Xe', state.xeIonized > 0.5);
+        }
+        ctx.globalAlpha = 1;
+
+        // Ag Core
+        const agY = xeY - layerH - 5;
+        drawLayer(agY, layerH, '#f8f9fa', 'Ag Core - GND/OUT');
+        for (let i = 0; i < 4; i++) {
+            const x = cx - 60 + i * 40;
+            drawAtom(x, agY + 30, 10, '#f8f9fa', 'Ag', state.current > 1.0);
+        }
+
+        // Connection labels
+        ctx.fillStyle = 'var(--text-dim)';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('IN L0', cx - 55, 15);
+        ctx.fillText('IN L1', cx + 25, 15);
+        ctx.textAlign = 'right';
+        ctx.fillText('OUT+', width - 55, agY + 20);
+        ctx.fillText('OUT-', width - 55, agY + 40);
+        ctx.fillText('GND', 45, agY + 30);
+
+        // Current flow visualization
+        if (state.current > 0.1) {
+            ctx.strokeStyle = 'var(--accent)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.lineDashOffset = -state.time * 50;
+            ctx.beginPath();
+            ctx.moveTo(cx, agY + layerH);
+            ctx.lineTo(width - 60, agY + 30);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+    }
+
+    let lastTime = 0;
+    function animate(time) {
+        const dt = Math.min((time - lastTime) / 1000, 0.1);
+        lastTime = time;
+        
+        updatePhysics(dt);
+        draw();
+        requestAnimationFrame(animate);
+    }
+
+    animate(0);
+})();
+</script>
+
+</body></html>

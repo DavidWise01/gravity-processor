@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<!-- saved from url=(0164)https://964337793064332.a.metaaiusercontent.com/html?artifact_uuid=e77ec43a-8ea7-4c8b-b7c5-efe3dc95ee7f&ext=1779385095&hash=Q5fpDAEh-xABStP7oSoixUZYRxFo&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tensor Stack 3D - WebGL Cyberpunk</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        user-select: none;
+    }
+    
+    body {
+        background: #000;
+        font-family: 'Courier New', monospace;
+        overflow: hidden;
+        color: #0ff;
+    }
+
+    #canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        cursor: grab;
+    }
+    
+    #canvas.grabbing {
+        cursor: grabbing;
+    }
+
+    .ui-panel {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 10, 20, 0.85);
+        border: 1px solid #0ff;
+        border-radius: 8px;
+        padding: 16px 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.05);
+        max-width: 320px;
+        pointer-events: auto;
+        z-index: 10;
+    }
+
+    .ui-panel h1 {
+        font-size: 16px;
+        margin-bottom: 12px;
+        color: #0ff;
+        text-shadow: 0 0 10px #0ff;
+        letter-spacing: 2px;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 8px 0;
+        font-size: 12px;
+        color: #8ff;
+    }
+
+    .stat-label {
+        color: #0aa;
+    }
+
+    .stat-value {
+        color: #0ff;
+        text-shadow: 0 0 5px #0ff;
+    }
+
+    .slider-container {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(0, 255, 255, 0.3);
+    }
+
+    .slider-label {
+        font-size: 11px;
+        color: #0aa;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 4px;
+        background: rgba(0, 50, 0.5);
+        outline: none;
+        border-radius: 2px;
+        -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        background: #0ff;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 10px #0ff;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        background: #0ff;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 10px #0ff;
+        border: none;
+    }
+
+    .controls {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(0, 10, 20, 0.85);
+        border: 1px solid #0ff;
+        border-radius: 8px;
+        padding: 12px 16px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        font-size: 11px;
+        color: #8ff;
+        line-height: 1.6;
+        z-index: 10;
+    }
+
+    .controls div {
+        margin: 4px 0;
+    }
+
+    .key {
+        display: inline-block;
+        background: rgba(0, 255, 255, 0.1);
+        border: 1px solid #0ff;
+        padding: 2px 6px;
+        border-radius: 3px;
+        margin-right: 6px;
+        color: #0ff;
+        text-shadow: 0 0 5px #0ff;
+    }
+
+    .audio-indicator {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 10, 20, 0.85);
+        border: 1px solid #0ff;
+        border-radius: 8px;
+        padding: 12px 16px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        font-size: 12px;
+        color: #0ff;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .audio-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #f00;
+        box-shadow: 0 0 10px #f00;
+        animation: pulse 1s ease-in-out infinite;
+    }
+
+    .audio-dot.active {
+        background: #0f0;
+        box-shadow: 0 0 15px #0f0;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    #gl-error {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(20, 0, 0, 0.95);
+        border: 2px solid #f00;
+        border-radius: 8px;
+        padding: 30px;
+        color: #f88;
+        text-align: center;
+        display: none;
+        z-index: 100;
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+    }
+</style>
+</head>
+<body>
+<canvas id="canvas" width="2328" height="1454"></canvas>
+
+<div class="ui-panel">
+    <h1>TENSOR STACK v1.0</h1>
+    <div class="stat-row">
+        <span class="stat-label">NODES:</span>
+        <span class="stat-value" id="nodeCount">1000</span>
+    </div>
+    <div class="stat-row">
+        <span class="stat-label">LIVE CORES:</span>
+        <span class="stat-value" id="liveCores">4</span>
+    </div>
+    <div class="stat-row">
+        <span class="stat-label">ACTIVE BEAMS:</span>
+        <span class="stat-value" id="beamCount">0</span>
+    </div>
+    <div class="stat-row">
+        <span class="stat-label">PARTICLES:</span>
+        <span class="stat-value" id="particleCount">0</span>
+    </div>
+    <div class="stat-row">
+        <span class="stat-label">FPS:</span>
+        <span class="stat-value" id="fps">0</span>
+    </div>
+    
+    <div class="slider-container">
+        <div class="slider-label">
+            <span>IN SIGNAL MASS</span>
+            <span id="massValue">0</span>
+        </div>
+        <input type="range" id="massSlider" min="0" max="1000" value="0" step="10">
+    </div>
+</div>
+
+<div class="controls">
+    <div><span class="key">MOUSE DRAG</span>Rotate view</div>
+    <div><span class="key">SCROLL</span>Zoom in/out</div>
+    <div><span class="key">CLICK NODE</span>Activate tensor core</div>
+    <div><span class="key">SPACE</span>Toggle 10kHz tone</div>
+</div>
+
+<div class="audio-indicator">
+    <div class="audio-dot" id="audioDot"></div>
+    <span id="audioStatus">AUDIO OFF</span>
+</div>
+
+<div id="gl-error">
+    <h2>WebGL Not Supported</h2>
+    <p>Your browser does not support WebGL2</p>
+</div>
+
+<script>
+// Shaders - Raw WebGL GLSL
+const vertexShaderSource = `#version 300 es
+precision highp float;
+
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_normal;
+layout(location = 2) in vec3 a_instancePos;
+layout(location = 3) in float a_instanceType;
+layout(location = 4) in float a_instanceState;
+
+uniform mat4 u_viewProjection;
+uniform mat4 u_model;
+uniform float u_time;
+
+out vec3 v_normal;
+out vec3 v_worldPos;
+out float v_state;
+out float v_type;
+
+void main() {
+    vec3 pos = a_position;
+    
+    // Pulse effect for live cores
+    if (a_instanceType > 0.5) {
+        float pulse = sin(u_time * 3.0 + a_instancePos.y) * 0.1 + 1.0;
+        pos *= pulse;
+    }
+    
+    vec3 worldPos = a_instancePos + pos;
+    gl_Position = u_viewProjection * u_model * vec4(worldPos, 1.0);
+    
+    v_normal = mat3(u_model) * a_normal;
+    v_worldPos = worldPos;
+    v_state = a_instanceState;
+    v_type = a_instanceType;
+}
+`;
+
+const fragmentShaderSource = `#version 300 es
+precision highp float;
+
+in vec3 v_normal;
+in vec3 v_worldPos;
+in float v_state;
+in float v_type;
+
+uniform vec3 u_cameraPos;
+uniform float u_time;
+
+out vec4 outColor;
+
+vec3 neonGlow(vec3 color, float intensity) {
+    return color * intensity + color * pow(intensity, 4.0) * 2.0;
+}
+
+void main() {
+    vec3 normal = normalize(v_normal);
+    vec3 viewDir = normalize(u_cameraPos - v_worldPos);
+    
+    vec3 baseColor;
+    float glowIntensity = v_state;
+    
+    if (v_type > 0.5) {
+        // Live tensor core - cyan/magenta
+        float hue = sin(u_time * 2.0 + v_worldPos.y * 0.1) * 0.5 + 0.5;
+        baseColor = mix(vec3(0.0, 1.0, 1.0), vec3(1.0, 0.0, 1.0), hue);
+        glowIntensity = 0.8 + sin(u_time * 4.0) * 0.2;
+    } else {
+        // Gravity prim - dim cyan
+        baseColor = vec3(0.0, 0.5, 0.7);
+        glowIntensity = v_state * 0.6;
+    }
+    
+    // Fresnel for edge glow
+    float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.0);
+    glowIntensity += fresnel * 0.5;
+    
+    // Basic lighting
+    vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
+    float diff = max(dot(normal, lightDir), 0.0);
+    
+    vec3 color = neonGlow(baseColor, glowIntensity + diff * 0.3);
+    
+    // Add energy field effect
+    float energy = sin(v_worldPos.y * 5.0 + u_time * 3.0) * 0.1 + 0.9;
+    color *= energy;
+    
+    outColor = vec4(color, 1.0);
+}
+`;
+
+const laserVertexShader = `#version 300 es
+precision highp float;
+
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_laserStart;
+layout(location = 2) in vec3 a_laserEnd;
+layout(location = 3) in float a_laserIntensity;
+
+uniform mat4 u_viewProjection;
+uniform float u_time;
+
+out float v_intensity;
+out float v_yPos;
+
+void main() {
+    vec3 pos = a_laserStart + a_position.y * (a_laserEnd - a_laserStart);
+    pos.x += a_position.x * 0.02;
+    pos.z += a_position.z * 0.02;
+    
+    gl_Position = u_viewProjection * vec4(pos, 1.0);
+    v_intensity = a_laserIntensity;
+    v_yPos = a_position.y;
+}
+`;
+
+const laserFragmentShader = `#version 300 es
+precision highp float;
+
+in float v_intensity;
+in float v_yPos;
+
+uniform float u_time;
+
+out vec4 outColor;
+
+void main() {
+    float energy = sin(v_yPos * 20.0 - u_time * 10.0) * 0.3 + 0.7;
+    vec3 beamColor = vec3(0.0, 1.0, 1.0);
+    
+    float alpha = v_intensity * energy;
+    vec3 color = beamColor * alpha * 2.0;
+    
+    outColor = vec4(color, alpha * 0.8);
+}
+`;
+
+const particleVertexShader = `#version 300 es
+precision highp float;
+
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_particlePos;
+layout(location = 2) in float a_particleLife;
+
+uniform mat4 u_viewProjection;
+uniform vec3 u_cameraRight;
+uniform vec3 u_cameraUp;
+
+out float v_life;
+
+void main() {
+    vec3 pos = a_particlePos + (u_cameraRight * a_position.x + u_cameraUp * a_position.y) * 0.05;
+    gl_Position = u_viewProjection * vec4(pos, 1.0);
+    v_life = a_particleLife;
+}
+`;
+
+const particleFragmentShader = `#version 300 es
+precision highp float;
+
+in float v_life;
+
+uniform float u_time;
+
+out vec4 outColor;
+
+void main() {
+    float alpha = v_life * v_life;
+    vec3 color = mix(vec3(0.0, 1.0, 1.0), vec3(1.0, 0.0, 1.0), v_life);
+    color *= alpha * 3.0;
+    outColor = vec4(color, alpha);
+}
+`;
+
+const bloomVertexShader = `#version 300 es
+precision highp float;
+
+layout(location = 0) in vec2 a_position;
+layout(location = 1) in vec2 a_texCoord;
+
+out vec2 v_texCoord;
+
+void main() {
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    v_texCoord = a_texCoord;
+}
+`;
+
+const bloomFragmentShader = `#version 300 es
+precision highp float;
+
+in vec2 v_texCoord;
+
+uniform sampler2D u_scene;
+uniform vec2 u_resolution;
+
+out vec4 outColor;
+
+void main() {
+    vec4 color = texture(u_scene, v_texCoord);
+    
+    // Simple bloom - extract bright areas and blur
+    float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+    vec3 bloom = vec3(0.0);
+    
+    if (brightness > 0.5) {
+        float blur = 0.003;
+        for (int x = -2; x <= 2; x++) {
+            for (int y = -2; y <= 2; y++) {
+                vec2 offset = vec2(float(x), float(y)) * blur;
+                bloom += texture(u_scene, v_texCoord + offset).rgb;
+            }
+        }
+        bloom /= 25.0;
+    }
+    
+    color.rgb += bloom * 0.8;
+    
+    // Tone mapping
+    color.rgb = color.rgb / (color.rgb + vec3(1.0));
+    color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
+    
+    outColor = color;
+}
+`;
+
+class TensorVisualizer {
+    constructor() {
+        this.canvas = document.getElementById('canvas');
+        this.gl = this.canvas.getContext('webgl2', { 
+            antialias: true, 
+            alpha: false,
+            preserveDrawingBuffer: false,
+            powerPreference: 'high-performance'
+        });
+        
+        if (!this.gl) {
+            document.getElementById('gl-error').style.display = 'block';
+            return;
+        }
+        
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        
+        // Scene state
+        this.time = 0;
+        this.lastTime = 0;
+        this.deltaTime = 0;
+        this.fps = 0;
+        this.frameCount = 0;
+        this.lastFpsUpdate = 0;
+        
+        // Camera
+        this.camera = {
+            rotation: { x: -0.4, y: 0.5 },
+            distance: 18,
+            target: [0, 0, 0]
+        };
+        
+        // Interaction
+        this.mouse = { x: 0, y: 0, down: false, lastX: 0, lastY: 0 };
+        this.selectedNode = -1;
+        this.hoveredNode = -1;
+        
+        // Tensor data - 10x10x10
+        this.gridSize = 10;
+        this.totalNodes = 1000;
+        this.nodePositions = new Float32Array(this.totalNodes * 3);
+        this.nodeTypes = new Float32Array(this.totalNodes); // 0=gravity prim, 1=live core
+        this.nodeStates = new Float32Array(this.totalNodes); // activation state
+        this.nodeMass = new Float32Array(this.totalNodes);
+        
+        this.initTensorGrid();
+        
+        // Lasers
+        this.maxLasers = 200;
+        this.laserData = [];
+        this.activeLasers = 0;
+        
+        // Particles
+        this.maxParticles = 500;
+        this.particles = [];
+        
+        // Physics
+        this.massInput = 0;
+        this.gravityConstant = 0.01;
+        
+        // Audio
+        this.audioCtx = null;
+        this.oscillator = null;
+        this.gainNode = null;
+        this.audioEnabled = false;
+        
+        this.initWebGL();
+        this.initGeometry();
+        this.initEventListeners();
+        this.initFramebuffers();
+        
+        this.render = this.render.bind(this);
+        requestAnimationFrame(this.render);
+    }
+    
+    resize() {
+        this.canvas.width = window.innerWidth * window.devicePixelRatio;
+        this.canvas.height = window.innerHeight * window.devicePixelRatio;
+        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    }
+    
+    initTensorGrid() {
+        const spacing = 1.2;
+        const offset = -spacing * (this.gridSize - 1) / 2;
+        
+        let idx = 0;
+        for (let y = 0; y < this.gridSize; y++) {
+            for (let z = 0; z < this.gridSize; z++) {
+                for (let x = 0; x < this.gridSize; x++) {
+                    const i = y * this.gridSize * this.gridSize + z * this.gridSize + x;
+                    this.nodePositions[i * 3] = offset + x * spacing;
+                    this.nodePositions[i * 3 + 1] = offset + y * spacing;
+                    this.nodePositions[i * 3 + 2] = offset + z * spacing;
+                    
+                    // 4 Live cores at layer 0 in corners
+                    if (y === 0 && ((x === 0 && z === 0) || (x === 0 && z === 9) || 
+                        (x === 9 && z === 0) || (x === 9 && z === 9))) {
+                        this.nodeTypes[i] = 1.0;
+                        this.nodeStates[i] = 1.0;
+                    } else {
+                        this.nodeTypes[i] = 0.0;
+                        this.nodeStates[i] = 0.0;
+                    }
+                    
+                    this.nodeMass[i] = 1.0;
+                }
+            }
+        }
+    }
+    
+    createShader(type, source) {
+        const shader = this.gl.createShader(type);
+        this.gl.shaderSource(shader, source);
+        this.gl.compileShader(shader);
+        
+        if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+            console.error('Shader compile error:', this.gl.getShaderInfoLog(shader));
+            this.gl.deleteShader(shader);
+            return null;
+        }
+        return shader;
+    }
+    
+    createProgram(vs, fs) {
+        const program = this.gl.createProgram();
+        this.gl.attachShader(program, vs);
+        this.gl.attachShader(program, fs);
+        this.gl.linkProgram(program);
+        
+        if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
+            console.error('Program link error:', this.gl.getProgramInfoLog(program));
+            return null;
+        }
+        return program;
+    }
+    
+    initWebGL() {
+        // Main node program
+        const vs = this.createShader(this.gl.VERTEX_SHADER, vertexShaderSource);
+        const fs = this.createShader(this.gl.FRAGMENT_SHADER, fragmentShaderSource);
+        this.nodeProgram = this.createProgram(vs, fs);
+        
+        // Laser program
+        const lvs = this.createShader(this.gl.VERTEX_SHADER, laserVertexShader);
+        const lfs = this.createShader(this.gl.FRAGMENT_SHADER, laserFragmentShader);
+        this.laserProgram = this.createProgram(lvs, lfs);
+        
+        // Particle program
+        const pvs = this.createShader(this.gl.VERTEX_SHADER, particleVertexShader);
+        const pfs = this.createShader(this.gl.FRAGMENT_SHADER, particleFragmentShader);
+        this.particleProgram = this.createProgram(pvs, pfs);
+        
+        // Bloom/post program
+        const bvs = this.createShader(this.gl.VERTEX_SHADER, bloomVertexShader);
+        const bfs = this.createShader(this.gl.FRAGMENT_SHADER, bloomFragmentShader);
+        this.postProgram = this.createProgram(bvs, bfs);
+        
+        this.gl.enable(this.gl.DEPTH_TEST);
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE);
+        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    }
+    
+    initGeometry() {
+        // Cube geometry for nodes
+        const cubeVerts = new Float32Array([
+            // Front
+            -0.1,-0.1, 0.1,  0, 0, 1,  0.1,-0.1, 0.1,  0, 0, 1,  0.1, 0.1, 0.1,  0, 0, 1,
+            -0.1,-0.1, 0.1,  0, 0, 1,  0.1, 0.1, 0.1,  0, 0, 1, -0.1, 0.1, 0.1,  0, 0, 1,
+            // Back
+            -0.1,-0.1,-0.1,  0, 0,-1, -0.1, 0.1,-0.1,  0, 0,-1,  0.1, 0.1,-0.1,  0, 0,-1,
+            -0.1,-0.1,-0.1,  0, 0,-1,  0.1, 0.1,-0.1,  0, 0,-1,  0.1,-0.1,  0, 0,-1,
+            // Top
+            -0.1, 0.1,-0.1,  0, 1, 0, -0.1, 0.1, 0.1,  0, 1, 0,  0.1, 0.1, 0.1,  0, 1, 0,
+            -0.1, 0.1,-0.1,  0, 1, 0,  0.1, 0.1, 0.1,  0, 1, 0,  0.1, 0.1,-0.1,  0, 1, 0,
+            // Bottom
+            -0.1,-0.1,-0.1,  0,-1, 0,  0.1,-0.1,-0.1,  0,-1, 0,  0.1,-0.1, 0.1,  0,-1, 0,
+            -0.1,-0.1,  0,-1, 0,  0.1,-0.1, 0.1,  0,-1, 0, -0.1,-0.1, 0.1,  0,-1, 0,
+            // Right
+             0.1,-0.1,-0.1,  1, 0, 0,  0.1, 0.1,-0.1,  1, 0, 0,  0.1, 0.1, 0.1,  1, 0, 0,
+             0.1,-0.1,-0.1,  1, 0, 0,  0.1, 0.1, 0.1,  1, 0, 0,  0.1,-0.1, 0.1,  1, 0, 0,
+            // Left
+            -0.1,-0.1,-0.1, -1, 0, 0, -0.1,-0.1, 0.1, -1, 0, 0, -0.1, 0.1, 0.1, -1, 0, 0,
+            -0.1,-0.1, -1, 0, 0, -0.1, 0.1, 0.1, -1, 0, 0, -0.1, 0.1,-0.1, -1, 0, 0,
+        ]);
+        
+        this.cubeVBO = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVBO);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, cubeVerts, this.gl.STATIC_DRAW);
+        
+        // Instance data
+        this.instanceVBO = this.gl.createBuffer();
+        this.updateInstanceBuffer();
+        
+        // Laser quad
+        const laserVerts = new Float32Array([
+            -1, 0, 0,  1, 0, 0,  -1, 1, 0,
+            -1, 1, 0,  1, 0, 0,   1, 1, 0
+        ]);
+        this.laserVBO = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.laserVBO);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, laserVerts, this.gl.STATIC_DRAW);
+        
+        this.laserInstanceVBO = this.gl.createBuffer();
+        
+        // Particle quad
+        const particleVerts = new Float32Array([
+            -1, -1, 0,  1, -1, 0,  -1, 1, 0,
+            -1, 1, 0,   1, -1, 0,   1, 1, 0
+        ]);
+        this.particleVBO = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.particleVBO);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, particleVerts, this.gl.STATIC_DRAW);
+        
+        this.particleInstanceVBO = this.gl.createBuffer();
+        
+        // Quad for post processing
+        const quadVerts = new Float32Array([
+            -1, -1, 0, 0,  1, -1, 1, 0,  -1, 1, 0, 1,
+            -1, 1, 0, 1,   1, -1, 1, 0,   1, 1, 1, 1
+        ]);
+        this.quadVBO = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.quadVBO);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, quadVerts, this.gl.STATIC_DRAW);
+    }
+    
+    updateInstanceBuffer() {
+        const data = new Float32Array(this.totalNodes * 5); // pos3 + type + state
+        for (let i = 0; i < this.totalNodes; i++) {
+            data[i * 5] = this.nodePositions[i * 3];
+            data[i * 5 + 1] = this.nodePositions[i * 3 + 1];
+            data[i * 5 + 2] = this.nodePositions[i * 3 + 2];
+            data[i * 5 + 3] = this.nodeTypes[i];
+            data[i * 5 + 4] = this.nodeStates[i];
+        }
+        
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.instanceVBO);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, data, this.gl.DYNAMIC_DRAW);
+    }
+    
+    initFramebuffers() {
+        // Create framebuffer for bloom pass
+        this.sceneFB = this.gl.createFramebuffer();
+        this.sceneTex = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.sceneTex);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.canvas.width, this.canvas.height, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        
+        this.sceneDepth = this.gl.createRenderbuffer();
+        this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, this.sceneDepth);
+        this.gl.renderbufferStorage(this.gl.RENDERBUFFER, this.gl.DEPTH_COMPONENT16, this.canvas.width, this.canvas.height);
+        
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.sceneFB);
+        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.sceneTex, 0);
+        this.gl.framebufferRenderbuffer(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.RENDERBUFFER, this.sceneDepth);
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+    }
+    
+    initEventListeners() {
+        this.canvas.addEventListener('mousedown', (e) => {
+            this.mouse.down = true;
+            this.canvas.classList.add('grabbing');
+            this.mouse.lastX = e.clientX;
+            this.mouse.lastY = e.clientY;
+        });
+        
+        this.canvas.addEventListener('mouseup', () => {
+            this.mouse.down = false;
+            this.canvas.classList.remove('grabbing');
+        });
+        
+        this.canvas.addEventListener('mousemove', (e) => {
+            if (this.mouse.down) {
+                const dx = e.clientX - this.mouse.lastX;
+                const dy = e.clientY - this.mouse.lastY;
+                this.camera.rotation.y += dx * 0.005;
+                this.camera.rotation.x += dy * 0.005;
+                this.camera.rotation.x = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, this.camera.rotation.x));
+                this.mouse.lastX = e.clientX;
+                this.mouse.lastY = e.clientY;
+            }
+            
+            // Raycast for hover
+            this.mouse.x = e.clientX;
+            this.mouse.y = e.clientY;
+        });
+        
+        this.canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            this.camera.distance += e.deltaY * 0.01;
+            this.camera.distance = Math.max(8, Math.min(40, this.camera.distance));
+        });
+        
+        this.canvas.addEventListener('click', (e) => {
+            this.handleNodeClick(e);
+        });
+        
+        document.getElementById('massSlider').addEventListener('input', (e) => {
+            this.massInput = parseFloat(e.target.value);
+            document.getElementById('massValue').textContent = this.massInput.toFixed(0);
+            
+            if (this.selectedNode >= 0) {
+                this.activateNode(this.selectedNode, this.massInput);
+            }
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                this.toggleAudio();
+            }
+        });
+    }
+    
+    handleNodeClick(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        
+        // Simple raycast - pick closest node to camera ray
+        const viewProj = this.getViewProjectionMatrix();
+        const invVP = this.invertMatrix(viewProj);
+        
+        const rayStart = this.transformPoint([x, y, -1], invVP);
+        const rayEnd = this.transformPoint([x, y, 1], invVP);
+        const rayDir = this.normalize([
+            rayEnd[0] - rayStart[0],
+            rayEnd[1] - rayStart[1],
+            rayEnd[2] - rayStart[2]
+        ]);
+        
+        let closestDist = 1e9;
+        let closestIdx = -1;
+        
+        for (let i = 0; i < this.totalNodes; i++) {
+            const pos = [
+                this.nodePositions[i * 3],
+                this.nodePositions[i * 3 + 1],
+                this.nodePositions[i * 3 + 2]
+            ];
+            
+            // Distance from ray to point
+            const toNode = [pos[0] - rayStart[0], pos[1] - rayStart[1], pos[2] - rayStart[2]];
+            const proj = toNode[0] * rayDir[0] + toNode[1] * rayDir[1] + toNode[2] * rayDir[2];
+            if (proj < 0) continue;
+            
+            const closest = [
+                rayStart[0] + rayDir[0] * proj,
+                rayStart[1] + rayDir[1] * proj,
+                rayStart[2] + rayDir[2] * proj
+            ];
+            
+            const dist = Math.sqrt(
+                (pos[0] - closest[0]) ** 2 +
+                (pos[1] - closest[1]) ** 2 +
+                (pos[2] - closest[2]) ** 2
+            );
+            
+            if (dist < 0.3 && proj < closestDist) {
+                closestDist = proj;
+                closestIdx = i;
+            }
+        }
+        
+        if (closestIdx >= 0) {
+            this.selectedNode = closestIdx;
+            this.activateNode(closestIdx, this.massInput);
+        }
+    }
+    
+    activateNode(idx, mass) {
+        this.nodeMass[idx] = mass;
+        this.nodeStates[idx] = Math.min(1.0, mass / 1000.0);
+        
+        // Create vertical laser beam to layer above
+        const yIdx = Math.floor(idx / (this.gridSize * this.gridSize));
+        if (yIdx < this.gridSize - 1) {
+            const aboveIdx = idx + this.gridSize * this.gridSize;
+            this.createLaser(idx, aboveIdx, mass / 1000.0);
+            
+            // Propagate activation
+            if (this.nodeStates[aboveIdx] < 0.9) {
+                setTimeout(() => {
+                    this.nodeStates[aboveIdx] = Math.min(1.0, this.nodeStates[aboveIdx] + mass / 2000.0);
+                }, 100);
+            }
+        }
+        
+        // Spawn particles based on r×F×ΔD physics
+        const force = mass * this.gravityConstant;
+        for (let i = 0; i < Math.min(50, mass / 20); i++) {
+            if (this.particles.length < this.maxParticles) {
+                this.spawnParticle(idx, force);
+            }
+        }
+        
+        this.updateInstanceBuffer();
+    }
+    
+    createLaser(fromIdx, toIdx, intensity) {
+        if (this.laserData.length >= this.maxLasers * 7) return;
+        
+        const fromPos = [
+            this.nodePositions[fromIdx * 3],
+            this.nodePositions[fromIdx * 3 + 1],
+            this.nodePositions[fromIdx * 3 + 2]
+        ];
+        const toPos = [
+            this.nodePositions[toIdx * 3],
+            this.nodePositions[toIdx * 3 + 1],
+            this.nodePositions[toIdx * 3 + 2]
+        ];
+        
+        this.laserData.push(...fromPos, ...toPos, intensity);
+        this.activeLasers++;
+    }
+    
+    spawnParticle(nodeIdx, force) {
+        const pos = [
+            this.nodePositions[nodeIdx * 3],
+            this.nodePositions[nodeIdx * 3 + 1],
+            this.nodePositions[nodeIdx * 3 + 2]
+        ];
+        
+        // r×F×ΔD physics: random direction × force × delta distance
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI;
+        const r = Math.random() * 0.5 + 0.5;
+        const deltaD = Math.random() * 2 + 1;
+        
+        const velocity = [
+            r * force * deltaD * Math.sin(phi) * Math.cos(theta),
+            -force * deltaD, // Gravity down
+            r * force * deltaD * Math.sin(phi) * Math.sin(theta)
+        ];
+        
+        this.particles.push({
+            pos: [...pos],
+            vel: velocity,
+            life: 1.0,
+            age: 0
+        });
+    }
+    
+    updateParticles(dt) {
+        const gravity = -9.8 * this.gravityConstant;
+        
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+            p.age += dt;
+            p.life = Math.max(0, 1.0 - p.age / 3.0);
+            
+            // Physics: v += a*dt, x += v*dt
+            p.vel[1] += gravity * dt;
+            p.pos[0] += p.vel[0] * dt;
+            p.pos[1] += p.vel[1] * dt;
+            p.pos[2] += p.vel[2] * dt;
+            
+            // Check collision with nodes below
+            const layer = Math.floor((p.pos[1] + 5) / 1.2);
+            if (layer >= 0 && layer < this.gridSize) {
+                const gridY = Math.max(0, Math.floor(layer));
+                for (let checkY = gridY; checkY >= 0; checkY--) {
+                    const baseIdx = checkY * this.gridSize * this.gridSize;
+                    // Simple collision check
+                    for (let j = 0; j < this.gridSize * this.gridSize; j++) {
+                        const idx = baseIdx + j;
+                        const nodePos = [
+                            this.nodePositions[idx * 3],
+                            this.nodePositions[idx * 3 + 1],
+                            this.nodePositions[idx * 3 + 2]
+                        ];
+                        const dist = Math.sqrt(
+                            (p.pos[0] - nodePos[0]) ** 2 +
+                            (p.pos[1] - nodePos[1]) ** 2 +
+                            (p.pos[2] - nodePos[2]) ** 2
+                        );
+                        
+                        if (dist < 0.3) {
+                            // Transfer energy to node
+                            this.nodeStates[idx] = Math.min(1.0, this.nodeStates[idx] + p.life * 0.1);
+                            p.life = 0;
+                            break;
+                        }
+                    }
+                    if (p.life === 0) break;
+                }
+            }
+            
+            if (p.life <= 0 || p.pos[1] < -8) {
+                this.particles.splice(i, 1);
+            }
+        }
+    }
+    
+    updateLasers(dt) {
+        // Fade out lasers
+        for (let i = 0; i < this.laserData.length; i += 7) {
+            this.laserData[i + 6] -= dt * 0.5;
+        }
+        
+        // Remove dead lasers
+        const newData = [];
+        this.activeLasers = 0;
+        for (let i = 0; i < this.laserData.length; i += 7) {
+            if (this.laserData[i + 6] > 0) {
+                newData.push(...this.laserData.slice(i, i + 7));
+                this.activeLasers++;
+            }
+        }
+        this.laserData = newData;
+    }
+    
+    initAudio() {
+        if (!this.audioCtx) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+    
+    toggleAudio() {
+        this.initAudio();
+        
+        if (this.audioEnabled) {
+            if (this.oscillator) {
+                this.oscillator.stop();
+                this.oscillator = null;
+            }
+            this.audioEnabled = false;
+            document.getElementById('audioDot').classList.remove('active');
+            document.getElementById('audioStatus').textContent = 'AUDIO OFF';
+        } else {
+            this.oscillator = this.audioCtx.createOscillator();
+            this.gainNode = this.audioCtx.createGain();
+            this.oscillator.frequency.value = 10000; // 10kHz
+            this.gainNode.gain.value = 0.05;
+            this.oscillator.connect(this.gainNode);
+            this.gainNode.connect(this.audioCtx.destination);
+            this.oscillator.start();
+            this.audioEnabled = true;
+            document.getElementById('audioDot').classList.add('active');
+            document.getElementById('audioStatus').textContent = '10KHZ ACTIVE';
+        }
+    }
+    
+    getViewProjectionMatrix() {
+        const aspect = this.canvas.width / this.canvas.height;
+        const fov = 60 * Math.PI / 180;
+        const near = 0.1;
+        const far = 100.0;
+        
+        // Camera position from spherical coordinates
+        const eye = [
+            Math.sin(this.camera.rotation.y) * Math.cos(this.camera.rotation.x) * this.camera.distance,
+            Math.sin(this.camera.rotation.x) * this.camera.distance,
+            Math.cos(this.camera.rotation.y) * Math.cos(this.camera.rotation.x) * this.camera.distance
+        ];
+        
+        const projection = this.perspective(fov, aspect, near, far);
+        const view = this.lookAt(eye, this.camera.target, [0, 1, 0]);
+        
+        return this.multiply(projection, view);
+    }
+    
+    perspective(fov, aspect, near, far) {
+        const f = 1.0 / Math.tan(fov / 2);
+        return [
+            f / aspect, 0, 0, 0,
+            0, f, 0, 0,
+            0, 0, (far + near) / (near - far), -1,
+            0, 0, (2 * far * near) / (near - far), 0
+        ];
+    }
+    
+    lookAt(eye, target, up) {
+        const z = this.normalize([
+            eye[0] - target[0],
+            eye[1] - target[1],
+            eye[2] - target[2]
+        ]);
+        const x = this.normalize(this.cross(up, z));
+        const y = this.cross(z, x);
+        
+        return [
+            x[0], y[0], z[0], 0,
+            x[1], y[1], z[1], 0,
+            x[2], y[2], z[2], 0,
+            -this.dot(x, eye), -this.dot(y, eye), -this.dot(z, eye), 1
+        ];
+    }
+    
+    multiply(a, b) {
+        const out = new Array(16);
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                out[i * 4 + j] = 
+                    a[i * 4 + 0] * b[0 * 4 + j] +
+                    a[i * 4 + 1] * b[1 * 4 + j] +
+                    a[i * 4 + 2] * b[2 * 4 + j] +
+                    a[i * 4 + 3] * b[3 * 4 + j];
+            }
+        }
+        return out;
+    }
+    
+    invertMatrix(m) {
+        const inv = new Array(16);
+        inv[0] = m[5] * m[10] * m[15] - m[5] * m[11] * m[14] - m[9] * m[6] * m[15] + m[9] * m[7] * m[14] + m[13] * m[6] * m[11] - m[13] * m[7] * m[10];
+        inv[4] = -m[4] * m[10] * m[15] + m[4] * m[11] * m[14] + m[8] * m[6] * m[15] - m[8] * m[7] * m[14] - m[12] * m[6] * m[11] + m[12] * m[7] * m[10];
+        inv[8] = m[4] * m[9] * m[15] - m[4] * m[11] * m[13] - m[8] * m[5] * m[15] + m[8] * m[7] * m[13] + m[12] * m[5] * m[11] - m[12] * m[7] * m[9];
+        inv[12] = -m[4] * m[9] * m[14] + m[4] * m[10] * m[13] + m[8] * m[5] * m[14] - m[8] * m[6] * m[13] - m[12] * m[5] * m[10] + m[12] * m[6] * m[9];
+        inv[1] = -m[1] * m[10] * m[15] + m[1] * m[11] * m[14] + m[9] * m[2] * m[15] - m[9] * m[3] * m[14] - m[13] * m[2] * m[11] + m[13] * m[3] * m[10];
+        inv[5] = m[0] * m[10] * m[15] - m[0] * m[11] * m[14] - m[8] * m[2] * m[15] + m[8] * m[3] * m[14] + m[12] * m[2] * m[11] - m[12] * m[3] * m[10];
+        inv[9] = -m[0] * m[9] * m[15] + m[0] * m[11] * m[13] + m[8] * m[1] * m[15] - m[8] * m[3] * m[13] - m[12] * m[1] * m[11] + m[12] * m[3] * m[9];
+        inv[13] = m[0] * m[9] * m[14] - m[0] * m[10] * m[13] - m[8] * m[1] * m[14] + m[8] * m[2] * m[13] + m[12] * m[1] * m[10] - m[12] * m[2] * m[9];
+        inv[2] = m[1] * m[6] * m[15] - m[1] * m[7] * m[14] - m[5] * m[2] * m[15] + m[5] * m[3] * m[14] + m[13] * m[2] * m[7] - m[13] * m[3] * m[6];
+        inv[6] = -m[0] * m[6] * m[15] + m[0] * m[7] * m[14] + m[4] * m[2] * m[15] - m[4] * m[3] * m[14] - m[12] * m[2] * m[7] + m[12] * m[3] * m[6];
+        inv[10] = m[0] * m[5] * m[15] - m[0] * m[7] * m[13] - m[4] * m[1] * m[15] + m[4] * m[3] * m[13] + m[12] * m[1] * m[7] - m[12] * m[3] * m[5];
+        inv[14] = -m[0] * m[5] * m[14] + m[0] * m[6] * m[13] + m[4] * m[1] * m[14] - m[4] * m[2] * m[13] - m[12] * m[1] * m[6] + m[12] * m[2] * m[5];
+        inv[3] = -m[1] * m[6] * m[11] + m[1] * m[7] * m[10] + m[5] * m[2] * m[11] - m[5] * m[3] * m[10] - m[9] * m[2] * m[7] + m[9] * m[3] * m[6];
+        inv[7] = m[0] * m[6] * m[11] - m[0] * m[7] * m[10] - m[4] * m[2] * m[11] + m[4] * m[3] * m[10] + m[8] * m[2] * m[7] - m[8] * m[3] * m[6];
+        inv[11] = -m[0] * m[5] * m[11] + m[0] * m[7] * m[9] + m[4] * m[1] * m[11] - m[4] * m[3] * m[9] - m[8] * m[1] * m[7] + m[8] * m[3] * m[5];
+        inv[15] = m[0] * m[5] * m[10] - m[0] * m[6] * m[9] - m[4] * m[1] * m[10] + m[4] * m[2] * m[9] + m[8] * m[1] * m[6] - m[8] * m[2] * m[5];
+        
+        let det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+        det = 1.0 / det;
+        for (let i = 0; i < 16; i++) inv[i] *= det;
+        return inv;
+    }
+    
+    transformPoint(p, m) {
+        const w = p[0] * m[3] + p[1] * m[7] + p[2] * m[11] + m[15];
+        return [
+            (p[0] * m[0] + p[1] * m[4] + p[2] * m[8] + m[12]) / w,
+            (p[0] * m[1] + p[1] * m[5] + p[2] * m[9] + m[13]) / w,
+            (p[0] * m[2] + p[1] * m[6] + p[2] * m[10] + m[14]) / w
+        ];
+    }
+    
+    normalize(v) {
+        const len = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        return [v[0] / len, v[1] / len, v[2] / len];
+    }
+    
+    cross(a, b) {
+        return [
+            a[1] * b[2] - a[2] * b[1],
+            a[2] * b[0] - a[0] * b[2],
+            a[0] * b[1] - a[1] * b[0]
+        ];
+    }
+    
+    dot(a, b) {
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    }
+    
+    render(currentTime) {
+        this.time = currentTime * 0.001;
+        this.deltaTime = Math.min(0.1, this.time - this.lastTime);
+        this.lastTime = this.time;
+        
+        // FPS counter
+        this.frameCount++;
+        if (this.time - this.lastFpsUpdate > 0.5) {
+            this.fps = Math.round(this.frameCount / (this.time - this.lastFpsUpdate));
+            document.getElementById('fps').textContent = this.fps;
+            this.frameCount = 0;
+            this.lastFpsUpdate = this.time;
+        }
+        
+        // Update physics
+        this.updateParticles(this.deltaTime);
+        this.updateLasers(this.deltaTime);
+        
+        // Decay node states
+        for (let i = 0; i < this.totalNodes; i++) {
+            if (this.nodeTypes[i] < 0.5) {
+                this.nodeStates[i] = Math.max(0, this.nodeStates[i] - this.deltaTime * 0.3);
+            }
+        }
+        this.updateInstanceBuffer();
+        
+        // Render to framebuffer for post-processing
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.sceneFB);
+        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        
+        const viewProj = this.getViewProjectionMatrix();
+        const eye = [
+            Math.sin(this.camera.rotation.y) * Math.cos(this.camera.rotation.x) * this.camera.distance,
+            Math.sin(this.camera.rotation.x) * this.camera.distance,
+            Math.cos(this.camera.rotation.y) * Math.cos(this.camera.rotation.x) * this.camera.distance
+        ];
+        
+        // Render nodes
+        this.gl.useProgram(this.nodeProgram);
+        this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.nodeProgram, 'u_viewProjection'), false, viewProj);
+        this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.nodeProgram, 'u_model'), false, [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]);
+        this.gl.uniform3fv(this.gl.getUniformLocation(this.nodeProgram, 'u_cameraPos'), eye);
+        this.gl.uniform1f(this.gl.getUniformLocation(this.nodeProgram, 'u_time'), this.time);
+        
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVBO);
+        this.gl.enableVertexAttribArray(0);
+        this.gl.vertexAttribPointer(0, 3, this.gl.FLOAT, false, 24, 0);
+        this.gl.enableVertexAttribArray(1);
+        this.gl.vertexAttribPointer(1, 3, this.gl.FLOAT, false, 24, 12);
+        
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.instanceVBO);
+        this.gl.enableVertexAttribArray(2);
+        this.gl.vertexAttribPointer(2, 3, this.gl.FLOAT, false, 20, 0);
+        this.gl.vertexAttribDivisor(2, 1);
+        this.gl.enableVertexAttribArray(3);
+        this.gl.vertexAttribPointer(3, 1, this.gl.FLOAT, false, 20, 12);
+        this.gl.vertexAttribDivisor(3, 1);
+        this.gl.enableVertexAttribArray(4);
+        this.gl.vertexAttribPointer(4, 1, this.gl.FLOAT, false, 20, 16);
+        this.gl.vertexAttribDivisor(4, 1);
+        
+        this.gl.drawArraysInstanced(this.gl.TRIANGLES, 0, 36, this.totalNodes);
+        
+        // Render lasers
+        if (this.laserData.length > 0) {
+            this.gl.useProgram(this.laserProgram);
+            this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.laserProgram, 'u_viewProjection'), false, viewProj);
+            this.gl.uniform1f(this.gl.getUniformLocation(this.laserProgram, 'u_time'), this.time);
+            
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.laserVBO);
+            this.gl.enableVertexAttribArray(0);
+            this.gl.vertexAttribPointer(0, 3, this.gl.FLOAT, false, 0, 0);
+            
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.laserInstanceVBO);
+            this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.laserData), this.gl.DYNAMIC_DRAW);
+            this.gl.enableVertexAttribArray(1);
+            this.gl.vertexAttribPointer(1, 3, this.gl.FLOAT, false, 28, 0);
+            this.gl.vertexAttribDivisor(1, 1);
+            this.gl.enableVertexAttribArray(2);
+            this.gl.vertexAttribPointer(2, 3, this.gl.FLOAT, false, 28, 12);
+            this.gl.vertexAttribDivisor(2, 1);
+            this.gl.enableVertexAttribArray(3);
+            this.gl.vertexAttribPointer(3, 1, this.gl.FLOAT, false, 28, 24);
+            this.gl.vertexAttribDivisor(3, 1);
+            
+            this.gl.drawArraysInstanced(this.gl.TRIANGLES, 0, 6, this.activeLasers);
+        }
+        
+        // Render particles
+        if (this.particles.length > 0) {
+            this.gl.useProgram(this.particleProgram);
+            this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.particleProgram, 'u_viewProjection'), false, viewProj);
+            this.gl.uniform1f(this.gl.getUniformLocation(this.particleProgram, 'u_time'), this.time);
+            
+            const view = this.lookAt(eye, this.camera.target, [0, 1, 0]);
+            const right = [view[0], view[4], view[8]];
+            const up = [view[1], view[5], view[9]];
+            this.gl.uniform3fv(this.gl.getUniformLocation(this.particleProgram, 'u_cameraRight'), right);
+            this.gl.uniform3fv(this.gl.getUniformLocation(this.particleProgram, 'u_cameraUp'), up);
+            
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.particleVBO);
+            this.gl.enableVertexAttribArray(0);
+            this.gl.vertexAttribPointer(0, 3, this.gl.FLOAT, false, 0, 0);
+            
+            const particleData = new Float32Array(this.particles.length * 4);
+            for (let i = 0; i < this.particles.length; i++) {
+                particleData[i * 4] = this.particles[i].pos[0];
+                particleData[i * 4 + 1] = this.particles[i].pos[1];
+                particleData[i * 4 + 2] = this.particles[i].pos[2];
+                particleData[i * 4 + 3] = this.particles[i].life;
+            }
+            
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.particleInstanceVBO);
+            this.gl.bufferData(this.gl.ARRAY_BUFFER, particleData, this.gl.DYNAMIC_DRAW);
+            this.gl.enableVertexAttribArray(1);
+            this.gl.vertexAttribPointer(1, 3, this.gl.FLOAT, false, 16, 0);
+            this.gl.vertexAttribDivisor(1, 1);
+            this.gl.enableVertexAttribArray(2);
+            this.gl.vertexAttribPointer(2, 1, this.gl.FLOAT, false, 16, 12);
+            this.gl.vertexAttribDivisor(2, 1);
+            
+            this.gl.drawArraysInstanced(this.gl.TRIANGLES, 0, 6, this.particles.length);
+        }
+        
+        // Post-process with bloom
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        
+        this.gl.useProgram(this.postProgram);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.quadVBO);
+        this.gl.enableVertexAttribArray(0);
+        this.gl.vertexAttribPointer(0, 2, this.gl.FLOAT, false, 16, 0);
+        this.gl.enableVertexAttribArray(1);
+        this.gl.vertexAttribPointer(1, 2, this.gl.FLOAT, false, 16, 8);
+        
+        this.gl.activeTexture(this.gl.TEXTURE0);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.sceneTex);
+        this.gl.uniform1i(this.gl.getUniformLocation(this.postProgram, 'u_scene'), 0);
+        this.gl.uniform2f(this.gl.getUniformLocation(this.postProgram, 'u_resolution'), this.canvas.width, this.canvas.height);
+        
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+        
+        // Update UI stats
+        document.getElementById('beamCount').textContent = this.activeLasers;
+        document.getElementById('particleCount').textContent = this.particles.length;
+        
+        requestAnimationFrame(this.render);
+    }
+}
+
+// Initialize
+window.addEventListener('DOMContentLoaded', () => {
+    new TensorVisualizer();
+});
+</script>
+
+</body></html>

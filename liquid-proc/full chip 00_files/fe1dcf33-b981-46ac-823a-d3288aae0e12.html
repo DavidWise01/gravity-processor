@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<!-- saved from url=(0165)https://1523332862740417.a.metaaiusercontent.com/html?artifact_uuid=fe1dcf33-b981-46ac-823a-d3288aae0e12&ext=1779378617&hash=Q5fpDAGrDgSOQrnStZGWANF9-vMm&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Kernel 4+1 Suite: S-Ti-Cu-Zn-Ag-Au Atomic Bus Visualizer</title>
+<style>
+    :root {
+        --bg: #0a0e18;
+        --panel: #12192b;
+        --panel-2: #1a2340;
+        --text: #e6f1ff;
+        --text-dim: #8fa3c4;
+        --accent: #00d9ff;
+        --s-color: #ffea00;
+        --ti-color: #b0bec5;
+        --cu-color: #ff6e40;
+        --zn-color: #64b5f6;
+        --ag-color: #e0e0e0;
+        --au-color: #ffd700;
+        --ag2s-color: #9c27b0;
+        --photon: #00ff88;
+        --trap: #ff1744;
+        --gnd: #1de9b6;
+        --success: #00e676;
+        --warn: #ffab00;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+        background-image: 
+            radial-gradient(circle at 20% 30%, rgba(0, 217, 255, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+    }
+
+    .header {
+        background: linear-gradient(135deg, var(--panel) 0%, var(--panel-2) 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        background: linear-gradient(90deg, var(--accent), var(--au-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .header p {
+        color: var(--text-dim);
+        font-size: 0.95rem;
+        max-width: 1200px;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+        max-width: 1800px;
+        margin: 0 auto;
+    }
+
+    .controls {
+        background: var(--panel);
+        border-radius: 16px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        position: sticky;
+        top: 1.5rem;
+    }
+
+    .controls h2 {
+        font-size: 1.2rem;
+        margin-bottom: 1.2rem;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .control-group {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .control-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .control-group label {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: linear-gradient(135deg, var(--accent), #0099cc);
+        color: var(--bg);
+        box-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 217, 255, 0.4);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        background: var(--panel-2);
+        color: var(--text);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary:hover {
+        background: #243252;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+    .slider-container {
+        margin-top: 0.5rem;
+    }
+
+    .slider {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--panel-2);
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 217, 255, 0.5);
+        transition: all 0.2s;
+    }
+
+    .slider::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+    }
+
+    .slider-value {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.3rem;
+        font-size: 0.8rem;
+        color: var(--text-dim);
+    }
+
+    .toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: 48px;
+        height: 26px;
+        background: var(--panel-2);
+        border-radius: 13px;
+        transition: all 0.3s;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .toggle-switch::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--text-dim);
+        top: 2px;
+        left: 2px;
+        transition: all 0.3s;
+    }
+
+    .toggle.active .toggle-switch {
+        background: linear-gradient(135deg, var(--accent), #0099cc);
+    }
+
+    .toggle.active .toggle-switch::after {
+        left: 24px;
+        background: white;
+    }
+
+    .viz-area {
+        background: var(--panel);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .elements-row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .element-card {
+        background: var(--panel-2);
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .element-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--elem-color, var(--accent));
+        opacity: 0.6;
+    }
+
+    .element-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .element-canvas {
+        width: 100%;
+        height: 120px;
+        margin: 0.5rem 0;
+    }
+
+    .element-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
+    .element-config {
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        margin-top: 0.25rem;
+        font-family: 'Courier New', monospace;
+    }
+
+    .element-role {
+        font-size: 0.75rem;
+        color: var(--accent);
+        margin-top: 0.5rem;
+        padding: 0.25rem 0.5rem;
+        background: rgba(0, 217, 255, 0.1);
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .bus-container {
+        background: var(--panel-2);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .bus-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .bus-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--ti-color);
+    }
+
+    .bus-stats {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--text-dim);
+    }
+
+    .bus-stats span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .bus-stats strong {
+        color: var(--accent);
+    }
+
+    #busCanvas {
+        width: 100%;
+        height: 300px;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #0d1525 0%, #0a0e18 100%);
+        border: 1px solid rgba(0, 217, 255, 0.1);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .stat-card {
+        background: var(--panel-2);
+        border-radius: 8px;
+        padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.3rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--accent);
+    }
+
+    .stat-unit {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        margin-left: 0.2rem;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        box-shadow: 0 0 8px currentColor;
+    }
+
+    .readme {
+        background: var(--panel-2);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .readme h3 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .readme p {
+        color: var(--text-dim);
+        line-height: 1.7;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .readme code {
+        background: rgba(0, 217, 255, 0.1);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        color: var(--accent);
+        font-size: 0.85rem;
+    }
+
+    .readme ul {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .readme li {
+        color: var(--text-dim);
+        line-height: 1.7;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .pulsing {
+        animation: pulse 1s infinite;
+    }
+
+    @media (max-width: 1200px) {
+        .container {
+            grid-template-columns: 1fr;
+        }
+        .controls {
+            position: relative;
+            top: 0;
+        }
+        .elements-row {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .elements-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .header h1 {
+            font-size: 1.4rem;
+        }
+        .bus-stats {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="header">
+        <h1>Full Kernel 4+1 Suite: S-Ti-Cu-Zn-Ag-Au Atomic Bus</h1>
+        <p>Interactive visualization of photon-mediated atomic logic stack: Ti3SiC2 MAX-phase bus, Ag2S memory sites, ZnO grounding layer. Demonstrates S [3s2 3p4] valency with 2+2 lasers, Ti photon carrier at 2m/s, Cu deep electron trap, Zn GND, Ag perfect trap forming Ag2S, Au leaky emitter.</p>
+    </div>
+
+    <div class="container">
+        <div class="controls">
+            <h2>⚡ System Controls</h2>
+            
+            <div class="control-group">
+                <label>Input Pulse</label>
+                <button class="btn" id="inPulseBtn">Fire IN Pulse</button>
+            </div>
+
+            <div class="control-group">
+                <label>Clock Signal</label>
+                <div class="toggle active" id="clockToggle">
+                    <div class="toggle-switch"></div>
+                    <span id="clockLabel">10 kHz Active</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Output Trigger</label>
+                <button class="btn btn-secondary" id="o1Btn">Read O1</button>
+            </div>
+
+            <div class="control-group">
+                <label>Ag2S Formation</label>
+                <button class="btn" id="ag2sBtn">Synthesize S + 2Ag + γ</button>
+            </div>
+
+            <div class="control-group">
+                <label>Temperature: <span id="tempVal">300K</span></label>
+                <div class="slider-container">
+                    <input type="range" class="slider" id="tempSlider" min="200" max="600" value="300" step="10">
+                    <div class="slider-value"><span>200K</span><span>600K</span></div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Pressure: <span id="pressVal">1.0</span> GPa</label>
+                <div class="slider-container">
+                    <input type="range" class="slider" id="pressSlider" min="0" max="5" value="1" step="0.1">
+                    <div class="slider-value"><span>0</span><span>5 GPa</span></div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Bus Speed</label>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="pauseBtn">Pause</button>
+                    <button class="btn btn-secondary" id="resetBtn">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="viz-area">
+            <div class="elements-row">
+                <div class="element-card" style="--elem-color: var(--s-color)">
+                    <canvas class="element-canvas" id="sCanvas" width="622" height="240"></canvas>
+                    <div class="element-name">S - Sulfur [16]</div>
+                    <div class="element-config">3s² 3p⁴</div>
+                    <div class="element-role">2 unpaired + 1 lone pair</div>
+                </div>
+                <div class="element-card" style="--elem-color: var(--ti-color)">
+                    <canvas class="element-canvas" id="tiCanvas" width="622" height="240"></canvas>
+                    <div class="element-name">Ti - Titanium [22]</div>
+                    <div class="element-config">3d² 4s²</div>
+                    <div class="element-role">Photon Bus 2m/s</div>
+                </div>
+                <div class="element-card" style="--elem-color: var(--cu-color)">
+                    <canvas class="element-canvas" id="cuCanvas" width="622" height="240"></canvas>
+                    <div class="element-name">Cu - Copper [29]</div>
+                    <div class="element-config">3d¹⁰ 4s¹</div>
+                    <div class="element-role">Deep Trap -0.8eV</div>
+                </div>
+                <div class="element-card" style="--elem-color: var(--zn-color)">
+                    <canvas class="element-canvas" id="znCanvas" width="622" height="240"></canvas>
+                    <div class="element-name">Zn - Zinc [30]</div>
+                    <div class="element-config">3d¹⁰ 4s²</div>
+                    <div class="element-role">GND - ZnO Layer</div>
+                </div>
+                <div class="element-card" style="--elem-color: var(--ag-color)">
+                    <canvas class="element-canvas" id="agCanvas" width="622" height="240"></canvas>
+                    <div class="element-name">Ag - Silver [47]</div>
+                    <div class="element-config">4d¹⁰ 5s¹</div>
+                    <div class="element-role">Perfect Trap</div>
+                </div>
+                <div class="element-card" style="--elem-color: var(--au-color)">
+                    <canvas class="element-canvas" id="auCanvas" width="622" height="240"></canvas>
+                    <div class="element-name">Au - Gold [79]</div>
+                    <div class="element-config">5d¹⁰ 6s¹</div>
+                    <div class="element-role">Leaky Emitter</div>
+                </div>
+            </div>
+
+            <div class="bus-container">
+                <div class="bus-header">
+                    <div class="bus-title">Ti3SiC2 MAX-Phase Photon Bus</div>
+                    <div class="bus-stats">
+                        <span>Clock: <strong id="clockStat">10kHz</strong></span>
+                        <span>Photons: <strong id="photonStat">4</strong></span>
+                        <span>Ag2S Sites: <strong id="ag2sStat">0</strong></span>
+                        <span>Temp: <strong id="tempStat">300K</strong></span>
+                    </div>
+                </div>
+                <canvas id="busCanvas" width="2032" height="600"></canvas>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--photon)"></div>Photon γ</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--s-color)"></div>Sulfur S</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--ag-color)"></div>Silver Ag</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--ag2s-color)"></div>Ag2S Trap</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--cu-color)"></div>Cu Deep Trap</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--gnd)"></div>ZnO GND</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Photon Velocity</div>
+                    <div class="stat-value">2.0<span class="stat-unit">m/s</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">S Bond Energy</div>
+                    <div class="stat-value" id="sBondStat">2.0<span class="stat-unit">eV</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Trap Depth</div>
+                    <div class="stat-value" id="trapStat">1.2<span class="stat-unit">eV</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">O1 Output</div>
+                    <div class="stat-value" id="o1Stat">0<span class="stat-unit">V</span></div>
+                </div>
+            </div>
+
+            <div class="readme">
+                <h3>📘 README: Full Kernel 4+1 Chip Stack Architecture</h3>
+                <p><strong>Overview:</strong> This simulates a photonic atomic computing stack using Kernel 4 elements plus Ag. The system uses photon-mediated electron transfer across a Ti3SiC2 MAX-phase bus to perform logic operations at memory sites.</p>
+                
+                <p><strong>Element Roles:</strong></p>
+                <ul>
+                    <li><code>S [16]</code>: 3s² 3p⁴ configuration gives 2 unpaired p-electrons + 1 lone pair. Acts as 2+2 laser system. Donates e- with photon to form bonds. Can accept Ag to form Ag2S memory.</li>
+                    <li><code>Ti [22]</code>: 3d² 4s² provides MAX-phase Ti3SiC2 bus structure. Transports photons at ~2 m/s effective group velocity due to plasmon coupling. Low-loss optical waveguide.</li>
+                    <li><code>Cu [29]</code>: 3d¹⁰ 4s¹ single valence e-. Acts as deep electron trap at -0.8 eV. Used for charge storage and logic state retention.</li>
+                    <li><code>Zn [30]</code>: 3d¹⁰ 4s² filled shell. Forms ZnO insulating layer, acts as GND plane. Dissipates excess charge, stabilizes Fermi level.</li>
+                    <li><code>Ag [47]</code>: 4d¹⁰ 5s¹ perfect valence matching S. Diffuses to S sites, captures electron+photon to form Ag2S. This creates permanent memory bit. Ag+ mobility = 0.1 eV barrier.</li>
+                    <li><code>Au [79]</code>: 5d¹⁰ 6s¹ relativistic effects. Intentionally leaky - emits electrons under field. Used as O1 read contact or overflow valve.</li>
+                </ul>
+
+                <p><strong>Ag2S Formation Reaction:</strong></p>
+                <p><code>S + 2Ag⁺ + γ(1.2eV) + e⁻ → Ag2S(trap)</code></p>
+                <p>The lone pair on S captures one Ag⁺, unpaired electrons capture second Ag⁺. Photon provides binding energy. Result is deep-level trap 1.2 eV below conduction band = non-volatile storage.</p>
+
+                <p><strong>Chip Stack:</strong></p>
+                <ul>
+                    <li><strong>Substrate:</strong> Ti3SiC2 MAX-phase - layered hexagonal structure, metallic conductivity + optical transparency</li>
+                    <li><strong>Bus Layer:</strong> Ti planes carry surface plasmons/photons between active sites</li>
+                    <li><strong>Memory Layer:</strong> S doped sites + mobile Ag⁺ ions. Under bias, Ag2S precipitates = bit written</li>
+                    <li><strong>GND Layer:</strong> ZnO - wide bandgap insulator, prevents leakage, sets reference potential</li>
+                    <li><strong>Contacts:</strong> Au pads for IN/OUT. Leaky to allow read current without disturbing trap</li>
+                </ul>
+
+                <p><strong>Operating Conditions:</strong> Synapse formation favors 300-400K, 1-2 GPa pressure. Higher T increases Ag⁺ mobility. Higher P reduces bus lattice spacing, increases photon coupling.</p>
+            </div>
+        </div>
+    </div>
+
+<script>
+(function() {
+    // State
+    const state = {
+        clock: true,
+        paused: false,
+        temp: 300, // K
+        pressure: 1.0, // GPa
+        photons: [],
+        atoms: [],
+        ag2sSites: [],
+        cuTraps: [],
+        o1Voltage: 0,
+        clockPhase: 0,
+        clockFreq: 10000, // Hz simulated
+        lastFrame: performance.now()
+    };
+
+    // Canvas setup
+    const busCanvas = document.getElementById('busCanvas');
+    const busCtx = busCanvas.getContext('2d');
+    const elementCanvases = {
+        S: document.getElementById('sCanvas'),
+        Ti: document.getElementById('tiCanvas'),
+        Cu: document.getElementById('cuCanvas'),
+        Zn: document.getElementById('znCanvas'),
+        Ag: document.getElementById('agCanvas'),
+        Au: document.getElementById('auCanvas')
+    };
+
+    function resizeCanvases() {
+        busCanvas.width = busCanvas.offsetWidth * window.devicePixelRatio;
+        busCanvas.height = busCanvas.offsetHeight * window.devicePixelRatio;
+        busCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        
+        Object.values(elementCanvases).forEach(canvas => {
+            canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+            canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        });
+    }
+    resizeCanvases();
+    window.addEventListener('resize', resizeCanvases);
+
+    // Atom class
+    class Atom {
+        constructor(type, x, y, vx = 0, vy = 0) {
+            this.type = type;
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+            this.config = this.getConfig(type);
+            this.bound = false;
+            this.partner = null;
+        }
+
+        getConfig(type) {
+            const configs = {
+                S: { color: '#ffea00', radius: 8, electrons: 6, lasers: 4, symbol: 'S' },
+                Ti: { color: '#b0bec5', radius: 10, electrons: 4, symbol: 'Ti' },
+                Cu: { color: '#ff6e40', radius: 9, electrons: 1, symbol: 'Cu' },
+                Zn: { color: '#64b5f6', radius: 9, electrons: 2, symbol: 'Zn' },
+                Ag: { color: '#e0e0e0', radius: 10, electrons: 1, symbol: 'Ag' },
+                Au: { color: '#ffd700', radius: 11, electrons: 1, symbol: 'Au' },
+                Ag2S: { color: '#9c27b0', radius: 14, electrons: 0, symbol: 'Ag2S' }
+            };
+            return configs[type];
+        }
+
+        update(dt) {
+            if (!this.bound) {
+                this.x += this.vx * dt;
+                this.y += this.vy * dt;
+                
+                // Boundary collision
+                const w = busCanvas.offsetWidth;
+                const h = busCanvas.offsetHeight;
+                if (this.x < this.config.radius || this.x > w - this.config.radius) {
+                    this.vx *= -0.8;
+                    this.x = Math.max(this.config.radius, Math.min(w - this.config.radius, this.x));
+                }
+                if (this.y < this.config.radius || this.y > h - this.config.radius) {
+                    this.vy *= -0.8;
+                    this.y = Math.max(this.config.radius, Math.min(h - this.config.radius, this.y));
+                }
+            }
+        }
+
+        draw(ctx, time) {
+            // Nucleus
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.config.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.config.color;
+            ctx.shadowColor = this.config.color;
+            ctx.shadowBlur = 10;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Symbol
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(this.config.symbol, this.x, this.y);
+
+            // Special rendering for S: show lone pair + unpaired
+            if (this.type === 'S' && !this.bound) {
+                const angle = time * 0.002;
+                // Lone pair
+                ctx.beginPath();
+                ctx.arc(this.x + Math.cos(angle) * 15, this.y + Math.sin(angle) * 15, 3, 0, Math.PI * 2);
+                ctx.arc(this.x + Math.cos(angle + 0.5) * 15, this.y + Math.sin(angle + 0.5) * 15, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#00d9ff';
+                ctx.shadowColor = '#00d9ff';
+                ctx.shadowBlur = 8;
+                ctx.fill();
+                // Unpaired x2
+                ctx.beginPath();
+                ctx.arc(this.x + Math.cos(angle + Math.PI) * 15, this.y + Math.sin(angle + Math.PI) * 15, 3, 0, Math.PI * 2);
+                ctx.arc(this.x + Math.cos(angle + Math.PI + 0.5) * 15, this.y + Math.sin(angle + Math.PI + 0.5) * 15, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff1744';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // Special for Ag2S: show trap depth
+            if (this.type === 'Ag2S') {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.config.radius + 8, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(156, 39, 176, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        }
+    }
+
+    // Photon class
+    class Photon {
+        constructor(x, y, angle) {
+            this.x = x;
+            this.y = y;
+            this.speed = 200; // pixels/sec = 2 m/s scaled
+            this.vx = Math.cos(angle) * this.speed;
+            this.vy = Math.sin(angle) * this.speed;
+            this.energy = 1.2; // eV
+            this.life = 3.0; // seconds
+            this.trail = [];
+        }
+
+        update(dt) {
+            this.life -= dt;
+            this.x += this.vx * dt;
+            this.y += this.vy * dt;
+            
+            this.trail.push({x: this.x, y: this.y});
+            if (this.trail.length > 10) this.trail.shift();
+        }
+
+        draw(ctx) {
+            // Trail
+            ctx.beginPath();
+            for (let i = 0; i < this.trail.length; i++) {
+                const p = this.trail[i];
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.strokeStyle = 'rgba(0, 255, 136, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Photon
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#00ff88';
+            ctx.shadowColor = '#00ff88';
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    // Initialize scene
+    function initScene() {
+        state.atoms = [];
+        state.photons = [];
+        state.ag2sSites = [];
+        state.cuTraps = [];
+        
+        const w = busCanvas.offsetWidth;
+        const h = busCanvas.offsetHeight;
+        
+        // Create Ti bus lattice points
+        for (let i = 0; i < 15; i++) {
+            const ti = new Atom('Ti', 50 + i * (w - 100) / 14, h / 2);
+            ti.bound = true;
+            state.atoms.push(ti);
+        }
+        
+        // Add mobile atoms
+        state.atoms.push(new Atom('S', 100, h * 0.3, 20, 10));
+        state.atoms.push(new Atom('Ag', w - 100, h * 0.3, -20, 10));
+        state.atoms.push(new Atom('Ag', w - 150, h * 0.7, -15, -10));
+        state.atoms.push(new Atom('Cu', w * 0.3, h * 0.7, 10, -5));
+        state.atoms.push(new Atom('Zn', w * 0.7, h * 0.8));
+        state.atoms.push(new Atom('Au', w - 80, h * 0.5));
+        
+        state.cuTraps.push(state.atoms.find(a => a.type === 'Cu'));
+    }
+    initScene();
+
+    // Draw element cards
+    function drawElementCard(canvas, type) {
+        const ctx = canvas.getContext('2d');
+        const w = canvas.offsetWidth;
+        const h = canvas.offsetHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        
+        ctx.clearRect(0, 0, w, h);
+        
+        const atom = new Atom(type, cx, cy);
+        atom.draw(ctx, performance.now());
+        
+        // Orbital shells
+        if (type === 'S') {
+            ctx.beginPath();
+            ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 234, 0, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+    }
+
+    function updateElementCards() {
+        Object.entries(elementCanvases).forEach(([type, canvas]) => {
+            drawElementCard(canvas, type);
+        });
+    }
+
+    // Physics
+    function checkCollisions() {
+        // Ag2S formation: S + 2Ag + photon
+        const sulfur = state.atoms.find(a => a.type === 'S' && !a.bound);
+        const silvers = state.atoms.filter(a => a.type === 'Ag' && !a.bound);
+        
+        if (sulfur && silvers.length >= 2) {
+            const ag1 = silvers[0];
+            const ag2 = silvers[1];
+            const dist1 = Math.hypot(sulfur.x - ag1.x, sulfur.y - ag1.y);
+            const dist2 = Math.hypot(sulfur.x - ag2.x, sulfur.y - ag2.y);
+            
+            // Check for nearby photon
+            const nearPhoton = state.photons.find(p => Math.hypot(p.x - sulfur.x, p.y - sulfur.y) < 50);
+            
+            if (dist1 < 30 && dist2 < 30 && nearPhoton) {
+                // Form Ag2S
+                const ag2s = new Atom('Ag2S', sulfur.x, sulfur.y);
+                ag2s.bound = true;
+                state.ag2sSites.push(ag2s);
+                state.atoms.push(ag2s);
+                
+                // Remove reactants
+                state.atoms = state.atoms.filter(a => a !== sulfur && a !== ag1 && a !== ag2);
+                state.photons = state.photons.filter(p => p !== nearPhoton);
+                
+                updateStats();
+            }
+        }
+
+        // Cu trap capture
+        state.cuTraps.forEach(cu => {
+            state.photons.forEach(photon => {
+                if (Math.hypot(photon.x - cu.x, photon.y - cu.y) < 20) {
+                    // Capture
+                    photon.life = 0;
+                    cu.config.radius = 11; // Visual feedback
+                    setTimeout(() => cu.config.radius = 9, 200);
+                }
+            });
+        });
+
+        // Au leaky emission
+        const gold = state.atoms.find(a => a.type === 'Au');
+        if (gold && Math.random() < 0.005 * (state.temp / 300)) {
+            const photon = new Photon(gold.x, gold.y, Math.random() * Math.PI * 2);
+            photon.energy = 0.5; // Lower energy, leaky
+            state.photons.push(photon);
+        }
+    }
+
+    // Render bus
+    function renderBus(time) {
+        const w = busCanvas.offsetWidth;
+        const h = busCanvas.offsetHeight;
+        
+        busCtx.clearRect(0, 0, w, h);
+        
+        // Draw Ti3SiC2 bus layers
+        busCtx.strokeStyle = 'rgba(176, 190, 197, 0.15)';
+        busCtx.lineWidth = 1;
+        for (let y = h * 0.45; y < h * 0.55; y += 5) {
+            busCtx.beginPath();
+            busCtx.moveTo(0, y);
+            busCtx.lineTo(w, y);
+            busCtx.stroke();
+        }
+        
+        // Draw ZnO GND plane
+        busCtx.fillStyle = 'rgba(29, 233, 182, 0.05)';
+        busCtx.fillRect(0, h * 0.8, w, h * 0.2);
+        busCtx.strokeStyle = 'rgba(29, 233, 182, 0.3)';
+        busCtx.lineWidth = 2;
+        busCtx.beginPath();
+        busCtx.moveTo(0, h * 0.8);
+        busCtx.lineTo(w, h * 0.8);
+        busCtx.stroke();
+        
+        // Update and draw atoms
+        state.atoms.forEach(atom => atom.draw(busCtx, time));
+        
+        // Update and draw photons
+        state.photons = state.photons.filter(p => p.life > 0);
+        state.photons.forEach(photon => photon.draw(busCtx));
+        
+        // Clock signal visual
+        if (state.clock) {
+            const clockY = h * 0.9;
+            busCtx.strokeStyle = state.clockPhase < 0.5 ? '#00d9ff' : '#004455';
+            busCtx.lineWidth = 3;
+            busCtx.beginPath();
+            busCtx.moveTo(0, clockY);
+            busCtx.lineTo(w, clockY);
+            busCtx.stroke();
+        }
+    }
+
+    // Animation loop
+    function animate() {
+        const now = performance.now();
+        const dt = Math.min((now - state.lastFrame) / 1000, 0.1);
+        state.lastFrame = now;
+        
+        if (!state.paused) {
+            // Update clock
+            if (state.clock) {
+                state.clockPhase = (state.clockPhase + dt * state.clockFreq / 1000) % 1;
+                if (state.clockPhase < 0.1 && Math.random() < 0.1) {
+                    // Clock edge: inject photon
+                    const ti = state.atoms.find(a => a.type === 'Ti');
+                    if (ti) {
+                        state.photons.push(new Photon(ti.x, ti.y, 0));
+                    }
+                }
+            }
+            
+            // Update physics
+            state.atoms.forEach(atom => atom.update(dt));
+            state.photons.forEach(photon => photon.update(dt));
+            checkCollisions();
+            
+            // Apply temperature effect
+            const tempFactor = state.temp / 300;
+            state.atoms.forEach(atom => {
+                if (!atom.bound && atom.type !== 'Ti') {
+                    atom.vx += (Math.random() - 0.5) * tempFactor * 5 * dt;
+                    atom.vy += (Math.random() - 0.5) * tempFactor * 5 * dt;
+                }
+            });
+        }
+        
+        renderBus(now);
+        updateElementCards();
+        requestAnimationFrame(animate);
+    }
+
+    // UI Controls
+    document.getElementById('inPulseBtn').onclick = () => {
+        const w = busCanvas.offsetWidth;
+        const h = busCanvas.offsetHeight;
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                state.photons.push(new Photon(50, h / 2, 0));
+            }, i * 100);
+        }
+    };
+
+    document.getElementById('clockToggle').onclick = function() {
+        state.clock = !state.clock;
+        this.classList.toggle('active');
+        document.getElementById('clockLabel').textContent = state.clock ? '10 kHz Active' : 'Clock Disabled';
+        document.getElementById('clockStat').textContent = state.clock ? '10kHz' : 'OFF';
+    };
+
+    document.getElementById('o1Btn').onclick = () => {
+        // Read voltage from Au contact based on Ag2S sites
+        state.o1Voltage = state.ag2sSites.length * 0.7 + Math.random() * 0.1;
+        document.getElementById('o1Stat').textContent = state.o1Voltage.toFixed(2);
+        
+        const btn = document.getElementById('o1Btn');
+        btn.classList.add('pulsing');
+        setTimeout(() => btn.classList.remove('pulsing'), 500);
+    };
+
+    document.getElementById('ag2sBtn').onclick = () => {
+        const w = busCanvas.offsetWidth;
+        const h = busCanvas.offsetHeight;
+        // Force reaction by spawning components near each other
+        const s = new Atom('S', w / 2, h / 2);
+        const ag1 = new Atom('Ag', w / 2 - 20, h / 2);
+        const ag2 = new Atom('Ag', w / 2 + 20, h / 2);
+        state.atoms.push(s, ag1, ag2);
+        state.photons.push(new Photon(w / 2, h / 2 - 30, Math.PI / 2));
+    };
+
+    const tempSlider = document.getElementById('tempSlider');
+    tempSlider.oninput = (e) => {
+        state.temp = parseFloat(e.target.value);
+        document.getElementById('tempVal').textContent = state.temp + 'K';
+        document.getElementById('tempStat').textContent = state.temp + 'K';
+        // Update bond energy based on temp
+        const bondEnergy = 2.5 - (state.temp - 300) * 0.001;
+        document.getElementById('sBondStat').textContent = bondEnergy.toFixed(2);
+    };
+
+    const pressSlider = document.getElementById('pressSlider');
+    pressSlider.oninput = (e) => {
+        state.pressure = parseFloat(e.target.value);
+        document.getElementById('pressVal').textContent = state.pressure.toFixed(1);
+        // Pressure increases trap depth
+        const trapDepth = 1.0 + state.pressure * 0.2;
+        document.getElementById('trapStat').textContent = trapDepth.toFixed(2);
+    };
+
+    document.getElementById('pauseBtn').onclick = function() {
+        state.paused = !state.paused;
+        this.textContent = state.paused ? 'Resume' : 'Pause';
+    };
+
+    document.getElementById('resetBtn').onclick = () => {
+        initScene();
+        state.o1Voltage = 0;
+        document.getElementById('o1Stat').textContent = '0';
+        updateStats();
+    };
+
+    function updateStats() {
+        document.getElementById('photonStat').textContent = state.photons.length;
+        document.getElementById('ag2sStat').textContent = state.ag2sSites.length;
+    }
+
+    // Start
+    animate();
+    setInterval(updateStats, 100);
+})();
+</script>
+
+</body></html>

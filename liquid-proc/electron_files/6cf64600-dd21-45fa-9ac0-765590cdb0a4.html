@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<!-- saved from url=(0164)https://951542161002409.a.metaaiusercontent.com/html?artifact_uuid=6cf64600-dd21-45fa-9ac0-765590cdb0a4&ext=1779385096&hash=Q5fpDAGUni9k0t4rWzmypSam3yPF&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Kernel Stack 4+1: S16 Ti22 Cu29 Zn30 Ag47 Au79</title>
+<style>
+    :root {
+        --bg: #0a0e1a;
+        --panel: #111827;
+        --border: #1f2937;
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+        --s-color: #facc15;
+        --ti-color: #38bdf8;
+        --cu-color: #fb923c;
+        --zn-color: #a3e635;
+        --ag-color: #e2e8f0;
+        --au-color: #fde047;
+        --trap-color: #ef4444;
+        --bus-color: #22d3ee;
+        --laser: #ff0080;
+        --good: #10b981;
+        --bad: #ef4444;
+        --warning: #f59e0b;
+    }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    header {
+        text-align: center;
+        padding: 30px 0;
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border-radius: 12px;
+        margin-bottom: 24px;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--s-color), var(--ti-color), var(--ag-color), var(--au-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+    }
+    .subtitle {
+        color: var(--text-dim);
+        font-size: 1rem;
+    }
+    .stack-name {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 6px 14px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        font-size: 0.9rem;
+        color: var(--bus-color);
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+    @media (max-width: 1024px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .panel h2 {
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .panel h2::before {
+        content: '';
+        width: 4px;
+        height: 18px;
+        background: linear-gradient(180deg, var(--ti-color), var(--ag-color));
+        border-radius: 2px;
+    }
+    .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .control-group label {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        display: flex;
+        justify-content: space-between;
+    }
+    .control-group label span {
+        color: var(--bus-color);
+        font-weight: 600;
+    }
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        background: var(--border);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        background: var(--ti-color);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        transition: all 0.2s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.8);
+    }
+    .btn {
+        padding: 10px 16px;
+        background: linear-gradient(135deg, #1e40af, #3b82f6);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    }
+    .btn:active {
+        transform: translateY(0);
+    }
+    .btn.btn-pulse {
+        background: linear-gradient(135deg, #be123c, #f43f5e);
+        box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
+    }
+    .btn.btn-pulse.active {
+        animation: pulse 0.5s ease-out;
+    }
+    .btn.btn-toggle.active {
+        background: linear-gradient(135deg, #059669, #10b981);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    .status-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 16px;
+    }
+    .status-item {
+        background: rgba(0,0,0,0.3);
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+    }
+    .status-item .label {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        margin-bottom: 4px;
+    }
+    .status-item .value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+    }
+    .clock-led {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--border);
+        display: inline-block;
+        margin-left: 8px;
+        transition: all 0.1s;
+    }
+    .clock-led.on {
+        background: var(--good);
+        box-shadow: 0 0 12px var(--good);
+    }
+    .elements-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+    @media (max-width: 1200px) {
+        .elements-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 768px) {
+        .elements-container {
+            grid-template-columns: 1fr;
+        }
+    }
+    .element-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+    .element-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        border-color: var(--ti-color);
+    }
+    .element-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--element-color), transparent);
+        opacity: 0.6;
+    }
+    .element-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 16px;
+    }
+    .element-symbol {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--element-color);
+        text-shadow: 0 0 20px var(--element-color);
+    }
+    .element-number {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        background: rgba(0,0,0,0.4);
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+    .element-name {
+        font-size: 0.9rem;
+        color: var(--text-dim);
+        margin-bottom: 12px;
+    }
+    .element-visual {
+        width: 100%;
+        height: 180px;
+        background: rgba(0,0,0,0.4);
+        border-radius: 8px;
+        position: relative;
+        margin-bottom: 12px;
+        border: 1px solid var(--border);
+    }
+    .element-card[data-element="S"] { --element-color: var(--s-color); }
+    .element-card[data-element="Ti"] { --element-color: var(--ti-color); }
+    .element-card[data-element="Cu"] { --element-color: var(--cu-color); }
+    .element-card[data-element="Zn"] { --element-color: var(--zn-color); }
+    .element-card[data-element="Ag"] { --element-color: var(--ag-color); }
+    .element-card[data-element="Au"] { --element-color: var(--au-color); }
+    .orbital {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 1px dashed rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+    .electron-arrow {
+        position: absolute;
+        font-size: 20px;
+        font-weight: 900;
+        color: var(--element-color);
+        text-shadow: 0 0 10px var(--element-color);
+        transition: all 0.3s;
+    }
+    .electron-arrow.up::before { content: '↑'; }
+    .electron-arrow.down::before { content: '↓'; }
+    .hole {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--laser);
+        border-radius: 50%;
+        box-shadow: 0 0 15px var(--laser);
+        animation: holePulse 1s infinite;
+    }
+    @keyframes holePulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.6; }
+    }
+    .laser-beam {
+        position: absolute;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--laser), transparent);
+        box-shadow: 0 0 10px var(--laser);
+        animation: laserShoot 0.8s infinite;
+        transform-origin: left center;
+    }
+    @keyframes laserShoot {
+        0% { opacity: 0; width: 0; }
+        50% { opacity: 1; }
+        100% { opacity: 0; width: 100%; }
+    }
+    .photon-bus {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: var(--bus-color);
+        border-radius: 50%;
+        box-shadow: 0 0 15px var(--bus-color);
+        animation: photonMove 2s linear infinite;
+    }
+    @keyframes photonMove {
+        0% { opacity: 0; transform: scale(0.5); }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { opacity: 0; transform: scale(1.5); }
+    }
+    .trap-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+    .trap-perfect {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--good);
+        border: 1px solid var(--good);
+    }
+    .trap-leaky {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--warning);
+        border: 1px solid var(--warning);
+    }
+    .trap-deep {
+        background: rgba(239, 68, 68, 0.2);
+        color: var(--bad);
+        border: 1px solid var(--bad);
+    }
+    .trap-none {
+        background: rgba(156, 163, 175, 0.2);
+        color: var(--text-dim);
+        border: 1px solid var(--text-dim);
+    }
+    .interaction-zone {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+    .interaction-title {
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+        color: var(--ag-color);
+    }
+    .ag2s-visual {
+        width: 100%;
+        height: 300px;
+        background: rgba(0,0,0,0.4);
+        border-radius: 8px;
+        position: relative;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+    .crystal-lattice {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+    .atom {
+        position: absolute;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        box-shadow: 0 0 20px currentColor;
+    }
+    .atom-ag {
+        width: 40px;
+        height: 40px;
+        background: var(--ag-color);
+        color: #000;
+    }
+    .atom-s {
+        width: 32px;
+        height: 32px;
+        background: var(--s-color);
+        color: #000;
+    }
+    .trap-level {
+        position: absolute;
+        left: 10%;
+        right: 10%;
+        height: 2px;
+        background: var(--trap-color);
+        box-shadow: 0 0 15px var(--trap-color);
+        animation: trapGlow 2s infinite;
+    }
+    @keyframes trapGlow {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+    }
+    .energy-label {
+        position: absolute;
+        right: 12px;
+        font-size: 0.75rem;
+        color: var(--trap-color);
+        background: rgba(0,0,0,0.8);
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .footer {
+        text-align: center;
+        padding: 30px 0;
+        color: var(--text-dim);
+        font-size: 0.85rem;
+        border-top: 1px solid var(--border);
+        margin-top: 40px;
+    }
+    .readme {
+        background: rgba(0,0,0,0.3);
+        border-left: 3px solid var(--ti-color);
+        padding: 16px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        line-height: 1.8;
+    }
+    .readme h3 {
+        color: var(--ti-color);
+        margin-bottom: 12px;
+        font-size: 1rem;
+    }
+    .readme ul {
+        margin-left: 20px;
+        margin-top: 8px;
+    }
+    .readme li {
+        margin-bottom: 6px;
+    }
+    .readme code {
+        background: rgba(56, 189, 248, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--bus-color);
+        font-family: 'Courier New', monospace;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Full Kernel Stack 4+1</h1>
+        <div class="subtitle">S16 · Ti22 · Cu29 · Zn30 · Ag47 · Au79 Interactive Orbital Physics</div>
+        <div class="stack-name">Ti₃SiC₂ + Ag₂S + ZnO Heterostructure</div>
+    </header>
+
+    <div class="grid">
+        <div class="panel">
+            <h2>Control Interface</h2>
+            <div class="controls">
+                <div class="control-group">
+                    <label>System Pressure <span id="pressureVal">1.0 atm</span></label>
+                    <input type="range" id="pressure" min="0.1" max="5" step="0.1" value="1.0">
+                </div>
+                
+                <div class="control-group">
+                    <label>Clock Speed <span id="clockVal">10.0 kHz</span></label>
+                    <input type="range" id="clockSpeed" min="1" max="100" step="1" value="10">
+                </div>
+
+                <button class="btn btn-pulse" id="inPulse">IN PULSE</button>
+                <button class="btn btn-toggle" id="o1Button">O1 GATE: OFF</button>
+                <button class="btn" id="resetBtn">RESET SYSTEM</button>
+
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="label">CLOCK<span class="clock-led" id="clockLed"></span></div>
+                        <div class="value" id="clockState">LOW</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="label">TRAP DEPTH</div>
+                        <div class="value" id="trapDepth" style="color: var(--text-dim);">0.00eV</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="label">LASERS ACTIVE</div>
+                        <div class="value" id="laserCount" style="color: var(--text-dim);">0</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="label">Ag₂S FORMED</div>
+                        <div class="value" id="ag2sState" style="color: var(--text-dim);">NO</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>System Overview</h2>
+            <div class="readme">
+                <h3>Full Kernel Stack 4+1 Architecture</h3>
+                <p><strong>Base Layer:</strong> <code>Ti₃SiC₂</code> MAX Phase - Photon bus substrate with Ti d-electrons</p>
+                <p><strong>Trap Layer:</strong> <code>Ag₂S</code> - 0.65eV mid-gap trap from S 3p⁴ + Ag 5s¹ interaction</p>
+                <p><strong>Barrier Layer:</strong> <code>ZnO</code> - Wide bandgap, no trap states, quantum confinement</p>
+                
+                <ul>
+                    <li><strong>S (16):</strong> 3s² 3p⁴ → 2 unpaired p-electrons + 2 holes = 2+2 laser channels</li>
+                    <li><strong>Ti (22):</strong> 3d² 4s² → Photon bus, mediates Ag₂S trap formation</li>
+                    <li><strong>Cu (29):</strong> 3d¹⁰ 4s¹ → Deep trap states, causes recombination loss</li>
+                    <li><strong>Zn (30):</strong> 3d¹⁰ 4s² → Full shell, no traps, insulating barrier</li>
+                    <li><strong>Ag (47):</strong> 4d¹⁰ 5s¹ → Perfect 0.65eV trap with S, high mobility</li>
+                    <li><strong>Au (79):</strong> 5d¹⁰ 6s¹ → Leaky trap, plasmonic loss, not stable</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="elements-container" id="elementsContainer"><div class="element-card" data-element="S">
+                <div class="element-header">
+                    <div>
+                        <div class="element-symbol">S</div>
+                        <div class="element-name">Sulfur</div>
+                    </div>
+                    <div class="element-number">16</div>
+                </div>
+                <div class="element-visual" id="visual-S"><div class="orbital" style="width: 40px; height: 40px;"></div><div class="orbital" style="width: 80px; height: 80px;"></div><div class="orbital" style="width: 120px; height: 120px;"></div><div class="electron-arrow up" style="left: 295px; top: 80px;"></div><div class="electron-arrow up" style="left: 245px; top: 130px;"></div><div class="electron-arrow down" style="left: 195px; top: 80px;"></div><div class="electron-arrow down" style="left: 245px; top: 30px;"></div><div class="hole" style="left: 297px; top: 82px;"></div><div class="hole" style="left: 247px; top: 132px;"></div></div>
+                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px;">
+                    <strong>Config:</strong> 3s² 3p⁴
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-dim);">
+                    2 unpaired p + 2 holes = 2+2 lasers
+                </div>
+                <div class="trap-indicator trap-perfect">
+                    ✓ Perfect Trap
+                </div>
+            </div><div class="element-card" data-element="Ti">
+                <div class="element-header">
+                    <div>
+                        <div class="element-symbol">Ti</div>
+                        <div class="element-name">Titanium</div>
+                    </div>
+                    <div class="element-number">22</div>
+                </div>
+                <div class="element-visual" id="visual-Ti"><div class="orbital" style="width: 40px; height: 40px;"></div><div class="orbital" style="width: 80px; height: 80px;"></div><div class="orbital" style="width: 120px; height: 120px;"></div><div class="electron-arrow up" style="left: 295px; top: 80px;"></div><div class="electron-arrow up" style="left: 245px; top: 130px;"></div></div>
+                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px;">
+                    <strong>Config:</strong> 3d² 4s²
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-dim);">
+                    Photon bus, d-orbital bridge
+                </div>
+                <div class="trap-indicator trap-bus">
+                    ⚡ Photon Bus
+                </div>
+            </div><div class="element-card" data-element="Cu">
+                <div class="element-header">
+                    <div>
+                        <div class="element-symbol">Cu</div>
+                        <div class="element-name">Copper</div>
+                    </div>
+                    <div class="element-number">29</div>
+                </div>
+                <div class="element-visual" id="visual-Cu"><div class="orbital" style="width: 40px; height: 40px;"></div><div class="orbital" style="width: 80px; height: 80px;"></div><div class="orbital" style="width: 120px; height: 120px;"></div><div class="electron-arrow up" style="left: 295px; top: 80px;"></div></div>
+                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px;">
+                    <strong>Config:</strong> 3d¹⁰ 4s¹
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-dim);">
+                    Deep trap, recombination center
+                </div>
+                <div class="trap-indicator trap-deep">
+                    ✗ Deep Trap
+                </div>
+            </div><div class="element-card" data-element="Zn">
+                <div class="element-header">
+                    <div>
+                        <div class="element-symbol">Zn</div>
+                        <div class="element-name">Zinc</div>
+                    </div>
+                    <div class="element-number">30</div>
+                </div>
+                <div class="element-visual" id="visual-Zn"><div class="orbital" style="width: 40px; height: 40px;"></div><div class="orbital" style="width: 80px; height: 80px;"></div><div class="orbital" style="width: 120px; height: 120px;"></div></div>
+                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px;">
+                    <strong>Config:</strong> 3d¹⁰ 4s²
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-dim);">
+                    Full shell, no trap states
+                </div>
+                <div class="trap-indicator trap-none">
+                    − No Trap
+                </div>
+            </div><div class="element-card" data-element="Ag">
+                <div class="element-header">
+                    <div>
+                        <div class="element-symbol">Ag</div>
+                        <div class="element-name">Silver</div>
+                    </div>
+                    <div class="element-number">47</div>
+                </div>
+                <div class="element-visual" id="visual-Ag"><div class="orbital" style="width: 40px; height: 40px;"></div><div class="orbital" style="width: 80px; height: 80px;"></div><div class="orbital" style="width: 120px; height: 120px;"></div><div class="electron-arrow up" style="left: 295px; top: 80px;"></div></div>
+                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px;">
+                    <strong>Config:</strong> 4d¹⁰ 5s¹
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-dim);">
+                    Perfect trap with S: 0.65eV
+                </div>
+                <div class="trap-indicator trap-perfect">
+                    ✓ Perfect Trap
+                </div>
+            </div><div class="element-card" data-element="Au">
+                <div class="element-header">
+                    <div>
+                        <div class="element-symbol">Au</div>
+                        <div class="element-name">Gold</div>
+                    </div>
+                    <div class="element-number">79</div>
+                </div>
+                <div class="element-visual" id="visual-Au"><div class="orbital" style="width: 40px; height: 40px;"></div><div class="orbital" style="width: 80px; height: 80px;"></div><div class="orbital" style="width: 120px; height: 120px;"></div><div class="electron-arrow up" style="left: 295px; top: 80px;"></div></div>
+                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px;">
+                    <strong>Config:</strong> 5d¹⁰ 6s¹
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-dim);">
+                    Leaky trap, plasmonic loss
+                </div>
+                <div class="trap-indicator trap-leaky">
+                    ≈ Leaky Trap
+                </div>
+            </div></div>
+
+    <div class="interaction-zone">
+        <div class="interaction-title">Ag₂S Trap Formation: S 3p⁴ ⊗ Ag 5s¹ → 0.65eV Mid-Gap State</div>
+        <div class="ag2s-visual" id="ag2sVisual">
+            <div class="crystal-lattice" id="lattice"><div class="atom atom-ag" style="left: 30%; top: 50%; transform: translate(-50%, -50%); opacity: 0.3; transition: 0.5s;">Ag</div><div class="atom atom-s" style="left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0.3; transition: 0.5s;">S</div><div class="atom atom-ag" style="left: 70%; top: 50%; transform: translate(-50%, -50%); opacity: 0.3; transition: 0.5s;">Ag</div><div class="atom atom-s" style="left: 40%; top: 30%; transform: translate(-50%, -50%); opacity: 0.3; transition: 0.5s;">S</div><div class="atom atom-ag" style="left: 60%; top: 30%; transform: translate(-50%, -50%); opacity: 0.3; transition: 0.5s;">Ag</div><div class="atom atom-s" style="left: 40%; top: 70%; transform: translate(-50%, -50%); opacity: 0.3; transition: 0.5s;">S</div><div class="atom atom-ag" style="left: 60%; top: 70%; transform: translate(-50%, -50%); opacity: 0.3; transition: 0.5s;">Ag</div></div>
+            <div class="trap-level" style="top: 45%;">
+                <span class="energy-label">0.65 eV Trap</span>
+            </div>
+            <div class="trap-level" style="top: 20%; background: var(--bus-color); box-shadow: 0 0 15px var(--bus-color);">
+                <span class="energy-label" style="color: var(--bus-color);">Conduction Band</span>
+            </div>
+            <div class="trap-level" style="top: 70%; background: var(--s-color); box-shadow: 0 0 15px var(--s-color);">
+                <span class="energy-label" style="color: var(--s-color);">Valence Band</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Full Kernel Stack 4+1 | Vanilla JS Physics Simulator | Ti₃SiC₂ + Ag₂S + ZnO
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    const elements = {
+        S: {
+            number: 16,
+            name: 'Sulfur',
+            config: '3s² 3p⁴',
+            electrons: { up: 2, down: 2, holes: 2 },
+            lasers: 4,
+            trapType: 'perfect',
+            trapDepth: 0.65,
+            desc: '2 unpaired p + 2 holes = 2+2 lasers'
+        },
+        Ti: {
+            number: 22,
+            name: 'Titanium',
+            config: '3d² 4s²',
+            electrons: { up: 2, down: 0, holes: 0 },
+            lasers: 0,
+            trapType: 'bus',
+            trapDepth: 0,
+            desc: 'Photon bus, d-orbital bridge'
+        },
+        Cu: {
+            number: 29,
+            name: 'Copper',
+            config: '3d¹⁰ 4s¹',
+            electrons: { up: 1, down: 0, holes: 0 },
+            lasers: 0,
+            trapType: 'deep',
+            trapDepth: 1.2,
+            desc: 'Deep trap, recombination center'
+        },
+        Zn: {
+            number: 30,
+            name: 'Zinc',
+            config: '3d¹⁰ 4s²',
+            electrons: { up: 0, down: 0, holes: 0 },
+            lasers: 0,
+            trapType: 'none',
+            trapDepth: 0,
+            desc: 'Full shell, no trap states'
+        },
+        Ag: {
+            number: 47,
+            name: 'Silver',
+            config: '4d¹⁰ 5s¹',
+            electrons: { up: 1, down: 0, holes: 0 },
+            lasers: 0,
+            trapType: 'perfect',
+            trapDepth: 0.65,
+            desc: 'Perfect trap with S: 0.65eV'
+        },
+        Au: {
+            number: 79,
+            name: 'Gold',
+            config: '5d¹⁰ 6s¹',
+            electrons: { up: 1, down: 0, holes: 0 },
+            lasers: 0,
+            trapType: 'leaky',
+            trapDepth: 0.45,
+            desc: 'Leaky trap, plasmonic loss'
+        }
+    };
+
+    const state = {
+        pressure: 1.0,
+        clockHz: 10,
+        clockOn: false,
+        o1Active: false,
+        ag2sFormed: false,
+        pulseActive: false,
+        animationFrame: null
+    };
+
+    const pressureSlider = document.getElementById('pressure');
+    const clockSlider = document.getElementById('clockSpeed');
+    const inPulseBtn = document.getElementById('inPulse');
+    const o1Btn = document.getElementById('o1Button');
+    const resetBtn = document.getElementById('resetBtn');
+    const clockLed = document.getElementById('clockLed');
+    const clockState = document.getElementById('clockState');
+    const trapDepthEl = document.getElementById('trapDepth');
+    const laserCountEl = document.getElementById('laserCount');
+    const ag2sStateEl = document.getElementById('ag2sState');
+
+    function initElements() {
+        const container = document.getElementById('elementsContainer');
+        container.innerHTML = '';
+        
+        Object.entries(elements).forEach(([symbol, data]) => {
+            const card = document.createElement('div');
+            card.className = 'element-card';
+            card.dataset.element = symbol;
+            
+            card.innerHTML = `
+                <div class="element-header">
+                    <div>
+                        <div class="element-symbol">${symbol}</div>
+                        <div class="element-name">${data.name}</div>
+                    </div>
+                    <div class="element-number">${data.number}</div>
+                </div>
+                <div class="element-visual" id="visual-${symbol}"></div>
+                <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px;">
+                    <strong>Config:</strong> ${data.config}
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-dim);">
+                    ${data.desc}
+                </div>
+                <div class="trap-indicator trap-${data.trapType}">
+                    ${getTrapLabel(data.trapType)}
+                </div>
+            `;
+            
+            container.appendChild(card);
+            renderElementVisual(symbol, data);
+        });
+    }
+
+    function getTrapLabel(type) {
+        const labels = {
+            perfect: '✓ Perfect Trap',
+            bus: '⚡ Photon Bus',
+            deep: '✗ Deep Trap',
+            none: '− No Trap',
+            leaky: '≈ Leaky Trap'
+        };
+        return labels[type] || type;
+    }
+
+    function renderElementVisual(symbol, data) {
+        const visual = document.getElementById(`visual-${symbol}`);
+        visual.innerHTML = '';
+        
+        const centerX = visual.offsetWidth / 2;
+        const centerY = visual.offsetHeight / 2;
+        
+        // Draw orbital shells
+        for (let i = 1; i <= 3; i++) {
+            const orbital = document.createElement('div');
+            orbital.className = 'orbital';
+            const size = i * 40;
+            orbital.style.width = size + 'px';
+            orbital.style.height = size + 'px';
+            visual.appendChild(orbital);
+        }
+        
+        // Render electrons as arrows
+        let arrowIndex = 0;
+        const radius = 50;
+        
+        // Up arrows
+        for (let i = 0; i < data.electrons.up; i++) {
+            const angle = (arrowIndex * 90) * Math.PI / 180;
+            const arrow = document.createElement('div');
+            arrow.className = 'electron-arrow up';
+            arrow.style.left = (centerX + Math.cos(angle) * radius - 10) + 'px';
+            arrow.style.top = (centerY + Math.sin(angle) * radius - 10) + 'px';
+            visual.appendChild(arrow);
+            arrowIndex++;
+        }
+        
+        // Down arrows
+        for (let i = 0; i < data.electrons.down; i++) {
+            const angle = (arrowIndex * 90) * Math.PI / 180;
+            const arrow = document.createElement('div');
+            arrow.className = 'electron-arrow down';
+            arrow.style.left = (centerX + Math.cos(angle) * radius - 10) + 'px';
+            arrow.style.top = (centerY + Math.sin(angle) * radius - 10) + 'px';
+            visual.appendChild(arrow);
+            arrowIndex++;
+        }
+        
+        // Holes for S
+        if (data.electrons.holes) {
+            for (let i = 0; i < data.electrons.holes; i++) {
+                const angle = ((arrowIndex + i) * 90) * Math.PI / 180;
+                const hole = document.createElement('div');
+                hole.className = 'hole';
+                hole.style.left = (centerX + Math.cos(angle) * radius - 8) + 'px';
+                hole.style.top = (centerY + Math.sin(angle) * radius - 8) + 'px';
+                visual.appendChild(hole);
+            }
+        }
+        
+        // Laser beams for S when active
+        if (symbol === 'S' && (state.pulseActive || state.o1Active)) {
+            for (let i = 0; i < 4; i++) {
+                const beam = document.createElement('div');
+                beam.className = 'laser-beam';
+                const angle = i * 90;
+                beam.style.left = centerX + 'px';
+                beam.style.top = centerY + 'px';
+                beam.style.transform = `rotate(${angle}deg)`;
+                beam.style.width = '80px';
+                visual.appendChild(beam);
+            }
+        }
+        
+        // Photon bus particles for Ti
+        if (symbol === 'Ti' && state.clockOn) {
+            for (let i = 0; i < 2; i++) {
+                const photon = document.createElement('div');
+                photon.className = 'photon-bus';
+                const angle = (i * 180 + Date.now() / 20) % 360;
+                const r = 40 + Math.sin(Date.now() / 500) * 10;
+                photon.style.left = (centerX + Math.cos(angle * Math.PI / 180) * r - 4) + 'px';
+                photon.style.top = (centerY + Math.sin(angle * Math.PI / 180) * r - 4) + 'px';
+                photon.style.animationDelay = (i * 0.5) + 's';
+                visual.appendChild(photon);
+            }
+        }
+    }
+
+    function initAg2SLattice() {
+        const lattice = document.getElementById('lattice');
+        lattice.innerHTML = '';
+        
+        const atoms = [
+            { type: 'Ag', x: 30, y: 50 },
+            { type: 'S', x: 50, y: 50 },
+            { type: 'Ag', x: 70, y: 50 },
+            { type: 'S', x: 40, y: 30 },
+            { type: 'Ag', x: 60, y: 30 },
+            { type: 'S', x: 40, y: 70 },
+            { type: 'Ag', x: 60, y: 70 }
+        ];
+        
+        atoms.forEach((atom, i) => {
+            const el = document.createElement('div');
+            el.className = `atom atom-${atom.type.toLowerCase()}`;
+            el.textContent = atom.type;
+            el.style.left = atom.x + '%';
+            el.style.top = atom.y + '%';
+            el.style.transform = 'translate(-50%, -50%)';
+            el.style.opacity = state.ag2sFormed ? '1' : '0.3';
+            el.style.transition = 'all 0.5s';
+            lattice.appendChild(el);
+        });
+    }
+
+    function updateClock() {
+        state.clockOn = !state.clockOn;
+        clockLed.classList.toggle('on', state.clockOn);
+        clockState.textContent = state.clockOn ? 'HIGH' : 'LOW';
+        
+        renderElementVisual('Ti', elements.Ti);
+        
+        if (state.o1Active && state.ag2sFormed) {
+            renderElementVisual('S', elements.S);
+        }
+    }
+
+    function clockLoop() {
+        const period = 1000 / state.clockHz;
+        updateClock();
+        setTimeout(clockLoop, period);
+    }
+
+    function checkAg2SFormation() {
+        const pressureFactor = state.pressure >= 1.5;
+        const pulseFactor = state.pulseActive;
+        const tempFactor = state.clockOn;
+        
+        state.ag2sFormed = pressureFactor && (pulseFactor || state.o1Active);
+        
+        ag2sStateEl.textContent = state.ag2sFormed ? 'YES' : 'NO';
+        ag2sStateEl.style.color = state.ag2sFormed ? 'var(--good)' : 'var(--text-dim)';
+        
+        const trapMod = state.ag2sFormed ? 0.65 : 0.0;
+        trapDepthEl.textContent = trapMod.toFixed(2) + 'eV';
+        trapDepthEl.style.color = state.ag2sFormed ? 'var(--good)' : 'var(--text-dim)';
+        
+        initAg2SLattice();
+        updateLaserCount();
+    }
+
+    function updateLaserCount() {
+        const count = state.ag2sFormed && (state.pulseActive || state.o1Active) ? 4 : 0;
+        laserCountEl.textContent = count;
+        laserCountEl.style.color = count > 0 ? 'var(--laser)' : 'var(--text-dim)';
+    }
+
+    function animateElements() {
+        Object.keys(elements).forEach(symbol => {
+            renderElementVisual(symbol, elements[symbol]);
+        });
+        state.animationFrame = requestAnimationFrame(animateElements);
+    }
+
+    // Event Listeners
+    pressureSlider.addEventListener('input', (e) => {
+        state.pressure = parseFloat(e.target.value);
+        document.getElementById('pressureVal').textContent = state.pressure.toFixed(1) + ' atm';
+        checkAg2SFormation();
+    });
+
+    clockSlider.addEventListener('input', (e) => {
+        state.clockHz = parseInt(e.target.value);
+        document.getElementById('clockVal').textContent = state.clockHz.toFixed(1) + ' kHz';
+    });
+
+    inPulseBtn.addEventListener('click', () => {
+        state.pulseActive = true;
+        inPulseBtn.classList.add('active');
+        checkAg2SFormation();
+        renderElementVisual('S', elements.S);
+        
+        setTimeout(() => {
+            state.pulseActive = false;
+            inPulseBtn.classList.remove('active');
+            checkAg2SFormation();
+            renderElementVisual('S', elements.S);
+        }, 500);
+    });
+
+    o1Btn.addEventListener('click', () => {
+        state.o1Active = !state.o1Active;
+        o1Btn.classList.toggle('active', state.o1Active);
+        o1Btn.textContent = state.o1Active ? 'O1 GATE: ON' : 'O1 GATE: OFF';
+        checkAg2SFormation();
+        renderElementVisual('S', elements.S);
+    });
+
+    resetBtn.addEventListener('click', () => {
+        state.pressure = 1.0;
+        state.o1Active = false;
+        state.pulseActive = false;
+        state.ag2sFormed = false;
+        
+        pressureSlider.value = 1.0;
+        document.getElementById('pressureVal').textContent = '1.0 atm';
+        o1Btn.classList.remove('active');
+        o1Btn.textContent = 'O1 GATE: OFF';
+        
+        checkAg2SFormation();
+        initElements();
+    });
+
+    // Initialize
+    initElements();
+    initAg2SLattice();
+    clockLoop();
+    animateElements();
+    checkAg2SFormation();
+})();
+</script>
+
+</body></html>

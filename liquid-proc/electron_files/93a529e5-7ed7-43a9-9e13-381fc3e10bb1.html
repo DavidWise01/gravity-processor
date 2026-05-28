@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<!-- saved from url=(0165)https://2741278616252936.a.metaaiusercontent.com/html?artifact_uuid=93a529e5-7ed7-43a9-9e13-381fc3e10bb1&ext=1779387078&hash=Q5fpDAFGZb-B_qMxrW3m_Y5tH6GH&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minimal 3-Stack Kernel Educational Demo</title>
+<style>
+    :root {
+        --bg: #0a0e1a;
+        --panel: #111827;
+        --border: #1f2937;
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+        --si: #4b5563;
+        --ti: #7c3aed;
+        --ag: #d1d5db;
+        --s: #facc15;
+        --xe: #22d3ee;
+        --o1: #ef4444;
+        --accent: #3b82f6;
+        --green: #10b981;
+        --red: #ef4444;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.6;
+    }
+    
+    header {
+        background: var(--panel);
+        border-bottom: 1px solid var(--border);
+        padding: 1.5rem 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .subtitle {
+        color: var(--text-dim);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 1.5rem;
+        padding: 1.5rem 2rem;
+        flex: 1;
+    }
+    
+    @media (max-width: 1024px) {
+        .container {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .canvas-wrap {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4);
+    }
+    
+    .canvas-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .status {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .status-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 8px currentColor;
+        animation: pulse 2s infinite;
+    }
+    
+    .status-dot.dead {
+        background: var(--red);
+        animation: none;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    
+    #simCanvas {
+        width: 100%;
+        height: 500px;
+        background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+        border-radius: 8px;
+        display: block;
+    }
+    
+    .controls {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4);
+        height: fit-content;
+    }
+    
+    .control-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .control-group h3 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: linear-gradient(135deg, var(--accent), #2563eb);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(59,130,246,0.3);
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px -1px rgba(59,130,246,0.4);
+    }
+    
+    .btn:active {
+        transform: translateY(0);
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        box-shadow: 0 4px 6px -1px rgba(239,68,68,0.3);
+    }
+    
+    .btn-secondary {
+        background: var(--border);
+        box-shadow: none;
+    }
+    
+    .slider-wrap {
+        margin-bottom: 1rem;
+    }
+    
+    .slider-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-dim);
+    }
+    
+    .slider-value {
+        color: var(--accent);
+        font-weight: 600;
+    }
+    
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        background: var(--border);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(59,130,246,0.6);
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 0 8px rgba(59,130,246,0.6);
+    }
+    
+    .toggle {
+        display: flex;
+        background: var(--border);
+        border-radius: 8px;
+        padding: 4px;
+    }
+    
+    .toggle button {
+        flex: 1;
+        padding: 0.5rem;
+        background: transparent;
+        border: none;
+        color: var(--text-dim);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.875rem;
+    }
+    
+    .toggle button.active {
+        background: var(--accent);
+        color: white;
+    }
+    
+    .metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+    
+    .metric {
+        background: var(--bg);
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+    }
+    
+    .metric-label {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        margin-bottom: 0.25rem;
+    }
+    
+    .metric-value {
+        font-size: 1.25rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+    
+    .legend {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--text-dim);
+    }
+    
+    .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+    }
+    
+    .readme {
+        grid-column: 1 / -1;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .readme h2 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .readme p {
+        color: var(--text-dim);
+        margin-bottom: 0.75rem;
+    }
+    
+    .readme ul {
+        margin-left: 1.5rem;
+        color: var(--text-dim);
+    }
+    
+    .readme li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .readme code {
+        background: var(--bg);
+        padding: 0.125rem 0.375rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.875em;
+        color: var(--accent);
+    }
+</style>
+</head>
+<body>
+<header>
+    <h1>Minimal 3-Stack Kernel Educational Visualization</h1>
+    <p class="subtitle">Conceptual demo of layered materials: Si [14], Ti [22], Ag [47], S [16], Xe [54], O [8]</p>
+</header>
+
+<div class="container">
+    <div class="canvas-wrap">
+        <div class="canvas-header">
+            <h3>Cross-Section View</h3>
+            <div class="status">
+                <div class="status-item">
+                    <div class="status-dot" id="chipStatus"></div>
+                    <span id="chipStatusText">Operational</span>
+                </div>
+            </div>
+        </div>
+        <canvas id="simCanvas" width="1292" height="1000"></canvas>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background: #4b5563"></div>Si [14]</div>
+            <div class="legend-item"><div class="legend-color" style="background: #7c3aed"></div>Ti [22]</div>
+            <div class="legend-item"><div class="legend-color" style="background: #d1d5db"></div>Ag [47]</div>
+            <div class="legend-item"><div class="legend-color" style="background: #facc15"></div>S [16]</div>
+            <div class="legend-item"><div class="legend-color" style="background: #22d3ee"></div>Xe [54]</div>
+            <div class="legend-item"><div class="legend-color" style="background: #ef4444"></div>O1 [8]</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <h3>Signal Control</h3>
+            <button class="btn" id="inPulseBtn">Send IN Pulse</button>
+            <div class="slider-wrap">
+                <div class="slider-label">
+                    <span>Clock Frequency</span>
+                    <span class="slider-value"><span id="clockVal">10.0</span> kHz</span>
+                </div>
+                <input type="range" id="clockSlider" min="1" max="20" value="10" step="0.5">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>Environment</h3>
+            <button class="btn btn-danger" id="o1Btn">Inject O1 Signal</button>
+            <div class="slider-wrap">
+                <div class="slider-label">
+                    <span>Xe Pressure</span>
+                    <span class="slider-value"><span id="pressureVal">50</span> %</span>
+                </div>
+                <input type="range" id="pressureSlider" min="0" max="100" value="50" step="1">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>Substrate Material</h3>
+            <div class="toggle">
+                <button class="active" id="siBtn">Si</button>
+                <button id="ti3siBtn">Ti3SiC2</button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>Live Metrics</h3>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-label">D Input</div>
+                    <div class="metric-value" id="dVal">0</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">OUT Current</div>
+                    <div class="metric-value" id="outVal">0.00</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">O1 Depth</div>
+                    <div class="metric-value" id="o1DepthVal">0</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">S Integrity</div>
+                    <div class="metric-value" id="sIntegrityVal">100%</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-secondary" id="resetBtn">Reset Simulation</button>
+    </div>
+
+    <div class="readme">
+        <h2>README.md - Conceptual Model Notes</h2>
+        <p>This is an educational visualization representing abstract concepts in material stack design. It is not a physically accurate semiconductor simulation.</p>
+        <p><strong>Stack Layout:</strong></p>
+        <ul>
+            <li><code>Si [14]</code> - Substrate layer at bottom</li>
+            <li><code>Ti [22]</code> - Conductive traces left/right of stack</li>
+            <li><code>Ag [47]</code> - Core element with + and - terminals</li>
+            <li><code>S [16]</code> - Layer above Ag, shown forming conceptual Ag2S region</li>
+            <li><code>Xe [54]</code> - Gas gap layer above, visualized as blocking field</li>
+            <li><code>O [8]</code> - Represented as 2+2 animated signals, labeled "O1" in this model</li>
+        </ul>
+        <p><strong>O1 vs Xe Interaction:</strong> In this conceptual demo, O1 signals move downward. The Xe layer density, controlled by pressure, reduces O1 penetration depth. If O1 reaches the S layer, the simulated "S Integrity" metric decreases, representing a fault condition that sets chip status to non-operational.</p>
+        <p><strong>Controls:</strong> IN Pulse simulates input activity. 10kHz clock drives the visualization timing. Material toggle changes substrate visualization only. This demo uses vanilla JavaScript with HTML5 Canvas and no external dependencies.</p>
+        <p><strong>Disclaimer:</strong> This tool does not model real chemistry, device physics, or manufacturing. No operational instructions for synthesis or device fabrication are provided.</p>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d');
+
+let w, h;
+function resize() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    w = canvas.width;
+    h = canvas.height;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// State
+let state = {
+    clock: 10.0,
+    dInput: 0,
+    outCurrent: 0,
+    pressure: 50,
+    material: 'Si',
+    o1Particles: [],
+    sIntegrity: 100,
+    chipDead: false,
+    pulseActive: false,
+    pulseTime: 0
+};
+
+// Layers geometry
+const layers = {
+    xe: { y: 0.15, h: 0.15 },
+    s: { y: 0.32, h: 0.08 },
+    ag: { y: 0.42, h: 0.12 },
+    tiL: { x: 0.15, w: 0.08 },
+    tiR: { x: 0.77, w: 0.08 },
+    si: { y: 0.58, h: 0.25 }
+};
+
+// Controls
+document.getElementById('inPulseBtn').addEventListener('click', () => {
+    if (!state.chipDead) {
+        state.dInput = 1;
+        state.pulseActive = true;
+        state.pulseTime = 0;
+        setTimeout(() => state.dInput = 0, 100);
+    }
+});
+
+document.getElementById('clockSlider').addEventListener('input', (e) => {
+    state.clock = parseFloat(e.target.value);
+    document.getElementById('clockVal').textContent = state.clock.toFixed(1);
+});
+
+document.getElementById('o1Btn').addEventListener('click', () => {
+    spawnO1();
+});
+
+document.getElementById('pressureSlider').addEventListener('input', (e) => {
+    state.pressure = parseInt(e.target.value);
+    document.getElementById('pressureVal').textContent = state.pressure;
+});
+
+document.getElementById('siBtn').addEventListener('click', () => {
+    state.material = 'Si';
+    document.getElementById('siBtn').classList.add('active');
+    document.getElementById('ti3siBtn').classList.remove('active');
+});
+
+document.getElementById('ti3siBtn').addEventListener('click', () => {
+    state.material = 'Ti3SiC2';
+    document.getElementById('ti3siBtn').classList.add('active');
+    document.getElementById('siBtn').classList.remove('active');
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+    state.sIntegrity = 100;
+    state.chipDead = false;
+    state.o1Particles = [];
+    state.outCurrent = 0;
+    document.getElementById('chipStatus').classList.remove('dead');
+    document.getElementById('chipStatusText').textContent = 'Operational';
+});
+
+function spawnO1() {
+    // O1 represented as 2s2 2p4 = 2+2 laser-like beams
+    for (let i = 0; i < 4; i++) {
+        state.o1Particles.push({
+            x: w * (0.3 + Math.random() * 0.4),
+            y: 0,
+            vy: 2 + Math.random() * 2,
+            group: i < 2 ? '2s' : '2p',
+            life: 1.0
+        });
+    }
+}
+
+function update() {
+    // Update O1 particles
+    state.o1Particles = state.o1Particles.filter(p => {
+        p.y += p.vy * (state.clock / 10);
+        
+        // Xe blocking effect - higher pressure = more blocking
+        const xeY = h * layers.xe.y;
+        const xeBottom = h * (layers.xe.y + layers.xe.h);
+        if (p.y > xeY && p.y < xeBottom) {
+            const blockChance = state.pressure / 100 * 0.05;
+            if (Math.random() < blockChance) {
+                p.life -= 0.1;
+                p.vy *= 0.95;
+            }
+        }
+        
+        // Check if reached S layer
+        const sY = h * layers.s.y;
+        if (p.y > sY && p.life > 0 && !state.chipDead) {
+            state.sIntegrity -= 0.5;
+            p.life = 0;
+            if (state.sIntegrity <= 0) {
+                state.sIntegrity = 0;
+                state.chipDead = true;
+                document.getElementById('chipStatus').classList.add('dead');
+                document.getElementById('chipStatusText').textContent = 'Fault State';
+            }
+        }
+        
+        p.life -= 0.002;
+        return p.life > 0 && p.y < h;
+    });
+    
+    // Update OUT current based on D and chip state
+    if (state.chipDead) {
+        state.outCurrent = 0;
+    } else if (state.pulseActive) {
+        state.pulseTime += 0.016 * state.clock;
+        state.outCurrent = Math.sin(state.pulseTime) * 0.5 + 0.5;
+        if (state.pulseTime > Math.PI * 2) {
+            state.pulseActive = false;
+            state.outCurrent = 0;
+        }
+    }
+    
+    // Update UI metrics
+    document.getElementById('dVal').textContent = state.dInput;
+    document.getElementById('outVal').textContent = state.outCurrent.toFixed(2);
+    document.getElementById('o1DepthVal').textContent = state.o1Particles.length > 0 
+        ? Math.max(...state.o1Particles.map(p => Math.floor(p.y / h * 100))) 
+        : 0;
+    document.getElementById('sIntegrityVal').textContent = Math.floor(state.sIntegrity) + '%';
+}
+
+function draw() {
+    ctx.clearRect(0, 0, w, h);
+    
+    // Draw substrate Si or Ti3SiC2
+    ctx.fillStyle = state.material === 'Si' ? '#4b5563' : '#5b21b6';
+    ctx.fillRect(0, h * layers.si.y, w, h * layers.si.h);
+    ctx.fillStyle = '#e5e7eb';
+    ctx.font = `${12 * window.devicePixelRatio}px monospace`;
+    ctx.fillText(state.material + ' [14]', 10 * window.devicePixelRatio, h * layers.si.y + 20 * window.devicePixelRatio);
+    
+    // Draw Ti traces
+    ctx.fillStyle = '#7c3aed';
+    ctx.fillRect(w * layers.tiL.x, h * 0.42, w * layers.tiL.w, h * 0.16);
+    ctx.fillRect(w * layers.tiR.x, h * 0.42, w * layers.tiR.w, h * 0.16);
+    ctx.fillStyle = '#e5e7eb';
+    ctx.fillText('Ti', w * layers.tiL.x + 5 * window.devicePixelRatio, h * 0.5);
+    ctx.fillText('Ti', w * layers.tiR.x + 5 * window.devicePixelRatio, h * 0.5);
+    
+    // Draw Ag core with terminals
+    ctx.fillStyle = '#d1d5db';
+    const agX = w * 0.3, agW = w * 0.4;
+    ctx.fillRect(agX, h * layers.ag.y, agW, h * layers.ag.h);
+    ctx.fillStyle = '#111827';
+    ctx.font = `${14 * window.devicePixelRatio}px monospace`;
+    ctx.fillText('Ag [47]', agX + 10 * window.devicePixelRatio, h * layers.ag.y + 25 * window.devicePixelRatio);
+    
+    // Terminals + and -
+    ctx.fillStyle = '#10b981';
+    ctx.font = `${20 * window.devicePixelRatio}px monospace`;
+    ctx.fillText('+', agX - 25 * window.devicePixelRatio, h * layers.ag.y + 30 * window.devicePixelRatio);
+    ctx.fillStyle = '#ef4444';
+    ctx.fillText('−', agX + agW + 10 * window.devicePixelRatio, h * layers.ag.y + 30 * window.devicePixelRatio);
+    
+    // Draw S layer - changes color based on integrity
+    const sOpacity = state.sIntegrity / 100;
+    ctx.fillStyle = `rgba(250, 204, 21, ${0.3 + sOpacity * 0.7})`;
+    ctx.fillRect(w * 0.25, h * layers.s.y, w * 0.5, h * layers.s.h);
+    ctx.fillStyle = '#111827';
+    ctx.font = `${12 * window.devicePixelRatio}px monospace`;
+    const sLabel = state.sIntegrity < 100 ? 'Ag2S/SO2 [16]' : 'S [16]';
+    ctx.fillText(sLabel, w * 0.5 - 40 * window.devicePixelRatio, h * layers.s.y + 18 * window.devicePixelRatio);
+    
+    // Draw Xe gas gap with pressure visualization
+    const xeOpacity = 0.1 + (state.pressure / 100) * 0.3;
+    ctx.fillStyle = `rgba(34, 211, 238, ${xeOpacity})`;
+    ctx.fillRect(0, h * layers.xe.y, w, h * layers.xe.h);
+    
+    // Xe density lines
+    ctx.strokeStyle = `rgba(34, 211, 238, ${xeOpacity * 2})`;
+    ctx.lineWidth = 1 * window.devicePixelRatio;
+    const lineCount = Math.floor(state.pressure / 10);
+    for (let i = 0; i < lineCount; i++) {
+        const ly = h * layers.xe.y + (h * layers.xe.h / lineCount) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, ly);
+        ctx.lineTo(w, ly);
+        ctx.stroke();
+    }
+    
+    ctx.fillStyle = '#e5e7eb';
+    ctx.font = `${12 * window.devicePixelRatio}px monospace`;
+    ctx.fillText(`Xe [54] Gas Gap - ${state.pressure}%`, 10 * window.devicePixelRatio, h * layers.xe.y + 18 * window.devicePixelRatio);
+    
+    // Draw O1 particles as 2s2 2p4 = 2+2 laser beams
+    ctx.save();
+    state.o1Particles.forEach(p => {
+        const alpha = p.life;
+        const laserGradient = ctx.createLinearGradient(p.x, p.y - 20, p.x, p.y);
+        laserGradient.addColorStop(0, `rgba(239, 68, 68, 0)`);
+        laserGradient.addColorStop(1, `rgba(239, 68, 68, ${alpha})`);
+        
+        ctx.strokeStyle = laserGradient;
+        ctx.lineWidth = p.group === '2s' ? 3 * window.devicePixelRatio : 2 * window.devicePixelRatio;
+        ctx.shadowBlur = 10 * window.devicePixelRatio;
+        ctx.shadowColor = '#ef4444';
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - 30 * window.devicePixelRatio);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        
+        // Core glow
+        ctx.fillStyle = `rgba(239, 68, 68, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3 * window.devicePixelRatio, 0, Math.PI * 2);
+        ctx.fill();
+    });
+    ctx.restore();
+    
+    // Draw current flow animation if active
+    if (state.outCurrent > 0.1 && !state.chipDead) {
+        ctx.save();
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 2 * window.devicePixelRatio;
+        ctx.shadowBlur = 15 * window.devicePixelRatio;
+        ctx.shadowColor = '#3b82f6';
+        ctx.globalAlpha = state.outCurrent;
+        ctx.setLineDash([5 * window.devicePixelRatio, 5 * window.devicePixelRatio]);
+        ctx.beginPath();
+        const dashOffset = Date.now() / 50;
+        ctx.lineDashOffset = -dashOffset;
+        ctx.moveTo(agX - 20 * window.devicePixelRatio, h * layers.ag.y + h * layers.ag.h / 2);
+        ctx.lineTo(agX + agW + 20 * window.devicePixelRatio, h * layers.ag.y + h * layers.ag.h / 2);
+        ctx.stroke();
+        ctx.restore();
+    }
+    
+    // Chip dead overlay
+    if (state.chipDead) {
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#ef4444';
+        ctx.font = `bold ${24 * window.devicePixelRatio}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('CHIP FAULT', w / 2, h / 2);
+        ctx.textAlign = 'left';
+    }
+}
+
+function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+
+</body></html>

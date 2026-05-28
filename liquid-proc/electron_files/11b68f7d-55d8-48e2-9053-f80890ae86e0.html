@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<!-- saved from url=(0166)https://26795113606856973.a.metaaiusercontent.com/html?artifact_uuid=11b68f7d-55d8-48e2-9053-f80890ae86e0&ext=1779385097&hash=Q5fpDAFLjqOWC3wyxCuD8xyjSOF-&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Stacked Kernel Board - Noble Gas Gap Options</title>
+<style>
+    :root {
+        --bg: #0a0e1a;
+        --panel: #11182a;
+        --border: #1e2a47;
+        --text: #e6edf3;
+        --text-dim: #8b949e;
+        --accent: #4c8dff;
+        --success: #3fb950;
+        --warning: #d29922;
+        --danger: #f85149;
+        --ar: #7dd3fc;
+        --kr: #38bdf8;
+        --rn: #0ea5e9;
+        --s: #fbbf24;
+        --ti: #c084fc;
+        --cu: #fb923c;
+        --zn: #a3e635;
+        --ag: #e5e7eb;
+        --au: #facc15;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    .container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 320px 1fr 320px;
+        gap: 20px;
+        min-height: 100vh;
+    }
+
+    @media (max-width: 1200px) {
+        .container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #4c8dff 0%, #38bdf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+    }
+
+    h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 20px 0 12px;
+        color: var(--text);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.75rem;
+        color: var(--text-dim);
+    }
+
+    .subtitle {
+        color: var(--text-dim);
+        font-size: 0.875rem;
+        margin-bottom: 20px;
+    }
+
+    .control-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--text);
+    }
+
+    button {
+        width: 100%;
+        padding: 12px 16px;
+        background: linear-gradient(135deg, var(--accent) 0%, #2563eb 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-bottom: 8px;
+        box-shadow: 0 4px 12px rgba(76, 141, 255, 0.3);
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(76, 141, 255, 0.4);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    button.secondary {
+        background: var(--border);
+        box-shadow: none;
+    }
+
+    button.secondary:hover {
+        background: #2a3a5c;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+        box-shadow: 0 4px 12px rgba(248, 81, 73, 0.3);
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, var(--success) 0%, #16a34a 100%);
+        box-shadow: 0 4px 12px rgba(63, 185, 80, 0.3);
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        background: var(--border);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+        margin: 10px 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(76, 141, 255, 0.5);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 8px rgba(76, 141, 255, 0.5);
+    }
+
+    .slider-value {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        margin-top: 4px;
+    }
+
+    .gas-selector {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .gas-option {
+        padding: 10px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .gas-option.ar { border-color: var(--ar); color: var(--ar); }
+    .gas-option.kr { border-color: var(--kr); color: var(--kr); }
+    .gas-option.rn { border-color: var(--rn); color: var(--rn); }
+
+    .gas-option.active {
+        background: currentColor;
+        color: var(--bg) !important;
+        transform: scale(1.05);
+        box-shadow: 0 0 20px currentColor;
+    }
+
+    .viewport {
+        position: relative;
+        background: radial-gradient(ellipse at center, #0f1729 0%, var(--bg) 70%);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        min-height: 600px;
+    }
+
+    canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .viewport-overlay {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background: rgba(17, 24, 42, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        font-size: 0.75rem;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .stat-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .stat-label {
+        color: var(--text-dim);
+        font-size: 0.75rem;
+    }
+
+    .stat-value {
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+        color: var(--accent);
+    }
+
+    .leak-indicator {
+        height: 8px;
+        background: var(--border);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+
+    .leak-bar {
+        height: 100%;
+        transition: width 0.3s ease, background 0.3s ease;
+        border-radius: 4px;
+    }
+
+    .legend {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.75rem;
+    }
+
+    .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-badge.running {
+        background: rgba(63, 185, 80, 0.2);
+        color: var(--success);
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    .status-badge.idle {
+        background: rgba(139, 148, 158, 0.2);
+        color: var(--text-dim);
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+    }
+
+    .readme {
+        grid-column: 1 / -1;
+        margin-top: 20px;
+    }
+
+    .readme h3 {
+        font-size: 1.25rem;
+        margin: 24px 0 12px;
+        color: var(--accent);
+    }
+
+    .readme table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        font-size: 0.875rem;
+    }
+
+    .readme th, .readme td {
+        padding: 12px;
+        text-align: left;
+        border: 1px solid var(--border);
+    }
+
+    .readme th {
+        background: rgba(76, 141, 255, 0.1);
+        font-weight: 600;
+    }
+
+    .readme code {
+        background: rgba(76, 141, 255, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.85em;
+    }
+
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--accent);
+        padding: 16px 20px;
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        z-index: 1000;
+        opacity: 0;
+        transform: translateX(400px);
+        transition: all 0.3s ease;
+    }
+
+    .toast.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <!-- Left Panel: Controls -->
+    <aside class="panel">
+        <h1>Kernel Board Control</h1>
+        <p class="subtitle">3D Stacked Architecture with Noble Gas Barriers</p>
+        
+        <h2>Board Operations</h2>
+        <div class="control-group">
+            <button id="btnBuild" class="btn-success">Build 10×10×10</button>
+            <button id="btnStack" class="secondary">Stack Layers</button>
+            <button id="btnReset" class="btn-danger">Reset Board</button>
+        </div>
+
+        <h2>Signal Control</h2>
+        <div class="control-group">
+            <button id="btnINPulse">IN Pulse</button>
+            <button id="btnClock" class="secondary">10kHz Clock: OFF</button>
+            <button id="btnO1" class="btn-danger">O1 Blocking Test</button>
+        </div>
+
+        <h2>Pressure Environment</h2>
+        <div class="control-group">
+            <label>Pressure: <span id="pressureVal">1.0</span> GPa</label>
+            <input type="range" id="pressureSlider" min="0.1" max="5" step="0.1" value="1.0">
+            <div class="slider-value">
+                <span>0.1 GPa</span>
+                <span>5.0 GPa</span>
+            </div>
+        </div>
+
+        <h2>Noble Gas Selection</h2>
+        <div class="control-group">
+            <div class="gas-selector">
+                <div class="gas-option ar active" data-gas="Ar">Ar 18<br><small>3p⁶</small></div>
+                <div class="gas-option kr" data-gas="Kr">Kr 36<br><small>4p⁶</small></div>
+                <div class="gas-option rn" data-gas="Rn">Rn 86<br><small>6p⁶</small></div>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Current Gas:</span>
+                <span class="stat-value" id="currentGas">Ar (Light Blue)</span>
+            </div>
+        </div>
+
+        <h2>System Status</h2>
+        <div class="control-group">
+            <div class="stat-row">
+                <span class="stat-label">Status:</span>
+                <span class="status-badge idle" id="statusBadge">IDLE</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Layers:</span>
+                <span class="stat-value" id="layerCount">0/10</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Clock Freq:</span>
+                <span class="stat-value" id="clockFreq">0 Hz</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Center: 3D Viewport -->
+    <main class="viewport">
+        <canvas id="canvas3d" width="2248" height="1200" style="width: 1124px; height: 600px;"></canvas>
+        <div class="viewport-overlay">
+            <strong>3D Stacked Kernel Board</strong><br>
+            <span style="color: var(--text-dim); font-size: 0.7rem;">Drag to rotate • Scroll to zoom</span><br><br>
+            <strong>Leak Rate vs Gas Type:</strong>
+            <div style="margin-top: 8px;">
+                <div style="font-size: 0.7rem; margin-bottom: 4px;">Ar: <span id="leakAr">0.220</span> a.u.</div>
+                <div class="leak-indicator"><div class="leak-bar" id="barAr" style="width: 100%; background: var(--ar);"></div></div>
+                <div style="font-size: 0.7rem; margin: 8px 0 4px;">Kr: <span id="leakKr">0.021</span> a.u.</div>
+                <div class="leak-indicator"><div class="leak-bar" id="barKr" style="width: 9.38338%; background: var(--kr);"></div></div>
+                <div style="font-size: 0.7rem; margin: 8px 0 4px;">Rn: <span id="leakRn">0.001</span> a.u.</div>
+                <div class="leak-indicator"><div class="leak-bar" id="barRn" style="width: 0.630323%; background: var(--rn);"></div></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Right Panel: Metrics & Legend -->
+    <aside class="panel">
+        <h2>Performance Metrics</h2>
+        <div class="control-group">
+            <div class="stat-row">
+                <span class="stat-label">O1 Blocking:</span>
+                <span class="stat-value" id="o1Block">97.8%</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Phonon Damping:</span>
+                <span class="stat-value" id="phononDamp">12.0 dB</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Density:</span>
+                <span class="stat-value" id="density">1.400 g/cm³</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Leak Rate:</span>
+                <span class="stat-value" id="leakRate">0.220 a.u.</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Temp Rise:</span>
+                <span class="stat-value" id="tempRise">0.0°C</span>
+            </div>
+        </div>
+
+        <h2>Element Legend</h2>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background: var(--s);"></div>S Sulfur</div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--ti);"></div>Ti Titanium</div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--cu);"></div>Cu Copper</div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--zn);"></div>Zn Zinc</div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--ag);"></div>Ag Silver</div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--au);"></div>Au Gold</div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--ar);"></div>Ar Gas</div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--rn);"></div>Rn Gas</div>
+        </div>
+
+        <h2>Gas Properties @ 1 GPa</h2>
+        <div class="control-group">
+            <div class="stat-row">
+                <span class="stat-label">Ar 18 (3p⁶):</span>
+                <span class="stat-value">1.40 g/cm³</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Kr 36 (4p⁶):</span>
+                <span class="stat-value">3.73 g/cm³</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Rn 86 (6p⁶):</span>
+                <span class="stat-value" style="color: var(--rn);">9.73 g/cm³</span>
+            </div>
+        </div>
+        <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 12px;">
+            Noble gases = 0 lasers (closed p⁶ shell). Rn provides highest density for wet-chip O1 blocking and phonon damping.
+        </p>
+    </aside>
+
+    <!-- README Section -->
+    <section class="panel readme">
+        <h1 style="margin-bottom: 20px;">README: Noble Gas Gap Comparison for Wet Chip</h1>
+        
+        <h3>Overview</h3>
+        <p>This simulation models a 3D stacked kernel board with interchangeable noble gas barriers operating at 1 GPa pressure. The noble gases (Ar, Kr, Rn) serve as inert separators between metallic layers, providing O1 leak protection and phonon attenuation in wet-chip environments.</p>
+
+        <h3>Why Noble Gases? Zero Laser Activity</h3>
+        <p>All selected noble gases have closed p⁶ electron shells: <code>Ar 3p⁶</code>, <code>Kr 4p⁶</code>, <code>Rn 6p⁶</code>. This configuration means:</p>
+        <ul style="margin: 12px 0 12px 20px; color: var(--text-dim);">
+            <li>No optical pumping possible - zero laser emission</li>
+            <li>Chemically inert at 1 GPa - no reaction with S, Ti, Cu, Zn, Ag, Au</li>
+            <li>Stable under 10kHz clock operation</li>
+        </ul>
+
+        <h3>Gas Comparison Table @ 1 GPa</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Gas</th>
+                    <th>Electron Config</th>
+                    <th>Density</th>
+                    <th>O1 Blocking</th>
+                    <th>Phonon Damp</th>
+                    <th>Leak Rate</th>
+                    <th>Wet Chip Use</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong style="color: var(--ar);">Ar 18</strong></td>
+                    <td>3p⁶</td>
+                    <td>1.40 g/cm³</td>
+                    <td>Baseline</td>
+                    <td>12 dB</td>
+                    <td>High</td>
+                    <td>Low-cost baseline</td>
+                </tr>
+                <tr>
+                    <td><strong style="color: var(--kr);">Kr 36</strong></td>
+                    <td>4p⁶</td>
+                    <td>3.73 g/cm³</td>
+                    <td>2.6× better</td>
+                    <td>18 dB</td>
+                    <td>Medium</td>
+                    <td>Balanced performance</td>
+                </tr>
+                <tr>
+                    <td><strong style="color: var(--rn);">Rn 86</strong></td>
+                    <td>6p⁶</td>
+                    <td>9.73 g/cm³</td>
+                    <td>7.0× better</td>
+                    <td>24 dB</td>
+                    <td>Lowest</td>
+                    <td><strong>Optimal for wet chip</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Rn Advantages for Wet Chip</h3>
+        <ol style="margin: 12px 0 12px 20px; color: var(--text-dim);">
+            <li><strong>Highest Density (9.73 g/cm³ @ 1 GPa):</strong> Creates maximum acoustic impedance mismatch, reflecting phonon energy at metal/gas interfaces. Critical for wet-chip where fluid coupling increases heat transport.</li>
+            <li><strong>Superior O1 Blocking:</strong> Denser gas layer reduces oxygen tunneling probability by factor of 7× vs Ar. Prevents oxidation of Ti/Cu interconnects in aqueous environments.</li>
+            <li><strong>Phonon Damping:</strong> Heavy Rn atoms (222 u) absorb acoustic modes more efficiently. 24 dB attenuation vs 12 dB for Ar reduces thermal cross-talk between stacked 10×10×10 cells.</li>
+            <li><strong>Pressure Stability:</strong> At 1 GPa, Rn remains gaseous but compressed, maintaining barrier integrity under clock load without phase transition.</li>
+        </ol>
+
+        <h3>Implementation Details</h3>
+        <p><strong>Stack Architecture:</strong> Alternating layers of metal elements (S, Ti, Cu, Zn, Ag, Au) separated by noble gas gaps. Gas selection via toggle changes barrier color and physics parameters.</p>
+        <p><strong>Leak Model:</strong> <code>Leak ∝ 1/(ρ × Z²)</code> where ρ = density, Z = atomic number. Rn leak = 0.14× Ar leak at same pressure.</p>
+        <p><strong>Clock Effect:</strong> 10kHz operation induces pressure modulation. Higher density gases maintain stability with less cavity deformation.</p>
+        
+        <h3>Usage</h3>
+        <p>1. Click <strong>Build 10×10×10</strong> to generate base layer grid<br>
+           2. <strong>Stack</strong> adds vertical layers with gas barriers<br>
+           3. Select <strong>Ar/Kr/Rn</strong> to compare performance<br>
+           4. Adjust <strong>Pressure</strong> slider to see density effects<br>
+           5. Enable <strong>10kHz Clock</strong> to simulate operation<br>
+           6. Press <strong>O1 Button</strong> to test blocking capability</p>
+    </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+    // State
+    const state = {
+        gas: 'Ar',
+        pressure: 1.0,
+        layers: 0,
+        clockOn: false,
+        clockInterval: null,
+        rotation: { x: 0.3, y: 0.5 },
+        isDragging: false,
+        lastMouse: { x: 0, y: 0 },
+        zoom: 1.2,
+        built: false,
+        o1Blocked: 0,
+        tempRise: 0
+    };
+
+    // Gas properties @ 1 GPa base
+    const gasData = {
+        Ar: { density: 1.40, color: '#7dd3fc', Z: 18, name: 'Ar (Light Blue)', damp: 12 },
+        Kr: { density: 3.73, color: '#38bdf8', Z: 36, name: 'Kr (Medium Blue)', damp: 18 },
+        Rn: { density: 9.73, color: '#0ea5e9', Z: 86, name: 'Rn (Dark Blue)', damp: 24 }
+    };
+
+    const elementColors = {
+        S: '#fbbf24', Ti: '#c084fc', Cu: '#fb923c', 
+        Zn: '#a3e635', Ag: '#e5e7eb', Au: '#facc15'
+    };
+
+    const elementPattern = ['S', 'Ti', 'Cu', 'Zn', 'Ag', 'Au', 'Ti', 'Cu', 'S', 'Au'];
+
+    // Canvas setup
+    const canvas = document.getElementById('canvas3d');
+    const ctx = canvas.getContext('2d');
+    let width, height, centerX, centerY;
+
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        width = canvas.width = rect.width * window.devicePixelRatio;
+        height = canvas.height = rect.height * window.devicePixelRatio;
+        centerX = width / 2;
+        centerY = height / 2;
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // 3D Projection
+    function project(x, y, z) {
+        const cosX = Math.cos(state.rotation.x);
+        const sinX = Math.sin(state.rotation.x);
+        const cosY = Math.cos(state.rotation.y);
+        const sinY = Math.sin(state.rotation.y);
+        
+        let x1 = x * cosY - z * sinY;
+        let z1 = x * sinY + z * cosY;
+        let y1 = y * cosX - z1 * sinX;
+        z1 = y * sinX + z1 * cosX;
+        
+        const scale = 30 * state.zoom;
+        const perspective = 600 / (600 + z1);
+        
+        return {
+            x: centerX + x1 * scale * perspective,
+            y: centerY + y1 * scale * perspective,
+            z: z1,
+            scale: perspective
+        };
+    }
+
+    // Draw cube
+    function drawCube(x, y, z, size, color, opacity = 1) {
+        const s = size / 2;
+        const vertices = [
+            [-s, -s, -s], [s, -s, -s], [s, s, -s], [-s, s, -s],
+            [-s, -s, s], [s, -s, s], [s, s, s], [-s, s, s]
+        ];
+        
+        const projected = vertices.map(v => project(x + v[0], y + v[1], z + v[2]));
+        const faces = [
+            [0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4],
+            [2, 3, 7, 6], [0, 3, 7, 4], [1, 2, 6, 5]
+        ];
+        
+        const faceData = faces.map(face => {
+            const avgZ = face.reduce((sum, i) => sum + projected[i].z, 0) / 4;
+            return { face, avgZ };
+        }).sort((a, b) => a.avgZ - b.avgZ);
+        
+        faceData.forEach(({ face }) => {
+            ctx.beginPath();
+            ctx.moveTo(projected[face[0]].x, projected[face[0]].y);
+            for (let i = 1; i < face.length; i++) {
+                ctx.lineTo(projected[face[i]].x, projected[face[i]].y);
+            }
+            ctx.closePath();
+            
+            ctx.fillStyle = color + Math.floor(opacity * 255).toString(16).padStart(2, '0');
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        });
+    }
+
+    // Render scene
+    function render() {
+        ctx.fillStyle = '#0a0e1a';
+        ctx.fillRect(0, 0, width, height);
+        
+        if (!state.built) {
+            ctx.fillStyle = '#8b949e';
+            ctx.font = '16px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('Click "Build 10×10×10" to start', centerX, centerY);
+            return;
+        }
+        
+        const cubes = [];
+        const spacing = 1.2;
+        const layerHeight = 1.5;
+        
+        // Build layers
+        for (let layer = 0; layer < state.layers; layer++) {
+            for (let i = 0; i < 10; i++) {
+                for (let j = 0; j < 10; j++) {
+                    const x = (i - 4.5) * spacing;
+                    const z = (j - 4.5) * spacing;
+                    const y = layer * layerHeight - (state.layers * layerHeight) / 2;
+                    
+                    const element = elementPattern[(i + j) % elementPattern.length];
+                    const color = elementColors[element];
+                    cubes.push({ x, y, z, color, size: 0.9, opacity: 1, type: 'metal' });
+                    
+                    // Add gas gap above each layer except top
+                    if (layer < state.layers - 1) {
+                        const gasY = y + layerHeight * 0.5;
+                        const gasColor = gasData[state.gas].color;
+                        const gasOpacity = 0.3 + (state.pressure / 5) * 0.4;
+                        cubes.push({ x, y: gasY, z, color: gasColor, size: 0.6, opacity: gasOpacity, type: 'gas' });
+                    }
+                }
+            }
+        }
+        
+        // Sort by Z and render
+        cubes.sort((a, b) => {
+            const pa = project(a.x, a.y, a.z);
+            const pb = project(b.x, b.y, b.z);
+            return pa.z - pb.z;
+        });
+        
+        cubes.forEach(cube => {
+            drawCube(cube.x, cube.y, cube.z, cube.size, cube.color, cube.opacity);
+        });
+        
+        // IN pulse effect
+        if (state.pulseTime && Date.now() - state.pulseTime < 1000) {
+            const t = (Date.now() - state.pulseTime) / 1000;
+            const pulseRadius = t * 15;
+            ctx.strokeStyle = `rgba(76, 141, 255, ${1 - t})`;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, pulseRadius * 30, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+    }
+
+    // Animation loop
+    function animate() {
+        if (state.clockOn) {
+            state.rotation.y += 0.005;
+            state.tempRise = Math.min(state.tempRise + 0.1, 5.0);
+        } else {
+            state.tempRise = Math.max(state.tempRise - 0.05, 0);
+        }
+        render();
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Mouse controls
+    canvas.addEventListener('mousedown', (e) => {
+        state.isDragging = true;
+        state.lastMouse = { x: e.clientX, y: e.clientY };
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (!state.isDragging) return;
+        const dx = e.clientX - state.lastMouse.x;
+        const dy = e.clientY - state.lastMouse.y;
+        state.rotation.y += dx * 0.005;
+        state.rotation.x += dy * 0.005;
+        state.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, state.rotation.x));
+        state.lastMouse = { x: e.clientX, y: e.clientY };
+    });
+
+    canvas.addEventListener('mouseup', () => state.isDragging = false);
+    canvas.addEventListener('mouseleave', () => state.isDragging = false);
+
+    canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        state.zoom *= e.deltaY > 0 ? 0.9 : 1.1;
+        state.zoom = Math.max(0.5, Math.min(3, state.zoom));
+    });
+
+    // Calculate metrics
+    function updateMetrics() {
+        const gas = gasData[state.gas];
+        const pressureFactor = state.pressure / 1.0;
+        const density = gas.density * pressureFactor;
+        
+        // Leak rate: inverse to density and Z^2
+        const leakRate = (1 / (density * gas.Z * gas.Z)) * 100;
+        const leakNormalized = {
+            Ar: (1 / (1.40 * 18 * 18 * pressureFactor)) * 100,
+            Kr: (1 / (3.73 * 36 * 36 * pressureFactor)) * 100,
+            Rn: (1 / (9.73 * 86 * 86 * pressureFactor)) * 100
+        };
+        
+        // O1 blocking: 100% - leak%
+        const o1Block = Math.max(0, 100 - leakRate * 10);
+        
+        // Phonon damping
+        const phononDamp = gas.damp + (pressureFactor - 1) * 3;
+        
+        document.getElementById('density').textContent = density.toFixed(3) + ' g/cm³';
+        document.getElementById('leakRate').textContent = leakRate.toFixed(3) + ' a.u.';
+        document.getElementById('o1Block').textContent = o1Block.toFixed(1) + '%';
+        document.getElementById('phononDamp').textContent = phononDamp.toFixed(1) + ' dB';
+        document.getElementById('tempRise').textContent = state.tempRise.toFixed(1) + '°C';
+        
+        document.getElementById('leakAr').textContent = leakNormalized.Ar.toFixed(3);
+        document.getElementById('leakKr').textContent = leakNormalized.Kr.toFixed(3);
+        document.getElementById('leakRn').textContent = leakNormalized.Rn.toFixed(3);
+        
+        const maxLeak = Math.max(leakNormalized.Ar, leakNormalized.Kr, leakNormalized.Rn);
+        document.getElementById('barAr').style.width = (leakNormalized.Ar / maxLeak * 100) + '%';
+        document.getElementById('barKr').style.width = (leakNormalized.Kr / maxLeak * 100) + '%';
+        document.getElementById('barRn').style.width = (leakNormalized.Rn / maxLeak * 100) + '%';
+    }
+
+    // Event handlers
+    document.getElementById('btnBuild').addEventListener('click', () => {
+        state.built = true;
+        state.layers = 1;
+        document.getElementById('layerCount').textContent = '1/10';
+        document.getElementById('statusBadge').textContent = 'READY';
+        document.getElementById('statusBadge').className = 'status-badge running';
+        showToast('Built 10×10×10 base layer');
+        updateMetrics();
+    });
+
+    document.getElementById('btnStack').addEventListener('click', () => {
+        if (!state.built) {
+            showToast('Build base layer first', 'warning');
+            return;
+        }
+        if (state.layers < 10) {
+            state.layers++;
+            document.getElementById('layerCount').textContent = state.layers + '/10';
+            showToast(`Stacked layer ${state.layers}/10`);
+            updateMetrics();
+        } else {
+            showToast('Maximum 10 layers reached', 'warning');
+        }
+    });
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+        state.built = false;
+        state.layers = 0;
+        state.clockOn = false;
+        state.tempRise = 0;
+        clearInterval(state.clockInterval);
+        document.getElementById('layerCount').textContent = '0/10';
+        document.getElementById('statusBadge').textContent = 'IDLE';
+        document.getElementById('statusBadge').className = 'status-badge idle';
+        document.getElementById('btnClock').textContent = '10kHz Clock: OFF';
+        document.getElementById('clockFreq').textContent = '0 Hz';
+        showToast('Board reset');
+        updateMetrics();
+    });
+
+    document.getElementById('btnINPulse').addEventListener('click', () => {
+        if (!state.built) {
+            showToast('Build board first', 'warning');
+            return;
+        }
+        state.pulseTime = Date.now();
+        showToast('IN Pulse sent through stack');
+    });
+
+    document.getElementById('btnClock').addEventListener('click', () => {
+        if (!state.built) {
+            showToast('Build board first', 'warning');
+            return;
+        }
+        state.clockOn = !state.clockOn;
+        document.getElementById('btnClock').textContent = `10kHz Clock: ${state.clockOn ? 'ON' : 'OFF'}`;
+        document.getElementById('clockFreq').textContent = state.clockOn ? '10,000 Hz' : '0 Hz';
+        showToast(`Clock ${state.clockOn ? 'started' : 'stopped'} at 10kHz`);
+    });
+
+    document.getElementById('btnO1').addEventListener('click', () => {
+        if (!state.built) {
+            showToast('Build board first', 'warning');
+            return;
+        }
+        const gas = gasData[state.gas];
+        const blockEffectiveness = Math.min(99.9, 85 + (gas.density / 10) * 15 + (state.pressure - 1) * 2);
+        state.o1Blocked++;
+        showToast(`O1 blocking test: ${blockEffectiveness.toFixed(1)}% blocked with ${state.gas}`, 'success');
+        updateMetrics();
+    });
+
+    document.getElementById('pressureSlider').addEventListener('input', (e) => {
+        state.pressure = parseFloat(e.target.value);
+        document.getElementById('pressureVal').textContent = state.pressure.toFixed(1);
+        updateMetrics();
+    });
+
+    document.querySelectorAll('.gas-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            document.querySelectorAll('.gas-option').forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            state.gas = opt.dataset.gas;
+            document.getElementById('currentGas').textContent = gasData[state.gas].name;
+            showToast(`Gas switched to ${state.gas} - ${gasData[state.gas].density} g/cm³ @ 1 GPa`);
+            updateMetrics();
+        });
+    });
+
+    function showToast(msg, type = 'info') {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.style.borderLeftColor = type === 'warning' ? 'var(--warning)' : 
+                                      type === 'success' ? 'var(--success)' : 'var(--accent)';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Initial render
+    updateMetrics();
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<!-- saved from url=(0165)https://1478905753168354.a.metaaiusercontent.com/html?artifact_uuid=ee117d4e-5b3a-4886-b326-f80cde7bb34c&ext=1779385095&hash=Q5fpDAES6hZEiKza5ft0UgpZ3hz9&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Chip Stack 4+1: Ar Isolated Wet Chip 1 GPa</title>
+<style>
+    :root {
+        --bg: #0a0e17;
+        --panel: #111827;
+        --panel-light: #1f2937;
+        --border: #374151;
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+        --accent: #3b82f6;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --ar: #38bdf8;
+        --s: #facc15;
+        --ti: #a8a29e;
+        --cu: #f97316;
+        --zn: #8b5cf6;
+        --ag: #e5e7eb;
+        --au: #fbbf24;
+        --o1: #ef4444;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1.5rem;
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 1.5rem;
+        min-height: 100vh;
+    }
+
+    header {
+        grid-column: 1 / -1;
+        background: linear-gradient(135deg, var(--panel) 0%, var(--panel-light) 100%);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem 2rem;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+    }
+
+    header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    header p {
+        color: var(--text-dim);
+        font-size: 0.95rem;
+    }
+
+    .controls {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+        position: sticky;
+        top: 1.5rem;
+    }
+
+    .controls h2 {
+        font-size: 1.1rem;
+        margin-bottom: 1.25rem;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .controls h2::before {
+        content: '';
+        width: 4px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    .control-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .control-group label {
+        display: block;
+        font-size: 0.875rem;
+        color: var(--text-dim);
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 0.65rem 1rem;
+        background: var(--panel-light);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn:hover {
+        background: var(--border);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px -2px rgba(59,130,246,0.3);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+    .btn-primary {
+        background: var(--accent);
+        border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        border-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+    }
+
+    .btn-success {
+        background: var(--success);
+        border-color: var(--success);
+    }
+
+    .btn-success:hover {
+        background: #059669;
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        background: var(--panel-light);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        transition: all 0.15s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.15);
+    }
+
+    .value-display {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .value-display span {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .main-view {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .canvas-wrapper {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+    }
+
+    .canvas-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .canvas-header h3 {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: var(--panel-light);
+        border: 1px solid var(--border);
+    }
+
+    .status-badge.active {
+        background: rgba(16,185,129,0.2);
+        color: var(--success);
+        border-color: var(--success);
+    }
+
+    .status-badge.warning {
+        background: rgba(245,158,11,0.2);
+        color: var(--warning);
+        border-color: var(--warning);
+    }
+
+    .status-badge.danger {
+        background: rgba(239,68,68,0.2);
+        color: var(--danger);
+        border-color: var(--danger);
+    }
+
+    #chipCanvas {
+        width: 100%;
+        background: #060910;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        display: block;
+    }
+
+    .metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .metric-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+    }
+
+    .metric-card h4 {
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+
+    .metric-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .metric-sub {
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        margin-top: 0.25rem;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .readme {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-top: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+    }
+
+    .readme h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text);
+    }
+
+    .readme h3 {
+        font-size: 1.15rem;
+        margin: 1.5rem 0 0.75rem;
+        color: var(--accent);
+    }
+
+    .readme p, .readme li {
+        color: var(--text-dim);
+        margin-bottom: 0.75rem;
+        line-height: 1.7;
+    }
+
+    .readme ul {
+        margin-left: 1.5rem;
+    }
+
+    .readme code {
+        background: var(--panel-light);
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+        color: var(--ar);
+    }
+
+    @media (max-width: 1024px) {
+        .container {
+            grid-template-columns: 1fr;
+        }
+        .controls {
+            position: static;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Full Chip Stack 4+1: Wet Chip 1 GPa Ar Isolation</h1>
+        <p>10x10x10 Stack: Ar18 | S16 | Ti22 | Cu29 | Zn30 | Ag47 | Au79 | Inert gas dielectric prevents O1 shorts at 1 GPa</p>
+    </header>
+
+    <aside class="controls">
+        <h2>Chip Controls</h2>
+        
+        <div class="control-group">
+            <button id="buildBtn" class="btn btn-primary">Build 10x10x10 Stack</button>
+        </div>
+
+        <div class="control-group">
+            <label>Pressure Control</label>
+            <input type="range" id="pressureSlider" min="0" max="2" step="0.1" value="0">
+            <div class="value-display">
+                <span>0 GPa</span>
+                <span id="pressureValue">0.0 GPa</span>
+                <span>2 GPa</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <button id="inPulseBtn" class="btn" disabled="">Send IN Pulse</button>
+        </div>
+
+        <div class="control-group">
+            <button id="clockBtn" class="btn" disabled="">Start 10kHz Clock</button>
+        </div>
+
+        <div class="control-group">
+            <button id="o1Btn" class="btn btn-danger" disabled="">Inject O1 Contaminant</button>
+        </div>
+
+        <div class="control-group">
+            <button id="resetBtn" class="btn">Reset Simulation</button>
+        </div>
+    </aside>
+
+    <main class="main-view">
+        <div class="canvas-wrapper">
+            <div class="canvas-header">
+                <h3>Chip Stack Cross-Section View</h3>
+                <div class="status-badge" id="statusBadge">Idle</div>
+            </div>
+            <canvas id="chipCanvas" width="900" height="600"></canvas>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background: var(--ar)"></div>Ar 18 Gas</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--s)"></div>S 16</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--ti)"></div>Ti 22</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--cu)"></div>Cu 29</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--zn)"></div>Zn 30</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--ag)"></div>Ag 47</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--au)"></div>Au 79</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--o1)"></div>O1 Short</div>
+            </div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <h4>Ar Density</h4>
+                <div class="metric-value" id="arDensity">0.00</div>
+                <div class="metric-sub">atoms/nm³</div>
+            </div>
+            <div class="metric-card">
+                <h4>Ag47 Core D States</h4>
+                <div class="metric-value" id="agDStates">0</div>
+                <div class="metric-sub">Active cores</div>
+            </div>
+            <div class="metric-card">
+                <h4>OUT Current</h4>
+                <div class="metric-value" id="outCurrent">0.0</div>
+                <div class="metric-sub">μA</div>
+            </div>
+            <div class="metric-card">
+                <h4>Tunneling Events</h4>
+                <div class="metric-value" id="tunneling">0</div>
+                <div class="metric-sub">Photon leaks</div>
+            </div>
+            <div class="metric-card">
+                <h4>O1 Short Count</h4>
+                <div class="metric-value" id="o1Count">0</div>
+                <div class="metric-sub">Contaminants</div>
+            </div>
+            <div class="metric-card">
+                <h4>Clock Cycles</h4>
+                <div class="metric-value" id="clockCycles">0</div>
+                <div class="metric-sub">@ 10 kHz</div>
+            </div>
+        </div>
+
+        <div class="readme">
+            <h2>README.md: Wet Chip 1 GPa Design with Ar Gas Isolation</h2>
+            
+            <h3>1. Stack Architecture 4+1</h3>
+            <p>This simulation models a 10x10x10 wet chip stack operating at high pressure. Layer composition:</p>
+            <ul>
+                <li><code>Ar 18</code>: [Ne] 3s² 3p⁶ - Full shell, 0 valence electrons. Noble gas dielectric layer.</li>
+                <li><code>S 16</code>: [Ne] 3s² 3p⁴ - Sulfur chalcogenide switch layer.</li>
+                <li><code>Ti 22</code>: [Ar] 3d² 4s² - Titanium interconnect traces.</li>
+                <li><code>Cu 29</code>: [Ar] 3d¹⁰ 4s¹ - Copper power distribution.</li>
+                <li><code>Zn 30</code>: [Ar] 3d¹⁰ 4s² - Zinc buffer/diffusion barrier.</li>
+                <li><code>Ag 47</code>: [Kr] 4d¹⁰ 5s¹ - Silver memristor cores. D-state utilization.</li>
+                <li><code>Au 79</code>: [Xe] 4f¹⁴ 5d¹⁰ 6s¹ - Gold contact pads and bonding.</li>
+            </ul>
+
+            <h3>2. Ar as Inert Gas Isolation at 1 GPa</h3>
+            <p>Argon 18 has a complete 3p⁶ shell = 0 lasers rule. No valence electrons available for bonding or conduction. At 1 GPa:</p>
+            <ul>
+                <li>Ar compresses to ~2.65 atoms/nm³ density vs 0.025 at STP</li>
+                <li>Forms conformal gas dielectric between Ti traces and Ag cores</li>
+                <li>Breakdown field &gt; 15 MV/cm at 1 GPa prevents electron avalanche</li>
+                <li>Photon tunneling probability drops exponentially: P ∝ exp(-α*d*√ρ)</li>
+                <li>Blocks O1 diffusion paths that cause resistive shorts</li>
+            </ul>
+
+            <h3>3. 10kHz Clock Operation</h3>
+            <p>Clock drives IN pulses through S16 switches to Ag47 cores. Each cycle:</p>
+            <ul>
+                <li>IN pulse biases Ti22/Cu29 interconnects</li>
+                <li>S16 acts as phase-change switch, Zn30 prevents Cu migration</li>
+                <li>Ag47 D-states store charge: 4d¹⁰ orbital manipulation</li>
+                <li>OUT current measured at Au79 pads</li>
+                <li>At P &lt; 0.8 GPa: Ar gaps allow photon tunneling → leakage current</li>
+                <li>At P ≥ 1.0 GPa: Dense Ar blocks tunneling → clean OUT signal</li>
+            </ul>
+
+            <h3>4. O1 Contamination Model</h3>
+            <p>O1 represents atomic oxygen ingress causing resistive shorts. Without Ar isolation:</p>
+            <ul>
+                <li>O1 bridges Ti22 to Ag47 → permanent short circuit</li>
+                <li>OUT current spikes to failure state</li>
+                <li>With Ar at 1 GPa: O1 cannot penetrate dense gas layer</li>
+                <li>Mean free path λ &lt; 0.1nm blocks ionic transport</li>
+            </ul>
+
+            <h3>5. Controls Usage</h3>
+            <ul>
+                <li><strong>Build 10x10x10</strong>: Initializes stack layers with random distribution</li>
+                <li><strong>Pressure 0-2 GPa</strong>: Controls Ar density. Critical point at 1.0 GPa</li>
+                <li><strong>IN Pulse</strong>: Sends single test vector through interconnects</li>
+                <li><strong>10kHz Clock</strong>: Continuous operation, monitors D states and OUT</li>
+                <li><strong>O1 Button</strong>: Injects oxygen contaminants to test Ar barrier</li>
+            </ul>
+        </div>
+    </main>
+</div>
+
+<script>
+(function() {
+    const canvas = document.getElementById('chipCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    const elems = {
+        build: document.getElementById('buildBtn'),
+        pressure: document.getElementById('pressureSlider'),
+        pressureVal: document.getElementById('pressureValue'),
+        inPulse: document.getElementById('inPulseBtn'),
+        clock: document.getElementById('clockBtn'),
+        o1: document.getElementById('o1Btn'),
+        reset: document.getElementById('resetBtn'),
+        status: document.getElementById('statusBadge'),
+        arDensity: document.getElementById('arDensity'),
+        agDStates: document.getElementById('agDStates'),
+        outCurrent: document.getElementById('outCurrent'),
+        tunneling: document.getElementById('tunneling'),
+        o1Count: document.getElementById('o1Count'),
+        clockCycles: document.getElementById('clockCycles')
+    };
+
+    const state = {
+        built: false,
+        running: false,
+        pressure: 0,
+        pressurePa: 0,
+        arDensity: 0,
+        clockCycles: 0,
+        tunneling: 0,
+        o1Count: 0,
+        outCurrent: 0,
+        grid: [],
+        particles: [],
+        pulses: [],
+        o1particles: [],
+        clockInterval: null,
+        animFrame: null
+    };
+
+    const GRID_SIZE = 10;
+    const CELL_SIZE = 50;
+    const OFFSET_X = 200;
+    const OFFSET_Y = 50;
+
+    const ELEMENTS = {
+        Ar: { color: '#38bdf8', z: 18, laser: 0 },
+        S: { color: '#facc15', z: 16, laser: 4 },
+        Ti: { color: '#a8a29e', z: 22, laser: 2 },
+        Cu: { color: '#f97316', z: 29, laser: 1 },
+        Zn: { color: '#8b5cf6', z: 30, laser: 2 },
+        Ag: { color: '#e5e7eb', z: 47, laser: 1 },
+        Au: { color: '#fbbf24', z: 79, laser: 1 }
+    };
+
+    function initGrid() {
+        state.grid = [];
+        for (let x = 0; x < GRID_SIZE; x++) {
+            state.grid[x] = [];
+            for (let y = 0; y < GRID_SIZE; y++) {
+                state.grid[x][y] = [];
+                for (let z = 0; z < GRID_SIZE; z++) {
+                    let type;
+                    const rand = Math.random();
+                    if (z < 2) type = 'Au';
+                    else if (z < 4) type = 'Ag';
+                    else if (z < 5) type = 'Zn';
+                    else if (z < 6) type = 'Cu';
+                    else if (z < 7) type = 'Ti';
+                    else if (z < 8) type = 'S';
+                    else type = rand < 0.7 ? 'Ar' : 'Ti';
+                    
+                    state.grid[x][y][z] = {
+                        type: type,
+                        active: false,
+                        dState: type === 'Ag' ? 0 : null,
+                        shorted: false
+                    };
+                }
+            }
+        }
+        state.built = true;
+        updateArDensity();
+    }
+
+    function updateArDensity() {
+        // Ar density vs pressure: ideal gas with compression factor
+        // At 1 GPa, Ar density ~2.65 atoms/nm³
+        state.pressurePa = state.pressure * 1e9;
+        state.arDensity = state.pressure * 2.65;
+        elems.arDensity.textContent = state.arDensity.toFixed(2);
+    }
+
+    function calcTunnelingProbability() {
+        if (state.pressure < 0.1) return 0.8;
+        // P ∝ exp(-α * d * sqrt(ρ))
+        const alpha = 2.5;
+        const gap = 1.0; // nm
+        const prob = Math.exp(-alpha * gap * Math.sqrt(state.arDensity));
+        return Math.max(0, Math.min(1, prob));
+    }
+
+    function drawChip() {
+        ctx.fillStyle = '#060910';
+        ctx.fillRect(0, 0, W, H);
+
+        if (!state.built) {
+            ctx.fillStyle = '#374151';
+            ctx.font = '16px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('Click "Build 10x10x10 Stack" to initialize', W/2, H/2);
+            return;
+        }
+
+        // Draw cross-section view - isometric-ish projection
+        const slice = 5; // Show middle slice
+        for (let y = GRID_SIZE-1; y >= 0; y--) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                for (let z = 0; z < GRID_SIZE; z++) {
+                    const cell = state.grid[x][y][z];
+                    const px = OFFSET_X + x * CELL_SIZE - y * 15;
+                    const py = OFFSET_Y + z * CELL_SIZE + y * 10;
+                    
+                    // Base color
+                    let color = ELEMENTS[cell.type].color;
+                    if (cell.shorted) color = '#ef4444';
+                    else if (cell.active) color = '#10b981';
+                    else if (cell.type === 'Ag' && cell.dState > 0) {
+                        const intensity = Math.min(255, 100 + cell.dState * 30);
+                        color = `rgb(${intensity}, ${intensity}, ${intensity})`;
+                    }
+
+                    // Draw cell
+                    ctx.fillStyle = color;
+                    ctx.fillRect(px, py, CELL_SIZE-2, CELL_SIZE-2);
+                    
+                    // Ar gas effect
+                    if (cell.type === 'Ar' && state.pressure > 0.5) {
+                        ctx.fillStyle = `rgba(56, 189, 248, ${Math.min(0.8, state.arDensity * 0.25)})`;
+                        ctx.fillRect(px, py, CELL_SIZE-2, CELL_SIZE-2);
+                    }
+
+                    // Cell border
+                    ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(px, py, CELL_SIZE-2, CELL_SIZE-2);
+                }
+            }
+        }
+
+        // Draw layer labels
+        ctx.fillStyle = '#9ca3af';
+        ctx.font = '12px monospace';
+        ctx.textAlign = 'left';
+        const labels = ['Au79', 'Ag47', 'Zn30', 'Cu29', 'Ti22', 'S16', 'Ar18/Ti'];
+        labels.forEach((label, i) => {
+            const py = OFFSET_Y + i * CELL_SIZE + 30;
+            ctx.fillText(label, 50, py);
+        });
+
+        // Draw pulses
+        state.pulses.forEach(p => {
+            ctx.strokeStyle = `rgba(16, 185, 129, ${p.alpha})`;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(p.x1, p.y1);
+            ctx.lineTo(p.x2, p.y2);
+            ctx.stroke();
+        });
+
+        // Draw O1 contaminants
+        state.o1particles.forEach(o1 => {
+            ctx.fillStyle = `rgba(239, 68, 68, ${o1.alpha})`;
+            ctx.beginPath();
+            ctx.arc(o1.x, o1.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    }
+
+    function sendINPulse() {
+        if (!state.built) return;
+        
+        const tunneling = calcTunnelingProbability();
+        let current = 0;
+        let shorts = 0;
+
+        // Activate Ti/Cu interconnects
+        for (let x = 0; x < GRID_SIZE; x++) {
+            for (let y = 0; y < GRID_SIZE; y++) {
+                for (let z = 5; z < 7; z++) {
+                    if (state.grid[x][y][z].type === 'Ti' || state.grid[x][y][z].type === 'Cu') {
+                        state.grid[x][y][z].active = true;
+                        setTimeout(() => {
+                            if (state.grid[x] && state.grid[x][y] && state.grid[x][y][z]) {
+                                state.grid[x][y][z].active = false;
+                            }
+                        }, 200);
+                    }
+                }
+            }
+        }
+
+        // Process Ag cores
+        let activeCores = 0;
+        for (let x = 0; x < GRID_SIZE; x++) {
+            for (let y = 0; y < GRID_SIZE; y++) {
+                for (let z = 2; z < 4; z++) {
+                    const cell = state.grid[x][y][z];
+                    if (cell.type === 'Ag') {
+                        if (cell.shorted) {
+                            shorts++;
+                            current += 10; // Short circuit spike
+                        } else if (Math.random() > tunneling) {
+                            cell.dState = Math.min(10, cell.dState + 1);
+                            current += cell.dState * 0.5;
+                            activeCores++;
+                        } else {
+                            state.tunneling++;
+                            current += 0.1; // Leakage
+                        }
+                    }
+                }
+            }
+        }
+
+        state.outCurrent = current;
+        elems.agDStates.textContent = activeCores;
+        elems.outCurrent.textContent = current.toFixed(1);
+        elems.tunneling.textContent = state.tunneling;
+        elems.o1Count.textContent = shorts;
+
+        // Visual pulse
+        const pulse = {
+            x1: OFFSET_X,
+            y1: OFFSET_Y + 5.5 * CELL_SIZE,
+            x2: OFFSET_X + GRID_SIZE * CELL_SIZE,
+            y2: OFFSET_Y + 3 * CELL_SIZE,
+            alpha: 1.0
+        };
+        state.pulses.push(pulse);
+
+        setTimeout(() => {
+            const idx = state.pulses.indexOf(pulse);
+            if (idx > -1) state.pulses.splice(idx, 1);
+        }, 300);
+    }
+
+    function injectO1() {
+        if (!state.built) return;
+        
+        const count = Math.floor(Math.random() * 5) + 3;
+        for (let i = 0; i < count; i++) {
+            const x = Math.floor(Math.random() * GRID_SIZE);
+            const y = Math.floor(Math.random() * GRID_SIZE);
+            const z = Math.floor(Math.random() * 3) + 4; // Target Ti/Cu region
+            
+            if (state.grid[x][y][z]) {
+                const tunneling = calcTunnelingProbability();
+                const blocked = state.pressure >= 1.0 ? tunneling < 0.1 : tunneling < 0.5;
+                
+                if (!blocked) {
+                    state.grid[x][y][z].shorted = true;
+                    state.o1Count++;
+                    
+                    // Find Ag below and short it too
+                    for (let dz = z; dz >= 2; dz--) {
+                        if (state.grid[x][y][dz].type === 'Ag') {
+                            state.grid[x][y][dz].shorted = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Visual O1 particle
+                const o1 = {
+                    x: OFFSET_X + x * CELL_SIZE - y * 15 + CELL_SIZE/2,
+                    y: OFFSET_Y + z * CELL_SIZE + y * 10 + CELL_SIZE/2,
+                    alpha: 1.0,
+                    blocked: blocked
+                };
+                state.o1particles.push(o1);
+            }
+        }
+        elems.o1Count.textContent = state.o1Count;
+    }
+
+    function toggleClock() {
+        if (state.running) {
+            clearInterval(state.clockInterval);
+            state.running = false;
+            elems.clock.textContent = 'Start 10kHz Clock';
+            elems.clock.classList.remove('btn-success');
+            elems.status.textContent = 'Idle';
+            elems.status.className = 'status-badge';
+        } else {
+            state.running = true;
+            elems.clock.textContent = 'Stop 10kHz Clock';
+            elems.clock.classList.add('btn-success');
+            elems.status.textContent = 'Running @ 10kHz';
+            elems.status.className = 'status-badge active';
+            
+            state.clockInterval = setInterval(() => {
+                state.clockCycles++;
+                elems.clockCycles.textContent = state.clockCycles;
+                sendINPulse();
+                
+                // Pressure warning
+                if (state.pressure < 0.8 && state.clockCycles % 10 === 0) {
+                    elems.status.textContent = 'Warning: Tunneling Risk';
+                    elems.status.className = 'status-badge warning';
+                } else if (state.pressure >= 1.0) {
+                    elems.status.textContent = 'Running @ 10kHz - Ar Stable';
+                    elems.status.className = 'status-badge active';
+                }
+            }, 100); // 10Hz for visualization, represents 10kHz
+        }
+    }
+
+    function animate() {
+        // Fade pulses and O1
+        state.pulses.forEach(p => p.alpha *= 0.95);
+        state.pulses = state.pulses.filter(p => p.alpha > 0.01);
+        
+        state.o1particles.forEach(o1 => o1.alpha *= 0.98);
+        state.o1particles = state.o1particles.filter(o1 => o1.alpha > 0.01);
+        
+        drawChip();
+        state.animFrame = requestAnimationFrame(animate);
+    }
+
+    function reset() {
+        clearInterval(state.clockInterval);
+        cancelAnimationFrame(state.animFrame);
+        state.running = false;
+        state.built = false;
+        state.clockCycles = 0;
+        state.tunneling = 0;
+        state.o1Count = 0;
+        state.outCurrent = 0;
+        state.pulses = [];
+        state.o1particles = [];
+        
+        elems.inPulse.disabled = true;
+        elems.clock.disabled = true;
+        elems.o1.disabled = true;
+        elems.clock.textContent = 'Start 10kHz Clock';
+        elems.clock.classList.remove('btn-success');
+        elems.status.textContent = 'Idle';
+        elems.status.className = 'status-badge';
+        
+        Object.keys(elems).forEach(k => {
+            if (['arDensity', 'agDStates', 'outCurrent', 'tunneling', 'o1Count', 'clockCycles'].includes(k)) {
+                elems[k].textContent = '0';
+            }
+        });
+        
+        drawChip();
+        animate();
+    }
+
+    // Event listeners
+    elems.build.addEventListener('click', () => {
+        initGrid();
+        elems.inPulse.disabled = false;
+        elems.clock.disabled = false;
+        elems.o1.disabled = false;
+        elems.status.textContent = 'Stack Built';
+        elems.status.className = 'status-badge active';
+    });
+
+    elems.pressure.addEventListener('input', (e) => {
+        state.pressure = parseFloat(e.target.value);
+        elems.pressureVal.textContent = state.pressure.toFixed(1) + ' GPa';
+        updateArDensity();
+        
+        if (state.pressure >= 1.0) {
+            elems.status.textContent = 'Ar Density Critical - Tunneling Blocked';
+            elems.status.className = 'status-badge active';
+        } else if (state.pressure >= 0.5) {
+            elems.status.textContent = 'Ar Compressing';
+            elems.status.className = 'status-badge warning';
+        } else {
+            elems.status.textContent = 'Low Pressure - Leak Risk';
+            elems.status.className = 'status-badge danger';
+        }
+    });
+
+    elems.inPulse.addEventListener('click', sendINPulse);
+    elems.clock.addEventListener('click', toggleClock);
+    elems.o1.addEventListener('click', injectO1);
+    elems.reset.addEventListener('click', reset);
+
+    // Init
+    updateArDensity();
+    animate();
+})();
+</script>
+
+</body></html>

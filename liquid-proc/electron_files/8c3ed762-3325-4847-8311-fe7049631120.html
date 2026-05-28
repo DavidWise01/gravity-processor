@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<!-- saved from url=(0164)https://866694096462507.a.metaaiusercontent.com/html?artifact_uuid=8c3ed762-3325-4847-8311-fe7049631120&ext=1779385095&hash=Q5fpDAE0QTbc9C0f8hOYo7c2xJnA&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gravity Processor v2.0 - 42 Prim Kernel</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --bg-primary: #0a0a0f;
+        --bg-secondary: #13131a;
+        --bg-panel: #1a1a24;
+        --accent-cyan: #00f3ff;
+        --accent-magenta: #ff00e6;
+        --accent-violet: #9d00ff;
+        --accent-yellow: #ffee00;
+        --text-primary: #e0e0ff;
+        --text-secondary: #8a8aa8;
+        --grid-line: rgba(0, 243, 255, 0.1);
+        --glow-cyan: 0 0 20px rgba(0, 243, 255, 0.6), 0 0 40px rgba(0, 243, 255, 0.3);
+        --glow-magenta: 0 0 20px rgba(255, 0, 230, 0.6), 0 0 40px rgba(255, 0, 230, 0.3);
+    }
+
+    body {
+        font-family: 'Courier New', monospace;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        overflow-x: hidden;
+        min-height: 100vh;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(157, 0, 255, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(0, 243, 255, 0.1) 0%, transparent 50%),
+            linear-gradient(180deg, #0a0a0f 0%, #0f0a1a 100%);
+    }
+
+    .scanline {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, transparent 50%, rgba(0, 243, 255, 0.03) 51%, transparent 52%);
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.5;
+        animation: scanline 8s linear infinite;
+    }
+
+    @keyframes scanline {
+        0% { background-position: 0 0; }
+        100% { background-position: 0 100%; }
+    }
+
+    .header {
+        background: var(--bg-secondary);
+        border-bottom: 2px solid var(--accent-cyan);
+        padding: 1.5rem 2rem;
+        box-shadow: 0 4px 20px rgba(0, 243, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+        animation: headerGlow 3s linear infinite;
+    }
+
+    @keyframes headerGlow {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .header-content {
+        max-width: 1600px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .logo-icon {
+        width: 48px;
+        height: 48px;
+        border: 2px solid var(--accent-cyan);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: var(--glow-cyan);
+        animation: logoPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes logoPulse {
+        0%, 100% { transform: scale(1); box-shadow: var(--glow-cyan); }
+        50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 243, 255, 0.8); }
+    }
+
+    .logo-icon::before, .logo-icon::after {
+        content: '';
+        position: absolute;
+        background: var(--accent-cyan);
+    }
+
+    .logo-icon::before {
+        width: 60%;
+        height: 2px;
+    }
+
+    .logo-icon::after {
+        width: 2px;
+        height: 60%;
+    }
+
+    .logo h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
+    }
+
+    .kernel-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        background: rgba(157, 0, 255, 0.2);
+        border: 1px solid var(--accent-violet);
+        border-radius: 4px;
+        color: var(--accent-violet);
+        letter-spacing: 1px;
+    }
+
+    .status-display {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .status-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .status-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-secondary);
+    }
+
+    .status-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--accent-cyan);
+        text-shadow: var(--glow-cyan);
+    }
+
+    .container {
+        max-width: 1600px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 2rem;
+    }
+
+    .main-viewport {
+        background: var(--bg-panel);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 12px;
+        padding: 2rem;
+        position: relative;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+    }
+
+    .main-viewport::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+    }
+
+    .viewport-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+    }
+
+    .viewport-title {
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--accent-cyan);
+    }
+
+    .canvas-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1;
+        background: #050508;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 243, 255, 0.2);
+    }
+
+    #mainCanvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: crosshair;
+    }
+
+    .control-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .panel {
+        background: var(--bg-panel);
+        border: 1px solid rgba(157, 0, 255, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        position: relative;
+    }
+
+    .panel-header {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--accent-violet);
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(157, 0, 255, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .panel-header::before {
+        content: '▮';
+        color: var(--accent-violet);
+    }
+
+    .control-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .control-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .control-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .control-value {
+        color: var(--accent-cyan);
+        font-weight: 700;
+        font-size: 1rem;
+        text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        background: rgba(0, 243, 255, 0.1);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+        position: relative;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        background: var(--accent-cyan);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: var(--glow-cyan);
+        transition: all 0.2s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 30px rgba(0, 243, 255, 0.8);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        background: var(--accent-cyan);
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+        box-shadow: var(--glow-cyan);
+    }
+
+    .display-box {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        font-family: 'Courier New', monospace;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .display-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        background: var(--accent-cyan);
+        box-shadow: var(--glow-cyan);
+    }
+
+    .display-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .display-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .display-label {
+        color: var(--text-secondary);
+    }
+
+    .display-data {
+        color: var(--accent-cyan);
+        font-weight: 700;
+    }
+
+    #phaseVisualizer {
+        width: 100%;
+        height: 120px;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 0, 230, 0.3);
+    }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    button {
+        padding: 0.875rem;
+        background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(157, 0, 255, 0.1));
+        border: 1px solid var(--accent-cyan);
+        border-radius: 8px;
+        color: var(--accent-cyan);
+        font-family: 'Courier New', monospace;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(0, 243, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    button:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    button:hover {
+        box-shadow: var(--glow-cyan);
+        transform: translateY(-2px);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    button.active {
+        background: linear-gradient(135deg, rgba(0, 243, 255, 0.3), rgba(157, 0, 255, 0.3));
+        box-shadow: var(--glow-cyan);
+    }
+
+    .prim-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .stat-box {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(157, 0, 255, 0.3);
+        border-radius: 6px;
+        padding: 0.75rem;
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-magenta);
+        text-shadow: 0 0 10px rgba(255, 0, 230, 0.5);
+    }
+
+    .stat-label {
+        font-size: 0.65rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 0.25rem;
+    }
+
+    @media (max-width: 1200px) {
+        .container {
+            grid-template-columns: 1fr;
+        }
+        
+        .control-panel {
+            order: -1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .status-display {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .container {
+            padding: 0 1rem;
+        }
+
+        .main-viewport {
+            padding: 1rem;
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .live-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: var(--accent-cyan);
+        border-radius: 50%;
+        box-shadow: var(--glow-cyan);
+        animation: pulse 1s ease-in-out infinite;
+        margin-right: 0.5rem;
+    }
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<header class="header">
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <div>
+                <h1>Gravity Processor</h1>
+                <span class="kernel-badge">v2.0 - 42 PRIM KERNEL</span>
+            </div>
+        </div>
+        <div class="status-display">
+            <div class="status-item">
+                <span class="status-label">Frequency</span>
+                <span class="status-value" id="freqDisplay">10.02 kHz</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Status</span>
+                <span class="status-value"><span class="live-indicator"></span>LIVE</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="main-viewport">
+        <div class="viewport-header">
+            <span class="viewport-title">Tensor Core Array - Real-time Visualization</span>
+            <span class="viewport-title" id="activeNodes">0/42 PRIM ACTIVE</span>
+        </div>
+        <div class="canvas-container">
+            <canvas id="mainCanvas" width="2068" height="2068"></canvas>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <div class="panel">
+            <div class="panel-header">Gravity Control</div>
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Input Mass</span>
+                    <span class="control-value" id="massValue">500</span>
+                </div>
+                <input type="range" id="massSlider" min="0" max="1000" value="500">
+            </div>
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Output Trajectory</span>
+                </div>
+                <div class="display-box">
+                    <div class="display-row">
+                        <span class="display-label">Vector X:</span>
+                        <span class="display-data" id="outX">0.00</span>
+                    </div>
+                    <div class="display-row">
+                        <span class="display-label">Vector Y:</span>
+                        <span class="display-data" id="outY">0.00</span>
+                    </div>
+                    <div class="display-row">
+                        <span class="display-label">Magnitude:</span>
+                        <span class="display-data" id="outMag">0.00</span>
+                    </div>
+                    <div class="display-row">
+                        <span class="display-label">Curvature:</span>
+                        <span class="display-data" id="outCurve">0.0°</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Phase Visualizer</div>
+            <canvas id="phaseVisualizer" width="2196" height="240"></canvas>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Prim Kernel Stats</div>
+            <div class="prim-stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="activeCount">0</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="tensorLoad">0%</div>
+                    <div class="stat-label">Load</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="fluxRate">0.0</div>
+                    <div class="stat-label">Flux</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="stability">100%</div>
+                    <div class="stat-label">Stable</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Kernel Operations</div>
+            <div class="action-buttons">
+                <button id="activateAll">Activate All</button>
+                <button id="resetAll">Reset</button>
+                <button id="pulseMode" class="active">Pulse 10kHz</button>
+                <button id="randomize">Randomize</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // Canvas setup
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
+    const phaseCanvas = document.getElementById('phaseVisualizer');
+    const phaseCtx = phaseCanvas.getContext('2d');
+    
+    let width, height, centerX, centerY;
+    let time = 0;
+    let animationId;
+
+    // State
+    const state = {
+        mass: 500,
+        frequency: 10000,
+        pulseMode: true,
+        primNodes: [],
+        tensorCores: [],
+        activePrimCount: 0,
+        trajectory: { x: 0, y: 0, magnitude: 0, curvature: 0 },
+        phase: [0, 0, 0, 0]
+    };
+
+    // Tensor Cores at 0°, 90°, 180°, 270°
+    function initTensorCores() {
+        const angles = [0, 90, 180, 270];
+        const colors = ['#00f3ff', '#ff00e6', '#9d00ff', '#ffee00'];
+        state.tensorCores = angles.map((angle, i) => ({
+            id: i,
+            angle: angle * Math.PI / 180,
+            x: 0,
+            y: 0,
+            baseRadius: 0,
+            color: colors[i],
+            energy: 0,
+            pulse: 0
+        }));
+    }
+
+    // Hexagonal grid of 42 Gravity Prim nodes
+    function initPrimNodes() {
+        state.primNodes = [];
+        const hexRadius = 30;
+        const spacing = hexRadius * 1.8;
+        
+        // Generate hexagonal grid pattern for 42 nodes
+        const positions = [];
+        const layers = 4;
+        positions.push({ x: 0, y: 0 }); // Center
+        
+        for (let layer = 1; layer < layers; layer++) {
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i;
+                for (let j = 0; j < layer; j++) {
+                    if (positions.length >= 42) break;
+                    const t = j / layer;
+                    const nextAngle = (Math.PI / 3) * ((i + 1) % 6);
+                    const x = layer * spacing * (Math.cos(angle) * (1 - t) + Math.cos(nextAngle) * t);
+                    const y = layer * spacing * (Math.sin(angle) * (1 - t) + Math.sin(nextAngle) * t);
+                    positions.push({ x, y });
+                }
+            }
+        }
+
+        state.primNodes = positions.slice(0, 42).map((pos, i) => ({
+            id: i,
+            x: pos.x,
+            y: pos.y,
+            active: false,
+            energy: 0,
+            glow: 0,
+            connectedTo: [],
+            charge: 0,
+            hexSize: hexRadius
+        }));
+    }
+
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.width * window.devicePixelRatio;
+        width = canvas.width;
+        height = canvas.height;
+        centerX = width / 2;
+        centerY = height / 2;
+
+        phaseCanvas.width = phaseCanvas.parentElement.clientWidth * window.devicePixelRatio;
+        phaseCanvas.height = 120 * window.devicePixelRatio;
+
+        // Update tensor core positions
+        const tensorRadius = Math.min(width, height) * 0.35;
+        state.tensorCores.forEach(core => {
+            core.x = centerX + Math.cos(core.angle) * tensorRadius;
+            core.y = centerY + Math.sin(core.angle) * tensorRadius;
+            core.baseRadius = tensorRadius;
+        });
+    }
+
+    function drawGrid() {
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.1)';
+        ctx.lineWidth = 1;
+        const gridSize = 40;
+
+        for (let x = 0; x < width; x += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+            ctx.stroke();
+        }
+
+        for (let y = 0; y < height; y += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+            ctx.stroke();
+        }
+    }
+
+    function drawTensorCores() {
+        state.tensorCores.forEach((core, i) => {
+            // Pulse at 10kHz simulation
+            if (state.pulseMode) {
+                core.pulse = Math.sin(time * 0.1 + i * Math.PI / 2) * 0.5 + 0.5;
+            } else {
+                core.pulse = 0.5;
+            }
+            core.energy = core.pulse * (state.mass / 1000);
+
+            // Outer glow
+            const glowRadius = 40 + core.pulse * 20;
+            const gradient = ctx.createRadialGradient(core.x, core.y, 0, core.x, core.y, glowRadius);
+            gradient.addColorStop(0, core.color);
+            gradient.addColorStop(0.5, core.color + '66');
+            gradient.addColorStop(1, 'transparent');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(core.x, core.y, glowRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Core
+            ctx.fillStyle = core.color;
+            ctx.shadowBlur = 20 + core.pulse * 30;
+            ctx.shadowColor = core.color;
+            ctx.beginPath();
+            ctx.arc(core.x, core.y, 15 + core.pulse * 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Inner detail
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(core.x, core.y, 8, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Label
+            ctx.fillStyle = '#e0e0ff';
+            ctx.font = '12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(`${core.angle * 180 / Math.PI}°`, core.x, core.y + 25);
+            ctx.fillText('LIVE', core.x, core.y + 40);
+
+            // Update phase
+            state.phase[i] = core.pulse;
+        });
+        ctx.shadowBlur = 0;
+    }
+
+    function drawPrimNode(node) {
+        const x = centerX + node.x;
+        const y = centerY + node.y;
+        
+        if (node.active) {
+            node.energy = Math.min(node.energy + 0.05, 1);
+            node.glow = Math.min(node.glow + 0.08, 1);
+        } else {
+            node.energy = Math.max(node.energy - 0.03, 0);
+            node.glow = Math.max(node.glow - 0.05, 0);
+        }
+
+        // Hexagon
+        ctx.save();
+        ctx.translate(x, y);
+        
+        if (node.active || node.glow > 0) {
+            ctx.shadowBlur = 15 * node.glow;
+            ctx.shadowColor = '#ff00e6';
+        }
+        
+        ctx.strokeStyle = node.active ? '#ff00e6' : 'rgba(0, 243, 255, 0.3)';
+        ctx.fillStyle = node.active ? 'rgba(255, 0, 230, ' + (0.2 + node.energy * 0.3) + ')' : 'rgba(0, 243, 255, 0.05)';
+        ctx.lineWidth = node.active ? 2 : 1;
+
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i - Math.PI / 6;
+            const px = Math.cos(angle) * node.hexSize;
+            const py = Math.sin(angle) * node.hexSize;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Inner core
+        if (node.active) {
+            ctx.fillStyle = '#ff00e6';
+            ctx.beginPath();
+            ctx.arc(0, 0, 4 + node.energy * 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.restore();
+        ctx.shadowBlur = 0;
+    }
+
+    function drawLasers() {
+        state.primNodes.forEach(node => {
+            if (!node.active) return;
+
+            const nodeX = centerX + node.x;
+            const nodeY = centerY + node.y;
+
+            // Connect to all tensor cores with animated lasers
+            state.tensorCores.forEach(core => {
+                const dist = Math.hypot(core.x - nodeX, core.y - nodeY);
+                const alpha = Math.max(0, 1 - dist / 400) * node.energy * core.pulse * 0.6;
+                
+                if (alpha > 0.05) {
+                    // Laser beam with glow
+                    const gradient = ctx.createLinearGradient(nodeX, nodeY, core.x, core.y);
+                    gradient.addColorStop(0, 'rgba(255, 0, 230, ' + alpha + ')');
+                    gradient.addColorStop(0.5, 'rgba(0, 243, 255, ' + alpha + ')');
+                    gradient.addColorStop(1, core.color + Math.floor(alpha * 255).toString(16).padStart(2, '0'));
+
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = 2 + node.energy * 2;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = core.color;
+
+                    ctx.beginPath();
+                    ctx.moveTo(nodeX, nodeY);
+                    ctx.lineTo(core.x, core.y);
+                    ctx.stroke();
+
+                    // Traveling particle effect
+                    const t = (time * 0.01 + node.id * 0.1) % 1;
+                    const px = nodeX + (core.x - nodeX) * t;
+                    const py = nodeY + (core.y - nodeY) * t;
+                    
+                    ctx.fillStyle = core.color;
+                    ctx.shadowBlur = 15;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+        });
+        ctx.shadowBlur = 0;
+    }
+
+    function drawPhaseVisualizer() {
+        const w = phaseCanvas.width;
+        const h = phaseCanvas.height;
+        phaseCtx.clearRect(0, 0, w, h);
+
+        // Grid
+        phaseCtx.strokeStyle = 'rgba(255, 0, 230, 0.2)';
+        phaseCtx.lineWidth = 1;
+        for (let i = 0; i < 5; i++) {
+            const y = (h / 4) * i;
+            phaseCtx.beginPath();
+            phaseCtx.moveTo(0, y);
+            phaseCtx.lineTo(w, y);
+            phaseCtx.stroke();
+        }
+
+        // Draw 4 phase waves
+        state.tensorCores.forEach((core, i) => {
+            phaseCtx.strokeStyle = core.color;
+            phaseCtx.lineWidth = 2;
+            phaseCtx.shadowBlur = 10;
+            phaseCtx.shadowColor = core.color;
+            phaseCtx.beginPath();
+
+            for (let x = 0; x < w; x++) {
+                const t = x / w * 4 * Math.PI + time * 0.05 + i * Math.PI / 2;
+                const y = h / 2 + Math.sin(t) * (h / 3) * core.pulse;
+                if (x === 0) phaseCtx.moveTo(x, y);
+                else phaseCtx.lineTo(x, y);
+            }
+            phaseCtx.stroke();
+        });
+        phaseCtx.shadowBlur = 0;
+    }
+
+    function calculateTrajectory() {
+        let vx = 0, vy = 0;
+        
+        state.primNodes.forEach(node => {
+            if (!node.active) return;
+            
+            const nodeX = centerX + node.x;
+            const nodeY = centerY + node.y;
+            
+            state.tensorCores.forEach(core => {
+                const dx = core.x - nodeX;
+                const dy = core.y - nodeY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const force = (state.mass / 1000) * core.pulse * node.energy / (dist * 0.01);
+                vx += (dx / dist) * force * 0.0001;
+                vy += (dy / dist) * force * 0.0001;
+            });
+        });
+
+        state.trajectory.x = vx;
+        state.trajectory.y = vy;
+        state.trajectory.magnitude = Math.sqrt(vx * vx + vy * vy);
+        state.trajectory.curvature = Math.atan2(vy, vx) * 180 / Math.PI;
+
+        // Update display
+        document.getElementById('outX').textContent = state.trajectory.x.toFixed(2);
+        document.getElementById('outY').textContent = state.trajectory.y.toFixed(2);
+        document.getElementById('outMag').textContent = state.trajectory.magnitude.toFixed(2);
+        document.getElementById('outCurve').textContent = state.trajectory.curvature.toFixed(1) + '°';
+    }
+
+    function updateStats() {
+        state.activePrimCount = state.primNodes.filter(n => n.active).length;
+        document.getElementById('activeNodes').textContent = `${state.activePrimCount}/42 PRIM ACTIVE`;
+        document.getElementById('activeCount').textContent = state.activePrimCount;
+        
+        const load = (state.activePrimCount / 42) * 100;
+        document.getElementById('tensorLoad').textContent = load.toFixed(0) + '%';
+        
+        const flux = (state.mass * state.activePrimCount * 0.001).toFixed(1);
+        document.getElementById('fluxRate').textContent = flux;
+        
+        const stability = Math.max(0, 100 - (state.activePrimCount * 0.5)).toFixed(0);
+        document.getElementById('stability').textContent = stability + '%';
+    }
+
+    function animate() {
+        time++;
+        ctx.clearRect(0, 0, width, height);
+        
+        drawGrid();
+        drawLasers();
+        state.primNodes.forEach(drawPrimNode);
+        drawTensorCores();
+        drawPhaseVisualizer();
+        calculateTrajectory();
+        updateStats();
+
+        animationId = requestAnimationFrame(animate);
+    }
+
+    // Event handlers
+    canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * window.devicePixelRatio - centerX;
+        const y = (e.clientY - rect.top) * window.devicePixelRatio - centerY;
+
+        state.primNodes.forEach(node => {
+            const dist = Math.hypot(x - node.x, y - node.y);
+            if (dist < node.hexSize) {
+                node.active = !node.active;
+            }
+        });
+    });
+
+    document.getElementById('massSlider').addEventListener('input', (e) => {
+        state.mass = parseInt(e.target.value);
+        document.getElementById('massValue').textContent = state.mass;
+    });
+
+    document.getElementById('activateAll').addEventListener('click', () => {
+        state.primNodes.forEach(node => node.active = true);
+    });
+
+    document.getElementById('resetAll').addEventListener('click', () => {
+        state.primNodes.forEach(node => node.active = false);
+    });
+
+    document.getElementById('pulseMode').addEventListener('click', (e) => {
+        state.pulseMode = !state.pulseMode;
+        e.target.classList.toggle('active');
+        e.target.textContent = state.pulseMode ? 'Pulse 10kHz' : 'Steady';
+    });
+
+    document.getElementById('randomize').addEventListener('click', () => {
+        state.primNodes.forEach(node => {
+            node.active = Math.random() > 0.5;
+        });
+    });
+
+    // Frequency counter animation
+    setInterval(() => {
+        const freq = state.pulseMode ? (9900 + Math.random() * 200) / 1000 : 0;
+        document.getElementById('freqDisplay').textContent = freq.toFixed(2) + ' kHz';
+    }, 100);
+
+    // Initialize
+    window.addEventListener('resize', resizeCanvas);
+    initTensorCores();
+    initPrimNodes();
+    resizeCanvas();
+    animate();
+
+})();
+</script>
+
+</body></html>

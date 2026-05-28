@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<!-- saved from url=(0165)https://1324798236325847.a.metaaiusercontent.com/html?artifact_uuid=bb57f857-99d9-412b-ac98-04ce39292309&ext=1779385344&hash=Q5fpDAHUQsQOljZmVyIuv8zDiZTp&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minimal 3-Stack Kernel: Substrate + with 6 Connections</title>
+<style>
+    :root {
+        --bg: #0a0e1a;
+        --panel: #111827;
+        --panel-light: #1f2937;
+        --border: #374151;
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+        --accent: #3b82f6;
+        --ag: #c0c0c0;
+        --ti: #8b5cf6;
+        --s: #facc15;
+        --xe: #22d3ee;
+        --success: #10b981;
+        --danger: #ef4444;
+        --substrate: #4b5563;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+    
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--xe));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+        color: var(--text-dim);
+        font-size: 1.1rem;
+    }
+    
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    
+    .panel h2 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .canvas-wrapper {
+        position: relative;
+        width: 100%;
+        background: #000;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+    
+    .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+    
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .control-group label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .control-group label span.value {
+        color: var(--accent);
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+    }
+    
+    button {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    button:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    }
+    
+    button:active {
+        transform: translateY(0);
+    }
+    
+    button.secondary {
+        background: var(--panel-light);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    button.secondary:hover {
+        background: #374151;
+    }
+    
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--panel-light);
+        outline: none;
+        -webkit-appearance: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+    }
+    
+    .toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .toggle input[type="checkbox"] {
+        position: relative;
+        width: 48px;
+        height: 24px;
+        -webkit-appearance: none;
+        background: var(--panel-light);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .toggle input[type="checkbox"]::before {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--text-dim);
+        top: 3px;
+        left: 3px;
+        transition: all 0.3s;
+    }
+    
+    .toggle input[type="checkbox"]:checked {
+        background: var(--accent);
+    }
+    
+    .toggle input[type="checkbox"]:checked::before {
+        background: white;
+        left: 27px;
+    }
+    
+    .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .stat {
+        background: var(--panel-light);
+        padding: 0.75rem;
+        border-radius: 8px;
+        border-left: 3px solid var(--accent);
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+        margin-top: 0.25rem;
+    }
+    
+    .legend {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        flex-shrink: 0;
+    }
+    
+    .terminal {
+        position: absolute;
+        padding: 4px 8px;
+        background: rgba(17, 24, 39, 0.95);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+    
+    .readme {
+        margin-top: 2rem;
+    }
+    
+    .readme h3 {
+        color: var(--accent);
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+    }
+    
+    .readme p, .readme li {
+        color: var(--text-dim);
+        margin-bottom: 0.75rem;
+    }
+    
+    .readme ul {
+        padding-left: 1.5rem;
+    }
+    
+    .readme code {
+        background: var(--panel-light);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        color: var(--xe);
+        font-size: 0.9em;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin: 0 2px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Minimal 3-Stack Kernel</h1>
+        <p class="subtitle">Substrate + with 6 Connections | Xe 54, S 16, Ti 22, Ag 47</p>
+    </header>
+    
+    <div class="grid">
+        <div class="panel">
+            <h2>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                </svg>
+                Device Visualization
+            </h2>
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="800" height="600"></canvas>
+                <div class="terminal" id="t-inl0" style="display: block; left: 108.8px; top: 517.256px;">IN L0</div>
+                <div class="terminal" id="t-inl1" style="display: block; left: 651.2px; top: 517.256px;">IN L1</div>
+                <div class="terminal" id="t-outp" style="display: block; left: 278.3px; top: 527.426px;">OUT+</div>
+                <div class="terminal" id="t-outm" style="display: block; left: 481.7px; top: 527.426px;">OUT-</div>
+                <div class="terminal" id="t-gnd" style="display: block; left: 380px; top: 669.806px;">GND</div>
+                <div class="terminal" id="t-xe" style="display: block; left: 380px; top: 313.856px;">Xe Gap</div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background: var(--substrate)"></div>Substrate</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--ag)"></div>Ag 47 Core</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--ti)"></div>Ti 22 Traces</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--s)"></div>S 16 Trap Layer</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--xe)"></div>Xe 54 Gas Gap</div>
+                <div class="legend-item"><div class="legend-color" style="background: var(--success)"></div>Photon/D Path</div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3"></path>
+                </svg>
+                Controls &amp; Metrics
+            </h2>
+            <div class="controls">
+                <button id="pulseBtn">IN Pulse</button>
+                
+                <div class="control-group">
+                    <label>Clock Frequency <span class="value" id="clockVal">10.0 kHz</span></label>
+                    <input type="range" id="clockSlider" min="1" max="100" value="10" step="1">
+                </div>
+                
+                <div class="control-group">
+                    <label>O1 Enable <span class="value" id="o1Val">OFF</span></label>
+                    <div class="toggle">
+                        <input type="checkbox" id="o1Toggle">
+                        <span style="color: var(--text-dim); font-size: 0.875rem;">Oxygen contamination</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Xe Pressure <span class="value" id="pressureVal">1.00 GPa</span></label>
+                    <input type="range" id="pressureSlider" min="0.1" max="2" value="1" step="0.05">
+                </div>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-label">State D</div>
+                        <div class="stat-value" id="dVal">0.00</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">OUT Current</div>
+                        <div class="stat-value" id="currentVal">0.00 µA</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Trap Depth</div>
+                        <div class="stat-value" id="trapVal">2.4 eV</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Xe Status</div>
+                        <div class="stat-value" id="xeVal" style="font-size: 0.9rem; color: rgb(16, 185, 129);">Inert</div>
+                    </div>
+                </div>
+                
+                <button class="secondary" id="resetBtn">Reset State</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="panel readme">
+        <h2>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            README: Minimal 3-Stack Design
+        </h2>
+        
+        <h3>Architecture Overview</h3>
+        <p>This simulates a minimal 3-stack memristive kernel with 6 connections. The stack consists of:</p>
+        <ul>
+            <li><strong>Layer 1 - Substrate:</strong> Mechanical support + GND reference. Bottom layer.</li>
+            <li><strong>Layer 2 - Ag Core:</strong> <span class="badge" style="background: var(--ag); color: #000;">Ag 47</span> Silver electrode holds state D. Connected to OUT+ and OUT- terminals.</li>
+            <li><strong>Layer 3 - S Trap:</strong> <span class="badge" style="background: var(--s); color: #000;">S 16</span> Sulfur forms Ag2S ionic trap layer above Ag, creating 2.4 eV deep traps for D retention.</li>
+        </ul>
+        
+        <h3>Element Roles</h3>
+        <ul>
+            <li><code>Xe 54</code>: [Kr] 4d10 5s2 5p6 = closed shell, 0 lasers. Inert gas at 1 GPa fills gap above stack. Blocks O1 contamination.</li>
+            <li><code>Ag 47</code>: Silver core serves as mobile ion reservoir. Holds conductive filament state D (0=off, 1=on).</li>
+            <li><code>Ti 22</code>: Titanium traces left/right form photon/electron pathways. Moves at effective 2 m/s drift velocity under bias.</li>
+            <li><code>S 16</code>: Sulfur makes Ag2S trap interface. Immobilizes Ag+ ions until IN pulse overcomes activation barrier.</li>
+        </ul>
+        
+        <h3>6 Connections</h3>
+        <ul>
+            <li><strong>IN L0, IN L1:</strong> Left/right input terminals on Ti traces. Pulse here drives Ag+ migration through S layer.</li>
+            <li><strong>OUT+, OUT-:</strong> Ag core terminals. Measure filament current when D=1. Current ~0 when D=0.</li>
+            <li><strong>GND:</strong> Substrate ground reference. Anchors potential.</li>
+            <li><strong>Xe Gap:</strong> Gas cavity above stack. Inert Xe at 1 GPa prevents oxidation, maintains Ag2S stoichiometry.</li>
+        </ul>
+        
+        <h3>Operation</h3>
+        <p><strong>IN Pulse:</strong> Apply voltage across IN L0/L1. If sufficient, Ag+ breaks free from S trap, forms filament → D=1, OUT current flows.</p>
+        <p><strong>O1 Contamination:</strong> When enabled, O1 diffuses through defective Xe gap, oxidizes Ag to Ag2O, reduces trap depth, causes D leakage.</p>
+        <p><strong>Pressure Control:</strong> Xe pressure modulates gas gap density. At 1 GPa, Xe is inert and blocks O1. Below 0.5 GPa, barrier fails.</p>
+        <p><strong>Clock:</strong> 10kHz sync signal. Photon moves at 2 m/s in Ti traces, ~200µm per clock cycle at this scale.</p>
+        
+        <h3>Physics Model</h3>
+        <p>State equation: <code>D_next = D_prev + α·V_IN - β·O1·P_Xe^-1</code></p>
+        <p>Current: <code>I_OUT = D · G0 · (V_OUT+ - V_OUT-)</code> where G0 = 12.9 µS quantum conductance.</p>
+    </div>
+</div>
+
+<script>
+(function() {
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // State
+    let state = {
+        D: 0,
+        current: 0,
+        clock: 10,
+        o1Enabled: false,
+        pressure: 1.0,
+        photons: [],
+        filaments: [],
+        o1Particles: [],
+        pulseActive: false,
+        time: 0
+    };
+    
+    // Dimensions
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    // Layout positions
+    const layout = {
+        substrate: { x: W*0.1, y: H*0.75, w: W*0.8, h: H*0.15 },
+        agCore: { x: W*0.35, y: H*0.55, w: W*0.3, h: H*0.15 },
+        sLayer: { x: W*0.35, y: H*0.48, w: W*0.3, h: H*0.07 },
+        tiLeft: { x: W*0.1, y: H*0.58, w: W*0.24, h: H*0.04 },
+        tiRight: { x: W*0.66, y: H*0.58, w: W*0.24, h: H*0.04 },
+        xeGap: { x: W*0.35, y: H*0.2, w: W*0.3, h: H*0.27 },
+        connections: {
+            IN_L0: { x: W*0.1, y: H*0.6 },
+            IN_L1: { x: W*0.9, y: H*0.6 },
+            OUT_P: { x: W*0.35, y: H*0.62 },
+            OUT_M: { x: W*0.65, y: H*0.62 },
+            GND: { x: W*0.5, y: H*0.9 },
+            XE: { x: W*0.5, y: H*0.2 }
+        }
+    };
+    
+    // Terminal label positions
+    function updateTerminals() {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = rect.width / W;
+        const scaleY = rect.height / H;
+        
+        const terms = [
+            ['t-inl0', layout.connections.IN_L0],
+            ['t-inl1', layout.connections.IN_L1],
+            ['t-outp', layout.connections.OUT_P],
+            ['t-outm', layout.connections.OUT_M],
+            ['t-gnd', layout.connections.GND],
+            ['t-xe', layout.connections.XE]
+        ];
+        
+        terms.forEach(([id, pos]) => {
+            const el = document.getElementById(id);
+            el.style.display = 'block';
+            el.style.left = (rect.left + pos.x * scaleX) + 'px';
+            el.style.top = (rect.top + pos.y * scaleY - 25) + 'px';
+        });
+    }
+    
+    window.addEventListener('resize', updateTerminals);
+    setTimeout(updateTerminals, 100);
+    
+    // Drawing functions
+    function drawLayer(x, y, w, h, color, label) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeStyle = '#374151';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, w, h);
+    }
+    
+    function drawConnection(x, y, label, active) {
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = active ? '#3b82f6' : '#1f2937';
+        ctx.fill();
+        ctx.strokeStyle = active ? '#60a5fa' : '#374151';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+    
+    function drawPhoton(p) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 8);
+        gradient.addColorStop(0, '#10b981');
+        gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fill();
+    }
+    
+    function drawFilament() {
+        if (state.D === 0) return;
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 3;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#10b981';
+        ctx.beginPath();
+        const segments = 8;
+        const stepY = (layout.agCore.h) / segments;
+        for (let i = 0; i <= segments; i++) {
+            const x = layout.agCore.x + layout.agCore.w/2 + Math.sin(state.time * 0.01 + i) * 3;
+            const y = layout.agCore.y + i * stepY;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+    }
+    
+    function drawO1Particle(p) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+    }
+    
+    function drawXeParticles() {
+        const density = state.pressure * 30;
+        ctx.fillStyle = 'rgba(34, 211, 238, 0.15)';
+        for (let i = 0; i < density; i++) {
+            const x = layout.xeGap.x + Math.random() * layout.xeGap.w;
+            const y = layout.xeGap.y + Math.random() * layout.xeGap.h;
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+    
+    function render() {
+        // Clear
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, W, H);
+        
+        // Grid
+        ctx.strokeStyle = '#111827';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < W; x += 40) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, H);
+            ctx.stroke();
+        }
+        for (let y = 0; y < H; y += 40) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y);
+            ctx.stroke();
+        }
+        
+        // Layers bottom to top
+        drawLayer(layout.substrate.x, layout.substrate.y, layout.substrate.w, layout.substrate.h, '#4b5563');
+        drawLayer(layout.tiLeft.x, layout.tiLeft.y, layout.tiLeft.w, layout.tiLeft.h, '#8b5cf6');
+        drawLayer(layout.tiRight.x, layout.tiRight.y, layout.tiRight.w, layout.tiRight.h, '#8b5cf6');
+        drawLayer(layout.agCore.x, layout.agCore.y, layout.agCore.w, layout.agCore.h, '#c0c0c0');
+        drawLayer(layout.sLayer.x, layout.sLayer.y, layout.sLayer.w, layout.sLayer.h, '#facc15');
+        
+        // Xe gap
+        ctx.fillStyle = state.pressure > 0.5 ? 'rgba(34, 211, 238, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+        ctx.fillRect(layout.xeGap.x, layout.xeGap.y, layout.xeGap.w, layout.xeGap.h);
+        ctx.strokeStyle = state.pressure > 0.5 ? '#22d3ee' : '#ef4444';
+        ctx.setLineDash([5, 5]);
+        ctx.strokeRect(layout.xeGap.x, layout.xeGap.y, layout.xeGap.w, layout.xeGap.h);
+        ctx.setLineDash([]);
+        
+        drawXeParticles();
+        
+        // Connections
+        drawConnection(layout.connections.IN_L0.x, layout.connections.IN_L0.y, 'IN L0', state.pulseActive);
+        drawConnection(layout.connections.IN_L1.x, layout.connections.IN_L1.y, 'IN L1', state.pulseActive);
+        drawConnection(layout.connections.OUT_P.x, layout.connections.OUT_P.y, 'OUT+', state.D > 0);
+        drawConnection(layout.connections.OUT_M.x, layout.connections.OUT_M.y, 'OUT-', state.D > 0);
+        drawConnection(layout.connections.GND.x, layout.connections.GND.y, 'GND', true);
+        drawConnection(layout.connections.XE.x, layout.connections.XE.y, 'Xe', state.pressure > 0.5);
+        
+        // Dynamic elements
+        drawFilament();
+        state.photons.forEach(drawPhoton);
+        state.o1Particles.forEach(drawO1Particle);
+        
+        // Labels
+        ctx.fillStyle = '#e5e7eb';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillText('Substrate', layout.substrate.x + 10, layout.substrate.y + 25);
+        ctx.fillText('Ag 47 Core', layout.agCore.x + 10, layout.agCore.y + 25);
+        ctx.fillText('S 16 Trap', layout.sLayer.x + 10, layout.sLayer.y + 20);
+        ctx.fillText('Ti 22', layout.tiLeft.x + 10, layout.tiLeft.y + 18);
+        ctx.fillText('Ti 22', layout.tiRight.x + 10, layout.tiRight.y + 18);
+        ctx.fillStyle = state.pressure > 0.5 ? '#22d3ee' : '#ef4444';
+        ctx.fillText('Xe 54 Gap: ' + state.pressure.toFixed(2) + ' GPa', layout.xeGap.x + 10, layout.xeGap.y + 20);
+    }
+    
+    // Physics update
+    function update() {
+        state.time++;
+        
+        // Update photons
+        const speed = 2 * (state.clock / 10); // 2 m/s scaled
+        state.photons = state.photons.filter(p => {
+            p.x += p.vx * speed;
+            return p.x > 0 && p.x < W;
+        });
+        
+        // Update O1 particles
+        if (state.o1Enabled && state.pressure < 0.8) {
+            if (Math.random() < 0.1) {
+                state.o1Particles.push({
+                    x: layout.xeGap.x + Math.random() * layout.xeGap.w,
+                    y: layout.xeGap.y,
+                    vy: 1 + Math.random()
+                });
+            }
+        }
+        state.o1Particles = state.o1Particles.filter(p => {
+            p.y += p.vy;
+            if (p.y > layout.sLayer.y && p.y < layout.sLayer.y + layout.sLayer.h) {
+                state.D = Math.max(0, state.D - 0.02);
+                return false;
+            }
+            return p.y < H;
+        });
+        
+        // Calculate current
+        const G0 = 12.9; // µS
+        state.current = state.D * G0 * 0.5; // 0.5V bias
+        
+        // Trap depth calc
+        const trapDepth = 2.4 * (1 - state.o1Enabled * 0.3);
+        
+        // Update UI
+        document.getElementById('dVal').textContent = state.D.toFixed(2);
+        document.getElementById('currentVal').textContent = state.current.toFixed(2) + ' µA';
+        document.getElementById('trapVal').textContent = trapDepth.toFixed(1) + ' eV';
+        document.getElementById('xeVal').textContent = state.pressure > 0.5 ? 'Inert' : 'Leaking';
+        document.getElementById('xeVal').style.color = state.pressure > 0.5 ? '#10b981' : '#ef4444';
+    }
+    
+    // Controls
+    document.getElementById('pulseBtn').addEventListener('click', () => {
+        state.pulseActive = true;
+        setTimeout(() => state.pulseActive = false, 200);
+        
+        // Launch photon
+        state.photons.push({
+            x: layout.connections.IN_L0.x,
+            y: layout.connections.IN_L0.y,
+            vx: 2
+        });
+        
+        // Set D if pulse overcomes trap
+        if (state.D < 1.0) {
+            state.D = Math.min(1.0, state.D + 0.6);
+        }
+    });
+    
+    document.getElementById('clockSlider').addEventListener('input', (e) => {
+        state.clock = parseFloat(e.target.value);
+        document.getElementById('clockVal').textContent = state.clock.toFixed(1) + ' kHz';
+    });
+    
+    document.getElementById('o1Toggle').addEventListener('change', (e) => {
+        state.o1Enabled = e.target.checked;
+        document.getElementById('o1Val').textContent = state.o1Enabled ? 'ON' : 'OFF';
+        document.getElementById('o1Val').style.color = state.o1Enabled ? '#ef4444' : '#10b981';
+    });
+    
+    document.getElementById('pressureSlider').addEventListener('input', (e) => {
+        state.pressure = parseFloat(e.target.value);
+        document.getElementById('pressureVal').textContent = state.pressure.toFixed(2) + ' GPa';
+    });
+    
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        state.D = 0;
+        state.photons = [];
+        state.o1Particles = [];
+    });
+    
+    // Animation loop
+    function loop() {
+        update();
+        render();
+        requestAnimationFrame(loop);
+    }
+    
+    loop();
+})();
+</script>
+
+</body></html>

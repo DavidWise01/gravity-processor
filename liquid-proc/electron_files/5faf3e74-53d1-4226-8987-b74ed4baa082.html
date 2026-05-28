@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<!-- saved from url=(0164)https://976268698495655.a.metaaiusercontent.com/html?artifact_uuid=5faf3e74-53d1-4226-8987-b74ed4baa082&ext=1779385095&hash=Q5fpDAGDZ1Xt9DdSXk36sScRh4_V&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coinage Metals + Zn 4+1 Kernels: Cu, Ag, Au, Zn</title>
+<style>
+    :root {
+        --bg: #0a0e1a;
+        --panel: #12172a;
+        --panel-light: #1a2138;
+        --text: #e8ecf4;
+        --text-dim: #a0aac0;
+        --accent: #5d7bff;
+        --copper: #b87333;
+        --silver: #c0c0c0;
+        --gold: #ffd700;
+        --zinc: #7e8a9a;
+        --trap-deep: #ff4d4d;
+        --trap-perfect: #4dff88;
+        --trap-leaky: #ffad4d;
+        --trap-none: #6a7389;
+        --gnd: #3a4158;
+        --laser: #ff3366;
+        --out: #33d6ff;
+        --success: #00e676;
+        --border: #2a3149;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: radial-gradient(1200px 800px at 80% -10%, #1a2140 0%, var(--bg) 60%);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 24px;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 32px;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--copper), var(--silver), var(--gold), var(--zinc));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        color: var(--text-dim);
+        font-size: 1rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .controls {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 24px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        backdrop-filter: blur(8px);
+        animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .control-group label {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn {
+        background: linear-gradient(135deg, var(--accent), #7c8fff);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 16px rgba(93, 123, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(93, 123, 255, 0.4);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+    .btn.secondary {
+        background: var(--panel-light);
+        box-shadow: none;
+        border: 1px solid var(--border);
+    }
+
+    .btn.secondary:hover {
+        background: #232a45;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+
+    .clock-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: 'Courier New', monospace;
+    }
+
+    .led {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--border);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        transition: all 0.1s ease;
+    }
+
+    .led.active {
+        background: var(--success);
+        box-shadow: 0 0 12px var(--success), inset 0 1px 2px rgba(255,255,255,0.3);
+    }
+
+    .slider-group {
+        min-width: 200px;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        background: var(--panel-light);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(93, 123, 255, 0.4);
+        transition: all 0.2s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+    }
+
+    .temp-value {
+        font-family: 'Courier New', monospace;
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .kernels-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .kernel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        animation: fadeInUp 0.6s ease-out both;
+    }
+
+    .kernel:nth-child(1) { animation-delay: 0.2s; }
+    .kernel:nth-child(2) { animation-delay: 0.3s; }
+    .kernel:nth-child(3) { animation-delay: 0.4s; }
+    .kernel:nth-child(4) { animation-delay: 0.5s; }
+
+    .kernel:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+
+    .kernel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--metal-color);
+    }
+
+    .kernel.cu { --metal-color: var(--copper); }
+    .kernel.ag { --metal-color: var(--silver); }
+    .kernel.au { --metal-color: var(--gold); }
+    .kernel.zn { --metal-color: var(--zinc); }
+
+    .kernel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 16px;
+    }
+
+    .element {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--metal-color);
+    }
+
+    .kernel-info {
+        text-align: right;
+    }
+
+    .atomic-num {
+        font-size: 0.9rem;
+        color: var(--text-dim);
+    }
+
+    .config {
+        font-family: 'Courier New', monospace;
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        margin-top: 2px;
+    }
+
+    .trap-viz {
+        width: 100%;
+        height: 120px;
+        background: var(--bg);
+        border-radius: 12px;
+        margin: 16px 0;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+
+    .trap-well {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        background: linear-gradient(to top, var(--trap-color), transparent);
+        transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .trap-deep { --trap-color: var(--trap-deep); }
+    .trap-perfect { --trap-color: var(--trap-perfect); }
+    .trap-leaky { --trap-color: var(--trap-leaky); }
+    .trap-none { --trap-color: var(--trap-none); }
+
+    .electron {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: radial-gradient(circle at 30% 30%, #fff, var(--accent));
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--accent);
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 10;
+    }
+
+    .laser {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--laser), transparent);
+        top: 20px;
+        opacity: 0;
+        animation: laserPulse 0.6s ease-out;
+    }
+
+    @keyframes laserPulse {
+        0% { opacity: 0; transform: scaleX(0); }
+        50% { opacity: 1; transform: scaleX(1); }
+        100% { opacity: 0; transform: scaleX(1); }
+    }
+
+    .metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .metric {
+        background: var(--bg);
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+    }
+
+    .metric-label {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .metric-value {
+        font-family: 'Courier New', monospace;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .d-value {
+        color: var(--accent);
+    }
+
+    .out-current {
+        color: var(--out);
+    }
+
+    .state-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-trapped {
+        background: rgba(255, 77, 77, 0.2);
+        color: var(--trap-deep);
+    }
+
+    .badge-free {
+        background: rgba(77, 255, 136, 0.2);
+        color: var(--trap-perfect);
+    }
+
+    .badge-leaking {
+        background: rgba(255, 173, 77, 0.2);
+        color: var(--trap-leaky);
+    }
+
+    .badge-gnd {
+        background: rgba(122, 138, 154, 0.2);
+        color: var(--zinc);
+    }
+
+    .readme {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 32px;
+        margin-top: 40px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        animation: fadeInUp 0.6s ease-out 0.6s both;
+    }
+
+    .readme h2 {
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+        color: var(--accent);
+    }
+
+    .readme h3 {
+        font-size: 1.1rem;
+        margin: 24px 0 12px;
+        color: var(--text);
+    }
+
+    .readme p, .readme li {
+        color: var(--text-dim);
+        margin-bottom: 12px;
+    }
+
+    .readme code {
+        background: var(--bg);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        color: var(--accent);
+        font-size: 0.9em;
+    }
+
+    .readme ul {
+        padding-left: 24px;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 16px;
+        padding: 16px;
+        background: var(--bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        color: var(--text-dim);
+    }
+
+    .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+        body { padding: 16px; }
+        h1 { font-size: 1.6rem; }
+        .controls { flex-direction: column; align-items: stretch; }
+        .control-group { width: 100%; }
+        .kernels-grid { grid-template-columns: 1fr; }
+    }
+
+    .tooltip {
+        position: relative;
+        cursor: help;
+        border-bottom: 1px dashed var(--text-dim);
+    }
+
+    .tooltip:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--bg);
+        color: var(--text);
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        white-space: nowrap;
+        font-size: 0.8rem;
+        z-index: 100;
+        margin-bottom: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Coinage Metals + Zn 4+1 Kernels</h1>
+        <p class="subtitle">Cu 29, Ag 47, Au 79 trap behavior vs Zn 30 dielectric GND. Visualizing 4d<sup>10</sup>5s<sup>1</sup> uniqueness in Ag and why Zn is inert filler.</p>
+    </header>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>IN Pulse</label>
+            <button class="btn" id="inPulseBtn">FIRE IN PULSE</button>
+        </div>
+        <div class="control-group">
+            <label>O1 Control</label>
+            <button class="btn secondary" id="o1Btn">TOGGLE O1</button>
+        </div>
+        <div class="control-group">
+            <label>10kHz Clock</label>
+            <div class="clock-indicator">
+                <div class="led" id="clockLed"></div>
+                <span id="clockHz">9.98 kHz</span>
+            </div>
+        </div>
+        <div class="control-group slider-group">
+            <label>Temperature: <span class="temp-value" id="tempValue">298K</span></label>
+            <input type="range" id="tempSlider" min="100" max="600" value="298" step="1">
+        </div>
+        <div class="control-group">
+            <label>System</label>
+            <button class="btn secondary" id="resetBtn">RESET ALL</button>
+        </div>
+    </div>
+
+    <div class="kernels-grid" id="kernelsGrid">
+            <div class="kernel cu" id="kernel-cu">
+                <div class="kernel-header">
+                    <div>
+                        <div class="element">Cu</div>
+                        <div class="config">[Ar] 3d¹⁰ 4s¹</div>
+                    </div>
+                    <div class="kernel-info">
+                        <div class="atomic-num">Z = 29</div>
+                        <div class="state-badge badge-free" id="badge-cu">FREE</div>
+                    </div>
+                <div class="trap-viz" id="trap-cu">
+                    <div class="trap-well trap-deep" id="well-cu" style="height: 85%"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label tooltip" data-tooltip="Detuning/Stability">D Value</div>
+                        <div class="metric-value d-value" id="d-cu">0.200</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label tooltip" data-tooltip="Ejected electrons/ms">OUT Current</div>
+                        <div class="metric-value out-current" id="out-cu">0.00 μA</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Trap Depth</div>
+                        <div class="metric-value" id="depth-cu">85%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Lasers</div>
+                        <div class="metric-value" id="lasers-cu">1</div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="kernel ag" id="kernel-ag">
+                <div class="kernel-header">
+                    <div>
+                        <div class="element">Ag</div>
+                        <div class="config">[Kr] 4d¹⁰ 5s¹</div>
+                    </div>
+                    <div class="kernel-info">
+                        <div class="atomic-num">Z = 47</div>
+                        <div class="state-badge badge-free" id="badge-ag">FREE</div>
+                    </div>
+                <div class="trap-viz" id="trap-ag">
+                    <div class="trap-well trap-perfect" id="well-ag" style="height: 50%"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label tooltip" data-tooltip="Detuning/Stability">D Value</div>
+                        <div class="metric-value d-value" id="d-ag">0.500</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label tooltip" data-tooltip="Ejected electrons/ms">OUT Current</div>
+                        <div class="metric-value out-current" id="out-ag">0.00 μA</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Trap Depth</div>
+                        <div class="metric-value" id="depth-ag">50%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Lasers</div>
+                        <div class="metric-value" id="lasers-ag">1</div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="kernel au" id="kernel-au">
+                <div class="kernel-header">
+                    <div>
+                        <div class="element">Au</div>
+                        <div class="config">[Xe] 4f¹⁴ 5d¹⁰ 6s¹</div>
+                    </div>
+                    <div class="kernel-info">
+                        <div class="atomic-num">Z = 79</div>
+                        <div class="state-badge badge-free" id="badge-au">FREE</div>
+                    </div>
+                <div class="trap-viz" id="trap-au">
+                    <div class="trap-well trap-leaky" id="well-au" style="height: 30%"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label tooltip" data-tooltip="Detuning/Stability">D Value</div>
+                        <div class="metric-value d-value" id="d-au">0.800</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label tooltip" data-tooltip="Ejected electrons/ms">OUT Current</div>
+                        <div class="metric-value out-current" id="out-au">0.00 μA</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Trap Depth</div>
+                        <div class="metric-value" id="depth-au">30%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Lasers</div>
+                        <div class="metric-value" id="lasers-au">1</div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="kernel zn" id="kernel-zn">
+                <div class="kernel-header">
+                    <div>
+                        <div class="element">Zn</div>
+                        <div class="config">[Ar] 3d¹⁰ 4s²</div>
+                    </div>
+                    <div class="kernel-info">
+                        <div class="atomic-num">Z = 30</div>
+                        <div class="state-badge badge-gnd" id="badge-zn">GND</div>
+                    </div>
+                <div class="trap-viz" id="trap-zn">
+                    <div class="trap-well trap-none" id="well-zn" style="height: 0%"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label tooltip" data-tooltip="Detuning/Stability">D Value</div>
+                        <div class="metric-value d-value" id="d-zn">1.000</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label tooltip" data-tooltip="Ejected electrons/ms">OUT Current</div>
+                        <div class="metric-value out-current" id="out-zn">0.00 μA</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Trap Depth</div>
+                        <div class="metric-value" id="depth-zn">0%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Lasers</div>
+                        <div class="metric-value" id="lasers-zn">0</div>
+                    </div>
+                </div>
+            </div>
+        </div></div></div></div></div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-dot" style="background: var(--trap-deep)"></div>
+            <span>Deep Trap: Cu - electron captured, needs high temp/laser</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: var(--trap-perfect)"></div>
+            <span>Perfect Trap: Ag - stable hold, clean release on O1</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: var(--trap-leaky)"></div>
+            <span>Leaky Trap: Au - relativistic effects, spontaneous emission</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: var(--trap-none)"></div>
+            <span>No Trap: Zn - 3d<sup>10</sup>4s<sup>2</sup> paired, GND fill only</span>
+        </div>
+    </div>
+
+    <div class="readme">
+        <h2>README: Kernel Physics &amp; Zn as Dielectric GND</h2>
+        
+        <h3>Why Zn is Inert Filler</h3>
+        <p>Zn 30 has electron configuration <code>[Ar] 3d<sup>10</sup> 4s<sup>2</sup></code>. The 3d subshell is fully filled with 10 paired electrons, and 4s<sup>2</sup> gives 2 paired valence electrons. Result: 0 unpaired electrons = 0 "lasers" in kernel terms.</p>
+        <ul>
+            <li><strong>Paired electrons:</strong> No magnetic moment, no spin state to flip. Cannot store information or trap an IN electron.</li>
+            <li><strong>Closed shells:</strong> 3d<sup>10</sup> is extremely stable. Ionization energy 9.39 eV - requires UV to excite.</li>
+            <li><strong>GND function:</strong> In this 4+1 architecture, Zn acts as dielectric fill and ground plane. Provides bulk stability, thermal mass, and charge reference without participating in logic.</li>
+            <li><strong>No state change:</strong> IN pulses, O1 toggles, and temperature have no effect. OUT current always 0. D value fixed at baseline.</li>
+        </ul>
+
+        <h3>Coinage Metals: Cu, Ag, Au Trap Behavior</h3>
+        <p>Group 11 elements share <code>(n-1)d<sup>10</sup> ns<sup>1</sup></code> config, giving 1 unpaired s electron = 1 laser channel. But relativistic effects create distinct trap profiles:</p>
+        <ul>
+            <li><strong>Cu 29 - Deep Trap:</strong> <code>[Ar] 3d<sup>10</sup> 4s<sup>1</sup></code>. Small ionic radius, tight 4s orbital. IN electron falls deep into Coulomb well. Hard to eject - requires high temp or strong O1 laser. High retention, low switching speed.</li>
+            <li><strong>Ag 47 - Perfect Trap:</strong> <code>[Kr] 4d<sup>10</sup> 5s<sup>1</sup></code>. This is the unique sweet spot. 4d<sup>10</sup> provides excellent core shielding without relativistic contraction. 5s<sup>1</sup> is held loosely enough for clean O1 release, but deep enough for stable storage. Lowest trap depth variance. This is why Ag has lowest resistivity of all elements.</li>
+            <li><strong>Au 79 - Leaky Trap:</strong> <code>[Xe] 4f<sup>14</sup> 5d<sup>10</sup> 6s<sup>1</sup></code>. Heavy element relativistic effects contract 6s orbital and expand 5d. Spin-orbit coupling splits states. Trap is shallow + thermally noisy. Spontaneous emission common. Poor for information storage, good for catalysis.</li>
+        </ul>
+
+        <h3>Why 4d<sup>10</sup>5s<sup>1</sup> is Unique to Ag</h3>
+        <p>Ag sits at the Goldilocks zone of the periodic table for electron trapping:</p>
+        <ul>
+            <li><strong>R &lt; 71:</strong> Elements lighter than Lu have minimal relativistic effects. 5s orbital has normal radial distribution.</li>
+            <li><strong>d<sup>10</sup> shielding:</strong> The filled 4d<sup>10</sup> shell perfectly screens nuclear charge for 5s<sup>1</sup>. Unlike Cu's 3d or Au's 5d, the 4d orbitals have optimal energy/distance.</li>
+            <li><strong>Single laser:</strong> Unlike transition metals with multiple unpaired d electrons, Ag has exactly one addressable quantum state. No cross-talk.</li>
+            <li><strong>Empirical result:</strong> Ag has σ = 6.30×10<sup>7</sup> S/m at 293K, beating Cu 5.96×10<sup>7</sup> despite Cu having higher free electron density. The perfect trap = perfect conduction pathway.</li>
+        </ul>
+
+        <h3>Control Behavior</h3>
+        <p><strong>IN Pulse:</strong> Injects one electron into all kernels simultaneously. Cu/Ag/Au attempt to trap per their well depth. Zn ignores it.</p>
+        <p><strong>O1 Button:</strong> Simulates read/laser pulse. Trapped electrons in Cu/Ag/Au can be ejected to OUT if energy exceeds trap depth. Ag releases cleanly, Cu needs more work, Au leaks randomly.</p>
+        <p><strong>10kHz Clock:</strong> System clock for measurement sampling. Visual indicator only.</p>
+        <p><strong>Temp Slider:</strong> Lattice temperature 100K-600K. Higher T reduces trap depth via phonon excitation. Au leaky rate increases exponentially. Zn still inert.</p>
+        <p><strong>D Value:</strong> Detuning/stability metric. Lower D = deeper trap = harder to switch. Ag maintains D≈0.5, Cu D≈0.2, Au D≈0.8 with noise, Zn D=1.0 fixed.</p>
+        <p><strong>OUT Current:</strong> Ejected electrons per clock. Integrated over 100ms window.</p>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    const kernels = [
+        {
+            id: 'cu',
+            name: 'Cu',
+            num: 29,
+            config: '[Ar] 3d¹⁰ 4s¹',
+            type: 'deep',
+            class: 'cu',
+            trapDepth: 0.85,
+            leakRate: 0.001,
+            lasers: 1,
+            state: 'free',
+            electrons: 0,
+            dValue: 0.20,
+            outCurrent: 0,
+            color: '#b87333'
+        },
+        {
+            id: 'ag',
+            name: 'Ag',
+            num: 47,
+            config: '[Kr] 4d¹⁰ 5s¹',
+            type: 'perfect',
+            class: 'ag',
+            trapDepth: 0.50,
+            leakRate: 0.005,
+            lasers: 1,
+            state: 'free',
+            electrons: 0,
+            dValue: 0.50,
+            outCurrent: 0,
+            color: '#c0c0c0'
+        },
+        {
+            id: 'au',
+            name: 'Au',
+            num: 79,
+            config: '[Xe] 4f¹⁴ 5d¹⁰ 6s¹',
+            type: 'leaky',
+            class: 'au',
+            trapDepth: 0.30,
+            leakRate: 0.08,
+            lasers: 1,
+            state: 'free',
+            electrons: 0,
+            dValue: 0.80,
+            outCurrent: 0,
+            color: '#ffd700'
+        },
+        {
+            id: 'zn',
+            name: 'Zn',
+            num: 30,
+            config: '[Ar] 3d¹⁰ 4s²',
+            type: 'none',
+            class: 'zn',
+            trapDepth: 0.0,
+            leakRate: 0.0,
+            lasers: 0,
+            state: 'gnd',
+            electrons: 0,
+            dValue: 1.0,
+            outCurrent: 0,
+            color: '#7e8a9a'
+        }
+    ];
+
+    let temperature = 298;
+    let o1Active = false;
+    let clockPhase = false;
+    let clockHz = 10000;
+    let outBuffer = { cu: [], ag: [], au: [], zn: [] };
+
+    function init() {
+        renderKernels();
+        setupEventListeners();
+        startClock();
+        startSimulation();
+        updateAll();
+    }
+
+    function renderKernels() {
+        const grid = document.getElementById('kernelsGrid');
+        grid.innerHTML = kernels.map(k => `
+            <div class="kernel ${k.class}" id="kernel-${k.id}">
+                <div class="kernel-header">
+                    <div>
+                        <div class="element">${k.name}</div>
+                        <div class="config">${k.config}</div>
+                    </div>
+                    <div class="kernel-info">
+                        <div class="atomic-num">Z = ${k.num}</div>
+                        <div class="state-badge" id="badge-${k.id}">FREE</div>
+                    </div>
+                <div class="trap-viz" id="trap-${k.id}">
+                    <div class="trap-well trap-${k.type}" id="well-${k.id}" style="height: ${k.trapDepth * 100}%"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label tooltip" data-tooltip="Detuning/Stability">D Value</div>
+                        <div class="metric-value d-value" id="d-${k.id}">${k.dValue.toFixed(3)}</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label tooltip" data-tooltip="Ejected electrons/ms">OUT Current</div>
+                        <div class="metric-value out-current" id="out-${k.id}">${k.outCurrent.toFixed(2)} μA</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Trap Depth</div>
+                        <div class="metric-value" id="depth-${k.id}">${(k.trapDepth * 100).toFixed(0)}%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Lasers</div>
+                        <div class="metric-value" id="lasers-${k.id}">${k.lasers}</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function setupEventListeners() {
+        document.getElementById('inPulseBtn').addEventListener('click', fireInPulse);
+        document.getElementById('o1Btn').addEventListener('click', toggleO1);
+        document.getElementById('resetBtn').addEventListener('click', resetAll);
+        document.getElementById('tempSlider').addEventListener('input', (e) => {
+            temperature = parseInt(e.target.value);
+            document.getElementById('tempValue').textContent = temperature + 'K';
+            updateTrapDepths();
+        });
+    }
+
+    function fireInPulse() {
+        kernels.forEach(k => {
+            if (k.id === 'zn') return; // Zn ignores IN pulse
+            
+            if (k.state === 'free') {
+                k.electrons = 1;
+                k.state = k.type === 'deep' ? 'trapped' : k.type === 'perfect' ? 'trapped' : 'leaking';
+                addElectronViz(k.id);
+            }
+        });
+        
+        // Visual feedback
+        const btn = document.getElementById('inPulseBtn');
+        btn.style.transform = 'scale(0.95)';
+        setTimeout(() => btn.style.transform = '', 100);
+        
+        updateAll();
+    }
+
+    function toggleO1() {
+        o1Active = !o1Active;
+        const btn = document.getElementById('o1Btn');
+        btn.classList.toggle('secondary');
+        
+        if (o1Active) {
+            btn.textContent = 'O1 ACTIVE';
+            kernels.forEach(k => {
+                if (k.electrons > 0 && k.id !== 'zn') {
+                    fireLaser(k.id);
+                    attemptEjection(k);
+                }
+            });
+        } else {
+            btn.textContent = 'TOGGLE O1';
+        }
+        
+        updateAll();
+    }
+
+    function fireLaser(kernelId) {
+        const trap = document.getElementById(`trap-${kernelId}`);
+        const laser = document.createElement('div');
+        laser.className = 'laser';
+        trap.appendChild(laser);
+        setTimeout(() => laser.remove(), 600);
+    }
+
+    function attemptEjection(k) {
+        if (k.id === 'zn') return;
+        
+        const tempFactor = temperature / 298;
+        const effectiveDepth = k.trapDepth * (1 - tempFactor * 0.3);
+        const ejectionProb = o1Active ? Math.max(0, 1 - effectiveDepth) : 0;
+        
+        if (k.type === 'perfect') {
+            // Ag: clean release
+            if (Math.random() < ejectionProb * 1.2) {
+                ejectElectron(k);
+            }
+        } else if (k.type === 'deep') {
+            // Cu: needs high temp or strong O1
+            if (Math.random() < ejectionProb * 0.4) {
+                ejectElectron(k);
+            }
+        } else if (k.type === 'leaky') {
+            // Au: noisy, spontaneous
+            if (Math.random() < ejectionProb * 0.8 + k.leakRate) {
+                ejectElectron(k);
+            }
+        }
+    }
+
+    function ejectElectron(k) {
+        if (k.electrons > 0) {
+            k.electrons--;
+            outBuffer[k.id].push(Date.now());
+            k.state = 'free';
+            removeElectronViz(k.id);
+        }
+    }
+
+    function addElectronViz(kernelId) {
+        const trap = document.getElementById(`trap-${kernelId}`);
+        const existing = trap.querySelector('.electron');
+        if (existing) existing.remove();
+        
+        const electron = document.createElement('div');
+        electron.className = 'electron';
+        electron.style.left = '50%';
+        electron.style.bottom = '30%';
+        electron.style.transform = 'translateX(-50%)';
+        trap.appendChild(electron);
+        
+        // Animate into well
+        requestAnimationFrame(() => {
+            electron.style.bottom = '15%';
+        });
+    }
+
+    function removeElectronViz(kernelId) {
+        const trap = document.getElementById(`trap-${kernelId}`);
+        const electron = trap.querySelector('.electron');
+        if (electron) {
+            electron.style.bottom = '110%';
+            electron.style.opacity = '0';
+            setTimeout(() => electron.remove(), 500);
+        }
+    }
+
+    function updateTrapDepths() {
+        const tempFactor = temperature / 298;
+        kernels.forEach(k => {
+            if (k.id === 'zn') return;
+            
+            let baseDepth;
+            if (k.id === 'cu') baseDepth = 0.85;
+            else if (k.id === 'ag') baseDepth = 0.50;
+            else if (k.id === 'au') baseDepth = 0.30;
+            else baseDepth = 0;
+            
+            k.trapDepth = Math.max(0.05, baseDepth * (1 - (tempFactor - 1) * 0.3));
+            k.dValue = k.trapDepth;
+            
+            // Au gets extra noise at high temp
+            if (k.id === 'au' && temperature > 400) {
+                k.dValue += (Math.random() - 0.5) * 0.15;
+            }
+        });
+    }
+
+    function startClock() {
+        setInterval(() => {
+            clockPhase = !clockPhase;
+            document.getElementById('clockLed').classList.toggle('active', clockPhase);
+        }, 1000 / clockHz * 500);
+        
+        // Update Hz display with slight jitter
+        setInterval(() => {
+            const jitter = (Math.random() - 0.5) * 0.05;
+            document.getElementById('clockHz').textContent = (clockHz / 1000 + jitter).toFixed(2) + ' kHz';
+        }, 100);
+    }
+
+    function startSimulation() {
+        setInterval(() => {
+            // Spontaneous leakage
+            kernels.forEach(k => {
+                if (k.electrons > 0 && k.id !== 'zn') {
+                    if (k.type === 'leaky' && Math.random() < k.leakRate * (temperature / 298)) {
+                        ejectElectron(k);
+                    }
+                }
+            });
+            
+            // Update OUT current - 100ms rolling window
+            const now = Date.now();
+            kernels.forEach(k => {
+                outBuffer[k.id] = outBuffer[k.id].filter(t => now - t < 100);
+                k.outCurrent = outBuffer[k.id].length * 10; // scale to μA
+            });
+            
+            updateAll();
+        }, 50);
+    }
+
+    function resetAll() {
+        kernels.forEach(k => {
+            k.electrons = 0;
+            k.state = k.id === 'zn' ? 'gnd' : 'free';
+            outBuffer[k.id] = [];
+            k.outCurrent = 0;
+            removeElectronViz(k.id);
+        });
+        o1Active = false;
+        document.getElementById('o1Btn').textContent = 'TOGGLE O1';
+        document.getElementById('o1Btn').classList.add('secondary');
+        updateAll();
+    }
+
+    function updateAll() {
+        kernels.forEach(k => {
+            // Update badge
+            const badge = document.getElementById(`badge-${k.id}`);
+            if (badge) {
+                badge.textContent = k.state.toUpperCase();
+                badge.className = 'state-badge badge-' + k.state;
+            }
+            
+            // Update trap well
+            const well = document.getElementById(`well-${k.id}`);
+            if (well) {
+                well.style.height = (k.trapDepth * 100) + '%';
+            }
+            
+            // Update metrics
+            const dEl = document.getElementById(`d-${k.id}`);
+            if (dEl) dEl.textContent = k.dValue.toFixed(3);
+            
+            const outEl = document.getElementById(`out-${k.id}`);
+            if (outEl) outEl.textContent = k.outCurrent.toFixed(2) + ' μA';
+            
+            const depthEl = document.getElementById(`depth-${k.id}`);
+            if (depthEl) depthEl.textContent = (k.trapDepth * 100).toFixed(0) + '%';
+        });
+    }
+
+    // Init on load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
+
+</body></html>

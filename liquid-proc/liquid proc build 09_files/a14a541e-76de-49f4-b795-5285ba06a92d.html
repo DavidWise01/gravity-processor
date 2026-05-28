@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<!-- saved from url=(0165)https://1302335518078060.a.metaaiusercontent.com/html?artifact_uuid=a14a541e-76de-49f4-b795-5285ba06a92d&ext=1779377722&hash=Q5fpDAHQrvDhj_1LUGbLK5V3qCEL&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transition Metal 4+1 Kernels: Photon Highway Simulation</title>
+<style>
+    :root {
+        --bg: #0a0f1c;
+        --panel: #111827;
+        --panel-light: #1f2937;
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+        --accent: #3b82f6;
+        --accent-2: #8b5cf6;
+        --ti: #22d3ee;
+        --cu: #f97316;
+        --zn: #a3a3a3;
+        --ag: #e5e7eb;
+        --au: #fbbf24;
+        --success: #10b981;
+        --danger: #ef4444;
+        --border: #374151;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    h1 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--ti), var(--accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: var(--text-dim);
+        font-size: 1rem;
+    }
+
+    .controls-panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .controls-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        align-items: end;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .control-group label {
+        font-size: 0.875rem;
+        color: var(--text-dim);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    button {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.5);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .toggle-btn {
+        background: var(--panel-light);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .toggle-btn.active {
+        background: linear-gradient(135deg, var(--success), #059669);
+        border-color: var(--success);
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--panel-light);
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        border: 2px solid var(--bg);
+        box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        border: 2px solid var(--bg);
+    }
+
+    .value-display {
+        font-family: 'Courier New', monospace;
+        color: var(--ti);
+        font-weight: 700;
+    }
+
+    .kernels-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .kernel-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .kernel-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--card-accent, var(--accent));
+        opacity: 0.8;
+    }
+
+    .kernel-card.ti { --card-accent: var(--ti); }
+    .kernel-card.cu { --card-accent: var(--cu); }
+    .kernel-card.zn { --card-accent: var(--zn); }
+    .kernel-card.ag { --card-accent: var(--ag); }
+    .kernel-card.au { --card-accent: var(--au); }
+
+    .kernel-card.active {
+        border-color: var(--card-accent);
+        box-shadow: 0 0 24px rgba(34, 211, 238, 0.15);
+    }
+
+    .kernel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .kernel-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .kernel-symbol {
+        font-size: 1.75rem;
+        color: var(--card-accent);
+    }
+
+    .atomic-num {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        padding: 0.25rem 0.5rem;
+        background: var(--panel-light);
+        border-radius: 4px;
+    }
+
+    .electron-config {
+        font-family: 'Courier New', monospace;
+        font-size: 0.875rem;
+        color: var(--text-dim);
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        background: var(--bg);
+        border-radius: 6px;
+        border-left: 3px solid var(--card-accent);
+    }
+
+    .d-electrons {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+        min-height: 40px;
+        align-items: center;
+    }
+
+    .spin-arrow {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--panel-light);
+        border: 2px solid var(--card-accent);
+        border-radius: 6px;
+        font-size: 1.25rem;
+        color: var(--card-accent);
+        animation: spin-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes spin-pulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .laser-count {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        margin-top: 0.25rem;
+    }
+
+    .trap-visual {
+        width: 100%;
+        height: 120px;
+        background: var(--bg);
+        border-radius: 8px;
+        position: relative;
+        margin: 1rem 0;
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+
+    .trap-canvas {
+        width: 100%;
+        height: 100%;
+    }
+
+    .trap-status {
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background: var(--panel-light);
+        border-radius: 6px;
+        text-align: center;
+    }
+
+    .photon {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: radial-gradient(circle, #fff, var(--ti));
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--ti);
+    }
+
+    .velocity-display {
+        font-family: 'Courier New', monospace;
+        font-size: 0.875rem;
+        color: var(--success);
+        font-weight: 700;
+    }
+
+    .max-phase-panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .max-phase-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--ti);
+    }
+
+    .highway-canvas-container {
+        width: 100%;
+        height: 200px;
+        background: var(--bg);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        position: relative;
+        overflow: hidden;
+    }
+
+    #highwayCanvas {
+        width: 100%;
+        height: 100%;
+    }
+
+    .readme {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    .readme h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--ti);
+    }
+
+    .readme h3 {
+        font-size: 1.125rem;
+        margin: 1.5rem 0 0.75rem;
+        color: var(--text);
+    }
+
+    .readme p, .readme li {
+        color: var(--text-dim);
+        margin-bottom: 0.75rem;
+    }
+
+    .readme ul {
+        margin-left: 1.5rem;
+    }
+
+    .readme code {
+        background: var(--bg);
+        padding: 0.125rem 0.375rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        color: var(--ti);
+        font-size: 0.875rem;
+    }
+
+    .status-indicators {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .status-badge {
+        padding: 0.375rem 0.75rem;
+        background: var(--panel-light);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--text-dim);
+    }
+
+    .status-dot.active {
+        background: var(--success);
+        box-shadow: 0 0 8px var(--success);
+    }
+
+    @media (max-width: 768px) {
+        h1 { font-size: 1.75rem; }
+        .kernels-grid { grid-template-columns: 1fr; }
+        .controls-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Transition Metal 4+1 Kernels</h1>
+        <p class="subtitle">Ti 22, Cu 29, Zn 30, Ag 47, Au 79 · Photon Trap Behavior in MAX Phase Ti₃SiC₂</p>
+    </header>
+
+    <div class="controls-panel">
+        <div class="controls-grid">
+            <div class="control-group">
+                <label>System Controls</label>
+                <button id="inPulseBtn">IN Pulse · Inject Photon</button>
+            </div>
+            <div class="control-group">
+                <label>10kHz Clock</label>
+                <button id="clockBtn" class="toggle-btn">Clock: OFF</button>
+            </div>
+            <div class="control-group">
+                <label>O1 Output Gate</label>
+                <button id="o1Btn" class="toggle-btn">O1: CLOSED</button>
+            </div>
+            <div class="control-group">
+                <label>Pressure: <span class="value-display" id="pressureValue">1.0 bar</span></label>
+                <input type="range" id="pressureSlider" min="0.1" max="10" step="0.1" value="1.0">
+            </div>
+        </div>
+        <div class="status-indicators">
+            <div class="status-badge">
+                <div class="status-dot" id="systemStatus"></div>
+                <span>System: <span id="systemState">IDLE</span></span>
+            </div>
+            <div class="status-badge">
+                <span>Photons in Ti: <span class="value-display" id="photonCount">0</span></span>
+            </div>
+            <div class="status-badge">
+                <span>Ti Velocity: <span class="velocity-display" id="velocityDisplay">2.00 m/s</span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="kernels-grid" id="kernelsGrid"><div class="kernel-card ti" id="kernel-Ti">
+            <div class="kernel-header">
+                <div class="kernel-title">
+                    <span class="kernel-symbol">Ti</span>
+                    Titanium
+                </div>
+                <div class="atomic-num">Z=22</div>
+            </div>
+            <div class="electron-config">[Ar] 3d² 4s²</div>
+            <div class="d-electrons"><div class="spin-arrow">↑</div><div class="spin-arrow">↑</div></div>
+            <div class="laser-count">2 Spin Lasers</div>
+            <div class="trap-visual">
+                <canvas class="trap-canvas" id="trap-Ti" width="426" height="236"></canvas>
+            </div>
+            <div class="trap-status">Photon Highway · 2 lasers</div>
+        </div><div class="kernel-card cu" id="kernel-Cu">
+            <div class="kernel-header">
+                <div class="kernel-title">
+                    <span class="kernel-symbol">Cu</span>
+                    Copper
+                </div>
+                <div class="atomic-num">Z=29</div>
+            </div>
+            <div class="electron-config">[Ar] 3d¹⁰ 4s¹</div>
+            <div class="d-electrons"><div style="color: var(--text-dim); font-size: 0.875rem;">No unpaired d-electrons</div></div>
+            <div class="laser-count">Closed Shell</div>
+            <div class="trap-visual">
+                <canvas class="trap-canvas" id="trap-Cu" width="426" height="236"></canvas>
+            </div>
+            <div class="trap-status">Deep Trap · Absorbs</div>
+        </div><div class="kernel-card zn" id="kernel-Zn">
+            <div class="kernel-header">
+                <div class="kernel-title">
+                    <span class="kernel-symbol">Zn</span>
+                    Zinc
+                </div>
+                <div class="atomic-num">Z=30</div>
+            </div>
+            <div class="electron-config">[Ar] 3d¹⁰ 4s²</div>
+            <div class="d-electrons"><div style="color: var(--text-dim); font-size: 0.875rem;">No unpaired d-electrons</div></div>
+            <div class="laser-count">Closed Shell</div>
+            <div class="trap-visual">
+                <canvas class="trap-canvas" id="trap-Zn" width="426" height="236"></canvas>
+            </div>
+            <div class="trap-status">No Trap · Transparent</div>
+        </div><div class="kernel-card ag" id="kernel-Ag">
+            <div class="kernel-header">
+                <div class="kernel-title">
+                    <span class="kernel-symbol">Ag</span>
+                    Silver
+                </div>
+                <div class="atomic-num">Z=47</div>
+            </div>
+            <div class="electron-config">[Kr] 4d¹⁰ 5s¹</div>
+            <div class="d-electrons"><div style="color: var(--text-dim); font-size: 0.875rem;">No unpaired d-electrons</div></div>
+            <div class="laser-count">Closed Shell</div>
+            <div class="trap-visual">
+                <canvas class="trap-canvas" id="trap-Ag" width="426" height="236"></canvas>
+            </div>
+            <div class="trap-status">Perfect Trap · Elastic</div>
+        </div><div class="kernel-card au" id="kernel-Au">
+            <div class="kernel-header">
+                <div class="kernel-title">
+                    <span class="kernel-symbol">Au</span>
+                    Gold
+                </div>
+                <div class="atomic-num">Z=79</div>
+            </div>
+            <div class="electron-config">[Xe] 5d¹⁰ 6s¹</div>
+            <div class="d-electrons"><div style="color: var(--text-dim); font-size: 0.875rem;">No unpaired d-electrons</div></div>
+            <div class="laser-count">Closed Shell</div>
+            <div class="trap-visual">
+                <canvas class="trap-canvas" id="trap-Au" width="426" height="236"></canvas>
+            </div>
+            <div class="trap-status">Leaky Trap · Spin-orbit</div>
+        </div></div>
+
+    <div class="max-phase-panel">
+        <div class="max-phase-title">Ti₃SiC₂ MAX Phase · Photon Highway Visualization</div>
+        <p style="color: var(--text-dim); margin-bottom: 1rem;">Slowed light propagation at ~2 m/s through Ti d² electron coupling. Each photon wavepacket traverses the layered Si–C–Ti–Si–C structure.</p>
+        <div class="highway-canvas-container">
+            <canvas id="highwayCanvas" width="2160" height="396"></canvas>
+        </div>
+    </div>
+
+    <div class="readme">
+        <h2>README.md · Ti₃SiC₂ as Photon Bus</h2>
+        
+        <h3>Overview</h3>
+        <p>This simulation models the "4+1 Kernel" concept for transition metals interacting with photon wavepackets. The focus is Titanium (Ti, Z=22) embedded in the MAX phase Ti₃SiC₂, which acts as a photon bus with drastically reduced group velocity.</p>
+
+        <h3>Why d² is Critical for Slow Light</h3>
+        <p>Ti has electron configuration <code>[Ar] 3d² 4s²</code>. The two unpaired 3d electrons create magnetic moments that act as coherent "lasers" or spin states. In Ti₃SiC₂:</p>
+        <ul>
+            <li><strong>d² Coupling:</strong> Two unpaired d-electrons enable strong spin-photon coupling via the magneto-optic Kerr effect. The d-orbitals hybridize with Si p-states, creating localized traps.</li>
+            <li><strong>No f-states:</strong> Unlike lanthanides, Ti lacks f-electrons. This prevents deep, decohering trap states. The d-orbital trap is shallow enough to hold photons but allow controlled release.</li>
+            <li><strong>MAX Phase Layering:</strong> The Si–C–Ti–Si–C sandwich structure creates 2D electron gas planes. Photons propagate parallel to layers at ~2 m/s due to polariton formation between light and d² spin waves.</li>
+        </ul>
+
+        <h3>Kernel Comparison</h3>
+        <ul>
+            <li><strong>Ti (3d²):</strong> 2 unpaired spins = 2 lasers. Coherent trap, releases photons at 2 m/s. The photon highway.</li>
+            <li><strong>Cu (3d¹⁰ 4s¹):</strong> Full d-shell, 1 s-electron. Forms deep, decohering trap. Photon absorbed, rarely re-emitted. "Deep trap".</li>
+            <li><strong>Zn (3d¹⁰ 4s²):</strong> Full d¹⁰ s² shell. No unpaired electrons, no traps. Photon passes through. "No trap".</li>
+            <li><strong>Ag (4d¹⁰ 5s¹):</strong> d¹⁰ full shell, 1 s-electron. Very shallow trap, elastic scattering. "Perfect trap" for reflection.</li>
+            <li><strong>Au (5d¹⁰ 6s¹):</strong> Relativistic d¹⁰, 1 s-electron. Trap forms but leaks via spin-orbit coupling. "Leaky trap".</li>
+        </ul>
+
+        <h3>Controls</h3>
+        <ul>
+            <li><strong>IN Pulse:</strong> Injects a single photon wavepacket into the Ti MAX phase.</li>
+            <li><strong>10kHz Clock:</strong> Modulates the O1 gate. When synced, allows coherent photon release.</li>
+            <li><strong>O1 Button:</strong> Output gate. Open to release stored photons from Ti trap.</li>
+            <li><strong>Pressure Slider:</strong> Simulates lattice compression. Higher pressure reduces Ti–Si layer spacing, decreasing photon velocity linearly from 2 m/s → 0.5 m/s.</li>
+        </ul>
+
+        <h3>Physics Model</h3>
+        <p>Photon velocity in Ti MAX phase: <code>v = v₀ × (1 / P)</code> where v₀ = 2 m/s and P = pressure in bar. Trap time: <code>τ = h / (2 × d_spins × E_coupler)</code>. This is a phenomenological model for educational visualization, not ab initio QED.</p>
+    </div>
+</div>
+
+<script>
+const KERNELS = [
+    {
+        symbol: 'Ti',
+        name: 'Titanium',
+        atomic: 22,
+        config: '[Ar] 3d² 4s²',
+        dSpins: 2,
+        trapType: 'coherent',
+        trapDepth: 0.6,
+        leakRate: 0.02,
+        velocity: 2.0,
+        color: 'var(--ti)',
+        class: 'ti',
+        description: 'Photon Highway · 2 lasers'
+    },
+    {
+        symbol: 'Cu',
+        name: 'Copper',
+        atomic: 29,
+        config: '[Ar] 3d¹⁰ 4s¹',
+        dSpins: 0,
+        trapType: 'deep',
+        trapDepth: 0.95,
+        leakRate: 0.001,
+        velocity: 0,
+        color: 'var(--cu)',
+        class: 'cu',
+        description: 'Deep Trap · Absorbs'
+    },
+    {
+        symbol: 'Zn',
+        name: 'Zinc',
+        atomic: 30,
+        config: '[Ar] 3d¹⁰ 4s²',
+        dSpins: 0,
+        trapType: 'none',
+        trapDepth: 0,
+        leakRate: 1.0,
+        velocity: 299792458,
+        color: 'var(--zn)',
+        class: 'zn',
+        description: 'No Trap · Transparent'
+    },
+    {
+        symbol: 'Ag',
+        name: 'Silver',
+        atomic: 47,
+        config: '[Kr] 4d¹⁰ 5s¹',
+        dSpins: 0,
+        trapType: 'perfect',
+        trapDepth: 0.3,
+        leakRate: 0.8,
+        velocity: 299792458,
+        color: 'var(--ag)',
+        class: 'ag',
+        description: 'Perfect Trap · Elastic'
+    },
+    {
+        symbol: 'Au',
+        name: 'Gold',
+        atomic: 79,
+        config: '[Xe] 5d¹⁰ 6s¹',
+        dSpins: 0,
+        trapType: 'leaky',
+        trapDepth: 0.5,
+        leakRate: 0.3,
+        velocity: 0,
+        color: 'var(--au)',
+        class: 'au',
+        description: 'Leaky Trap · Spin-orbit'
+    }
+];
+
+let state = {
+    clockOn: false,
+    o1Open: false,
+    pressure: 1.0,
+    photons: [],
+    trappedPhotons: { Ti: [], Cu: [], Zn: [], Ag: [], Au: [] },
+    clockTime: 0,
+    lastPulse: 0
+};
+
+const kernelsGrid = document.getElementById('kernelsGrid');
+const inPulseBtn = document.getElementById('inPulseBtn');
+const clockBtn = document.getElementById('clockBtn');
+const o1Btn = document.getElementById('o1Btn');
+const pressureSlider = document.getElementById('pressureSlider');
+const pressureValue = document.getElementById('pressureValue');
+const systemStatus = document.getElementById('systemStatus');
+const systemState = document.getElementById('systemState');
+const photonCount = document.getElementById('photonCount');
+const velocityDisplay = document.getElementById('velocityDisplay');
+const highwayCanvas = document.getElementById('highwayCanvas');
+
+let highwayCtx = highwayCanvas.getContext('2d');
+let trapCanvases = {};
+
+function initKernels() {
+    KERNELS.forEach(kernel => {
+        const card = document.createElement('div');
+        card.className = `kernel-card ${kernel.class}`;
+        card.id = `kernel-${kernel.symbol}`;
+        
+        let spinsHTML = '';
+        for (let i = 0; i < kernel.dSpins; i++) {
+            spinsHTML += `<div class="spin-arrow">↑</div>`;
+        }
+        if (kernel.dSpins === 0) {
+            spinsHTML = '<div style="color: var(--text-dim); font-size: 0.875rem;">No unpaired d-electrons</div>';
+        }
+
+        card.innerHTML = `
+            <div class="kernel-header">
+                <div class="kernel-title">
+                    <span class="kernel-symbol">${kernel.symbol}</span>
+                    ${kernel.name}
+                </div>
+                <div class="atomic-num">Z=${kernel.atomic}</div>
+            </div>
+            <div class="electron-config">${kernel.config}</div>
+            <div class="d-electrons">${spinsHTML}</div>
+            <div class="laser-count">${kernel.dSpins > 0 ? `${kernel.dSpins} Spin Lasers` : 'Closed Shell'}</div>
+            <div class="trap-visual">
+                <canvas class="trap-canvas" id="trap-${kernel.symbol}"></canvas>
+            </div>
+            <div class="trap-status">${kernel.description}</div>
+        `;
+        kernelsGrid.appendChild(card);
+        
+        const canvas = document.getElementById(`trap-${kernel.symbol}`);
+        const ctx = canvas.getContext('2d');
+        trapCanvases[kernel.symbol] = { canvas, ctx };
+    });
+}
+
+function resizeCanvases() {
+    highwayCanvas.width = highwayCanvas.offsetWidth * window.devicePixelRatio;
+    highwayCanvas.height = highwayCanvas.offsetHeight * window.devicePixelRatio;
+    highwayCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    
+    Object.values(trapCanvases).forEach(({ canvas, ctx }) => {
+        canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+        canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    });
+}
+
+function injectPhoton() {
+    const photon = {
+        id: Date.now() + Math.random(),
+        x: 0,
+        y: highwayCanvas.offsetHeight / 2,
+        trapped: false,
+        trapKernel: 'Ti',
+        trapTime: 0,
+        energy: 1.0
+    };
+    
+    state.photons.push(photon);
+    state.trappedPhotons.Ti.push(photon);
+    state.lastPulse = Date.now();
+    updateUI();
+}
+
+function updateSimulation(dt) {
+    const tiKernel = KERNELS[0];
+    const baseVelocity = tiKernel.velocity / state.pressure;
+    
+    // Clock update at 10kHz = 0.1ms period
+    if (state.clockOn) {
+        state.clockTime += dt;
+    }
+
+    // Process photons in Ti highway
+    state.photons.forEach(photon => {
+        if (!photon.trapped && photon.trapKernel === 'Ti') {
+            photon.x += baseVelocity * dt * 50; // Scale for visualization
+        } else if (photon.trapped) {
+            photon.trapTime += dt;
+            
+            // Ti trap dynamics
+            if (photon.trapKernel === 'Ti') {
+                const releaseProb = state.o1Open ? 0.8 : tiKernel.leakRate;
+                if (Math.random() < releaseProb * dt) {
+                    photon.trapped = false;
+                    state.trappedPhotons.Ti = state.trappedPhotons.Ti.filter(p => p.id !== photon.id);
+                }
+            }
+        }
+    });
+
+    // Remove photons that exit the highway
+    state.photons = state.photons.filter(p => p.x < highwayCanvas.offsetWidth + 20);
+
+    // Process other kernels
+    KERNELS.slice(1).forEach(kernel => {
+        const trapped = state.trappedPhotons[kernel.symbol];
+        if (kernel.trapType === 'deep' || kernel.trapType === 'leaky') {
+            // Simulate spontaneous emission/absorption
+            for (let i = trapped.length - 1; i >= 0; i--) {
+                if (Math.random() < kernel.leakRate * dt) {
+                    trapped.splice(i, 1);
+                }
+            }
+        } else if (kernel.trapType === 'perfect') {
+            // Ag immediately re-emits
+            if (trapped.length > 0 && Math.random() < 0.95) {
+                trapped.length = 0;
+            }
+        }
+    });
+
+    updateUI();
+}
+
+function drawHighway() {
+    const w = highwayCanvas.offsetWidth;
+    const h = highwayCanvas.offsetHeight;
+    highwayCtx.clearRect(0, 0, w, h);
+
+    // Draw MAX phase layers
+    const layers = 5;
+    const layerHeight = h / layers;
+    const colors = ['#1e293b', '#334155', '#22d3ee', '#334155', '#1e293b'];
+    const labels = ['C', 'Si', 'Ti (d²)', 'Si', 'C'];
+
+    for (let i = 0; i < layers; i++) {
+        highwayCtx.fillStyle = colors[i];
+        highwayCtx.globalAlpha = i === 2 ? 0.3 : 0.1;
+        highwayCtx.fillRect(0, i * layerHeight, w, layerHeight);
+        
+        highwayCtx.fillStyle = '#64748b';
+        highwayCtx.font = '12px Courier New';
+        highwayCtx.globalAlpha = 0.6;
+        highwayCtx.fillText(labels[i], 10, i * layerHeight + layerHeight / 2 + 4);
+    }
+    highwayCtx.globalAlpha = 1;
+
+    // Draw photons
+    state.photons.forEach(photon => {
+        const alpha = photon.trapped ? 0.3 : 1.0;
+        highwayCtx.globalAlpha = alpha;
+        highwayCtx.fillStyle = '#22d3ee';
+        highwayCtx.shadowBlur = photon.trapped ? 5 : 15;
+        highwayCtx.shadowColor = '#22d3ee';
+        highwayCtx.beginPath();
+        highwayCtx.arc(photon.x, photon.y + Math.sin(Date.now() / 200 + photon.id) * 5, 4, 0, Math.PI * 2);
+        highwayCtx.fill();
+        highwayCtx.shadowBlur = 0;
+    });
+    highwayCtx.globalAlpha = 1;
+
+    // Draw velocity vector
+    if (state.photons.length > 0) {
+        const v = (KERNELS[0].velocity / state.pressure).toFixed(2);
+        highwayCtx.fillStyle = '#10b981';
+        highwayCtx.font = 'bold 14px Courier New';
+        highwayCtx.fillText(`v = ${v} m/s`, w - 120, 25);
+    }
+}
+
+function drawTrap(kernel, ctx, canvas) {
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    ctx.clearRect(0, 0, w, h);
+
+    const trapped = state.trappedPhotons[kernel.symbol];
+    const centerX = w / 2;
+    const centerY = h / 2;
+
+    // Draw trap potential
+    ctx.strokeStyle = kernel.color;
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.3;
+    
+    if (kernel.trapType === 'coherent') {
+        // Double well for d²
+        ctx.beginPath();
+        ctx.moveTo(10, h - 10);
+        ctx.quadraticCurveTo(w * 0.3, 10, w * 0.5, h - 10);
+        ctx.quadraticCurveTo(w * 0.7, 10, w - 10, h - 10);
+        ctx.stroke();
+    } else if (kernel.trapType === 'deep') {
+        // Deep single well
+        ctx.beginPath();
+        ctx.moveTo(10, 20);
+        ctx.lineTo(w / 2, h - 10);
+        ctx.lineTo(w - 10, 20);
+        ctx.stroke();
+    } else if (kernel.trapType === 'none') {
+        // Flat line
+        ctx.beginPath();
+        ctx.moveTo(10, h / 2);
+        ctx.lineTo(w - 10, h / 2);
+        ctx.stroke();
+    } else {
+        // Shallow well
+        ctx.beginPath();
+        ctx.moveTo(10, h * 0.4);
+        ctx.quadraticCurveTo(w / 2, h * 0.7, w - 10, h * 0.4);
+        ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // Draw trapped photons
+    ctx.fillStyle = kernel.color;
+    trapped.forEach((p, i) => {
+        const angle = (Date.now() / 1000 + i) % (Math.PI * 2);
+        const r = 15 + Math.sin(Date.now() / 500 + i) * 5;
+        const x = centerX + Math.cos(angle) * r;
+        const y = centerY + Math.sin(angle) * r * 0.5;
+        
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = kernel.color;
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    });
+
+    // Status text
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = '10px Courier New';
+    ctx.fillText(`Trapped: ${trapped.length}`, 5, h - 5);
+}
+
+function updateUI() {
+    const tiCount = state.trappedPhotons.Ti.length + state.photons.filter(p => !p.trapped).length;
+    photonCount.textContent = tiCount;
+    
+    const velocity = (KERNELS[0].velocity / state.pressure).toFixed(2);
+    velocityDisplay.textContent = velocity + ' m/s';
+    
+    const hasActivity = state.photons.length > 0 || Object.values(state.trappedPhotons).some(a => a.length > 0);
+    systemState.textContent = hasActivity ? 'ACTIVE' : 'IDLE';
+    systemStatus.className = 'status-dot' + (hasActivity ? ' active' : '');
+    
+    // Highlight active Ti card
+    const tiCard = document.getElementById('kernel-Ti');
+    if (tiCount > 0) {
+        tiCard.classList.add('active');
+    } else {
+        tiCard.classList.remove('active');
+    }
+}
+
+function animate() {
+    const dt = 0.016; // ~60fps
+    updateSimulation(dt);
+    drawHighway();
+    
+    KERNELS.forEach(kernel => {
+        const { ctx, canvas } = trapCanvases[kernel.symbol];
+        drawTrap(kernel, ctx, canvas);
+    });
+    
+    requestAnimationFrame(animate);
+}
+
+// Event Listeners
+inPulseBtn.addEventListener('click', injectPhoton);
+
+clockBtn.addEventListener('click', () => {
+    state.clockOn = !state.clockOn;
+    clockBtn.textContent = `Clock: ${state.clockOn ? 'ON' : 'OFF'}`;
+    clockBtn.classList.toggle('active', state.clockOn);
+});
+
+o1Btn.addEventListener('click', () => {
+    state.o1Open = !state.o1Open;
+    o1Btn.textContent = `O1: ${state.o1Open ? 'OPEN' : 'CLOSED'}`;
+    o1Btn.classList.toggle('active', state.o1Open);
+});
+
+pressureSlider.addEventListener('input', (e) => {
+    state.pressure = parseFloat(e.target.value);
+    pressureValue.textContent = state.pressure.toFixed(1) + ' bar';
+});
+
+// Initialize
+initKernels();
+resizeCanvases();
+window.addEventListener('resize', resizeCanvases);
+animate();
+updateUI();
+</script>
+
+</body></html>

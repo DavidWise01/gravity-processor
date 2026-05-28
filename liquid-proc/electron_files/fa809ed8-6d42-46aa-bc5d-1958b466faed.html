@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<!-- saved from url=(0165)https://1751512965829944.a.metaaiusercontent.com/html?artifact_uuid=fa809ed8-6d42-46aa-bc5d-1958b466faed&ext=1779387632&hash=Q5fpDAGWlYvagzIzmW2s4YYDOPFQ&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electron Colony Model Visualization</title>
+<style>
+    :root {
+        --bg: #0a0e1a;
+        --card: #111827;
+        --border: #1f2937;
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+        --accent: #6366f1;
+        --red: #ef4444;
+        --blue: #3b82f6;
+        --yellow: #facc15;
+        --green: #22c55e;
+        --shadow: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -2px rgba(0,0,0,0.2);
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.6;
+    }
+    
+    header {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        padding: 1.5rem 1rem;
+        text-align: center;
+        box-shadow: var(--shadow);
+        border-bottom: 1px solid var(--border);
+    }
+    
+    header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(90deg, #a5b4fc, #c4b5fd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    header p {
+        color: var(--text-dim);
+        max-width: 800px;
+        margin: 0 auto;
+        font-size: 0.95rem;
+    }
+    
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        width: 100%;
+        flex: 1;
+    }
+    
+    @media (min-width: 1024px) {
+        .container {
+            grid-template-columns: 2fr 1fr;
+        }
+    }
+    
+    .viz-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+    }
+    
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        align-items: center;
+    }
+    
+    button {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3);
+    }
+    
+    button:hover {
+        background: #4f46e5;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+    }
+    
+    button:active {
+        transform: translateY(0);
+    }
+    
+    button:disabled {
+        background: #374151;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .slider-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .slider-group label {
+        font-size: 0.9rem;
+        color: var(--text-dim);
+        white-space: nowrap;
+    }
+    
+    input[type="range"] {
+        flex: 1;
+        height: 6px;
+        background: var(--border);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    #canvas-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1;
+        max-height: 70vh;
+        background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+    
+    canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .legend-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .readme {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        height: fit-content;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .readme h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #a5b4fc;
+    }
+    
+    .readme h3 {
+        font-size: 1.1rem;
+        margin: 1.25rem 0 0.5rem;
+        color: #c4b5fd;
+    }
+    
+    .readme p, .readme li {
+        color: var(--text-dim);
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .readme ul {
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .readme code {
+        background: #1e293b;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.85rem;
+        color: #fca5a5;
+    }
+    
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+    
+    .stat-box {
+        background: #0f172a;
+        padding: 0.75rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid var(--border);
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        margin-top: 0.25rem;
+    }
+    
+    .notification {
+        position: absolute;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(34, 197, 94, 0.9);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        backdrop-filter: blur(8px);
+    }
+    
+    .notification.show {
+        opacity: 1;
+    }
+</style>
+</head>
+<body>
+<header>
+    <h1>Electron Colony Model</h1>
+    <p>Visualizing semiconductor behavior: 9 electrons per colony with spin pairing and carrier transport via photon excitation</p>
+</header>
+
+<div class="container">
+    <div class="viz-card">
+        <div class="controls">
+            <button id="fireBtn">Fire Photon</button>
+            <button id="resetBtn">Reset</button>
+            <div class="slider-group">
+                <label for="speedSlider">Speed:</label>
+                <input type="range" id="speedSlider" min="0.2" max="3" step="0.1" value="1">
+                <span id="speedValue">1.0x</span>
+            </div>
+        </div>
+        
+        <div id="canvas-container">
+            <canvas id="canvas" width="1362" height="1013"></canvas>
+            <div class="notification" id="notification"></div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M10 3 L10 17 M10 3 L6 7 M10 3 L14 7" stroke="#ef4444" stroke-width="2" fill="none"></path>
+                    </svg>
+                </div>
+                <span>Spin Up Electron</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M10 17 L10 3 M10 17 L6 13 M10 17 L14 13" stroke="#3b82f6" stroke-width="2" fill="none"></path>
+                    </svg>
+                </div>
+                <span>Spin Down Electron</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">
+                    <div style="width:12px;height:12px;background:#facc15;border-radius:50%;box-shadow:0 0 10px #facc15;"></div>
+                </div>
+                <span>Carrier Electron</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">
+                    <div style="width:8px;height:8px;background:#22c55e;border-radius:50%;box-shadow:0 0 8px #22c55e;"></div>
+                </div>
+                <span>Photon</span>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="photonsFired">0</div>
+                <div class="stat-label">Photons Fired</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="carriersTransferred">0</div>
+                <div class="stat-label">Carriers Transferred</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="readme">
+        <h2>README.md: Electron Colony Model</h2>
+        
+        <h3>Overview</h3>
+        <p>This simulation demonstrates the <strong>Electron Colony Model</strong>, a simplified representation of electron behavior in semiconductor materials. Each "colony" represents an atomic site or lattice position containing 9 electrons.</p>
+        
+        <h3>Colony Structure - 3x3 Grid</h3>
+        <p>Each colony follows a strict 9-electron configuration:</p>
+        <ul>
+            <li><strong>4 Spin Up Electrons</strong> (Red ↑): Paired electrons with magnetic moment aligned up</li>
+            <li><strong>4 Spin Down Electrons</strong> (Blue ↓): Paired electrons with magnetic moment aligned down</li>
+            <li><strong>1 Carrier Electron</strong> (Yellow ●): The unpaired electron in the center</li>
+        </ul>
+        
+        <h3>Physics Principles</h3>
+        <p><strong>1. Spin Pairing:</strong> Electrons in the same orbital must have opposite spins per Pauli exclusion principle. The 4 up + 4 down electrons form stable pairs.</p>
+        
+        <p><strong>2. Pauli Exclusion Principle:</strong> No two electrons can occupy the same quantum state. This forces the 9th electron to remain unpaired as a "carrier".</p>
+        
+        <p><strong>3. Carrier Transport:</strong> Only the unpaired carrier electron can move between colonies. When a photon strikes a colony with sufficient energy, it excites the carrier, allowing it to jump to an adjacent colony.</p>
+        
+        <h3>Interaction Model</h3>
+        <ul>
+            <li><code>Fire Photon</code>: Launches a photon from the edge toward a random colony</li>
+            <li>When photon hits a colony, it excites the carrier electron</li>
+            <li>Excited carrier becomes mobile and transfers to a neighboring colony</li>
+            <li>The receiving colony donates its carrier to maintain the 9-electron rule</li>
+            <li>This cascade represents electrical conduction in semiconductors</li>
+        </ul>
+        
+        <h3>Real-World Analogy</h3>
+        <p>This models how silicon doping works: pure silicon has 4 valence electrons. When doped with phosphorus (5 valence electrons), the extra electron becomes a free carrier that can conduct electricity when excited by photons or thermal energy.</p>
+        
+        <h3>Controls</h3>
+        <p><strong>Fire Photon:</strong> Emit a photon to excite a carrier<br>
+        <strong>Reset:</strong> Return all colonies to initial state<br>
+        <strong>Speed:</strong> Adjust animation speed from 0.2x to 3x</p>
+    </div>
+</div>
+
+<script>
+(function() {
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const fireBtn = document.getElementById('fireBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const speedSlider = document.getElementById('speedSlider');
+    const speedValue = document.getElementById('speedValue');
+    const notification = document.getElementById('notification');
+    const photonsFiredEl = document.getElementById('photonsFired');
+    const carriersTransferredEl = document.getElementById('carriersTransferred');
+    
+    let animationSpeed = 1.0;
+    let colonies = [];
+    let particles = [];
+    let animationFrame = null;
+    let stats = { photonsFired: 0, carriersTransferred: 0 };
+    
+    // Colony configuration: 3x3 grid means 9 colonies total
+    const GRID_SIZE = 3;
+    const COLONY_SIZE = 1; // 1 colony = 1 grid cell
+    
+    class Colony {
+        constructor(gridX, gridY, x, y, size) {
+            this.gridX = gridX;
+            this.gridY = gridY;
+            this.x = x;
+            this.y = y;
+            this.size = size;
+            this.electrons = this.initElectrons();
+            this.hasActiveCarrier = true;
+            this.glowIntensity = 0;
+        }
+        
+        initElectrons() {
+            const electrons = [];
+            const cellSize = this.size / 3;
+            const padding = cellSize * 0.3;
+            
+            // 3x3 grid: indices 0-8
+            // 0 1 2
+            // 3 4 5
+            // 6 7 8
+            // Center is index 4 - carrier
+            // Others: 4 up, 4 down
+            
+            let upCount = 0;
+            let downCount = 0;
+            
+            for (let i = 0; i < 9; i++) {
+                const row = Math.floor(i / 3);
+                const col = i % 3;
+                const ex = this.x + col * cellSize + cellSize / 2;
+                const ey = this.y + row * cellSize + cellSize / 2;
+                
+                let spin = 'carrier';
+                if (i === 4) {
+                    spin = 'carrier';
+                } else if (upCount < 4) {
+                    spin = 'up';
+                    upCount++;
+                } else {
+                    spin = 'down';
+                    downCount++;
+                }
+                
+                electrons.push({
+                    x: ex,
+                    y: ey,
+                    baseX: ex,
+                    baseY: ey,
+                    spin: spin,
+                    active: spin === 'carrier',
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+            return electrons;
+        }
+        
+        excite() {
+            const carrier = this.electrons.find(e => e.spin === 'carrier' && e.active);
+            if (carrier) {
+                this.glowIntensity = 1;
+                return carrier;
+            }
+            return null;
+        }
+        
+        receiveCarrier() {
+            this.glowIntensity = 1;
+            const carrier = this.electrons.find(e => e.spin === 'carrier');
+            if (carrier) {
+                carrier.active = true;
+                this.hasActiveCarrier = true;
+            }
+        }
+        
+        removeCarrier() {
+            const carrier = this.electrons.find(e => e.spin === 'carrier');
+            if (carrier) {
+                carrier.active = false;
+                this.hasActiveCarrier = false;
+            }
+        }
+        
+        update(deltaTime) {
+            if (this.glowIntensity > 0) {
+                this.glowIntensity -= deltaTime * 2;
+                if (this.glowIntensity < 0) this.glowIntensity = 0;
+            }
+            
+            // Subtle electron orbital motion
+            this.electrons.forEach(e => {
+                if (!e.active && e.spin !== 'carrier') {
+                    e.phase += deltaTime * 0.5;
+                    const offset = 2 * Math.sin(e.phase);
+                    e.x = e.baseX + offset * 0.5;
+                }
+            });
+        }
+        
+        draw(ctx) {
+            // Colony background with glow
+            ctx.save();
+            
+            if (this.glowIntensity > 0) {
+                const gradient = ctx.createRadialGradient(
+                    this.x + this.size/2, this.y + this.size/2, 0,
+                    this.x + this.size/2, this.y + this.size/2, this.size/2
+                );
+                gradient.addColorStop(0, `rgba(99, 102, 241, ${this.glowIntensity * 0.3})`);
+                gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+            
+            // Colony border
+            ctx.strokeStyle = '#1f2937';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(this.x, this.y, this.size, this.size);
+            
+            // Draw grid lines
+            ctx.strokeStyle = '#1f2937';
+            ctx.lineWidth = 1;
+            const cellSize = this.size / 3;
+            for (let i = 1; i < 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(this.x + i * cellSize, this.y);
+                ctx.lineTo(this.x + i * cellSize, this.y + this.size);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + i * cellSize);
+                ctx.lineTo(this.x + this.size, this.y + i * cellSize);
+                ctx.stroke();
+            }
+            
+            // Draw electrons
+            this.electrons.forEach(e => {
+                if (e.spin === 'carrier' && !e.active) return;
+                
+                ctx.save();
+                ctx.translate(e.x, e.y);
+                
+                if (e.spin === 'up') {
+                    // Red up arrow
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.fillStyle = '#ef4444';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -8);
+                    ctx.lineTo(0, 8);
+                    ctx.moveTo(0, -8);
+                    ctx.lineTo(-4, -4);
+                    ctx.moveTo(0, -8);
+                    ctx.lineTo(4, -4);
+                    ctx.stroke();
+                    
+                    // Glow
+                    ctx.shadowColor = '#ef4444';
+                    ctx.shadowBlur = 10;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                } else if (e.spin === 'down') {
+                    // Blue down arrow
+                    ctx.strokeStyle = '#3b82f6';
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -8);
+                    ctx.lineTo(0, 8);
+                    ctx.moveTo(0, 8);
+                    ctx.lineTo(-4, 4);
+                    ctx.moveTo(0, 8);
+                    ctx.lineTo(4, 4);
+                    ctx.stroke();
+                    
+                    // Glow
+                    ctx.shadowColor = '#3b82f6';
+                    ctx.shadowBlur = 10;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                } else if (e.spin === 'carrier' && e.active) {
+                    // Yellow pulsing carrier dot
+                    const pulse = 1 + Math.sin(Date.now() * 0.005) * 0.2;
+                    ctx.fillStyle = '#facc15';
+                    ctx.shadowColor = '#facc15';
+                    ctx.shadowBlur = 15;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 5 * pulse, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                ctx.restore();
+            });
+            
+            ctx.restore();
+        }
+    }
+    
+    class Photon {
+        constructor(startX, startY, targetColony) {
+            this.x = startX;
+            this.y = startY;
+            this.targetColony = targetColony;
+            this.tx = targetColony.x + targetColony.size / 2;
+            this.ty = targetColony.y + targetColony.size / 2;
+            this.speed = 300;
+            this.hit = false;
+            this.trail = [];
+        }
+        
+        update(deltaTime) {
+            if (this.hit) return true;
+            
+            const dx = this.tx - this.x;
+            const dy = this.ty - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 10) {
+                this.hit = true;
+                return true;
+            }
+            
+            const vx = (dx / dist) * this.speed * deltaTime * animationSpeed;
+            const vy = (dy / dist) * this.speed * deltaTime * animationSpeed;
+            
+            this.x += vx;
+            this.y += vy;
+            
+            // Trail
+            this.trail.push({ x: this.x, y: this.y });
+            if (this.trail.length > 10) this.trail.shift();
+            
+            return false;
+        }
+        
+        draw(ctx) {
+            // Trail
+            ctx.save();
+            this.trail.forEach((p, i) => {
+                const alpha = i / this.trail.length * 0.5;
+                ctx.fillStyle = `rgba(34, 197, 94, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Photon
+            ctx.fillStyle = '#22c55e';
+            ctx.shadowColor = '#22c55e';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+    
+    class CarrierElectron {
+        constructor(startX, startY, targetColony, sourceColony) {
+            this.x = startX;
+            this.y = startY;
+            this.sourceColony = sourceColony;
+            this.targetColony = targetColony;
+            this.tx = targetColony.x + targetColony.size / 2;
+            this.ty = targetColony.y + targetColony.size / 2;
+            this.progress = 0;
+            this.speed = 1.5;
+            this.arrived = false;
+            this.trail = [];
+        }
+        
+        update(deltaTime) {
+            if (this.arrived) return true;
+            
+            this.progress += deltaTime * this.speed * animationSpeed;
+            
+            if (this.progress >= 1) {
+                this.arrived = true;
+                return true;
+            }
+            
+            // Bezier curve for natural motion
+            const sx = this.sourceColony.x + this.sourceColony.size / 2;
+            const sy = this.sourceColony.y + this.sourceColony.size / 2;
+            const cx = (sx + this.tx) / 2;
+            const cy = Math.min(sy, this.ty) - 50;
+            
+            const t = this.progress;
+            this.x = (1-t)*(1-t)*sx + 2*(1-t)*t*cx + t*t*this.tx;
+            this.y = (1-t)*(1-t)*sy + 2*(1-t)*t*cy + t*t*this.ty;
+            
+            this.trail.push({ x: this.x, y: this.y });
+            if (this.trail.length > 15) this.trail.shift();
+            
+            return false;
+        }
+        
+        draw(ctx) {
+            ctx.save();
+            
+            // Trail
+            this.trail.forEach((p, i) => {
+                const alpha = i / this.trail.length * 0.6;
+                ctx.fillStyle = `rgba(250, 204, 21, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Carrier
+            const pulse = 1 + Math.sin(Date.now() * 0.01) * 0.3;
+            ctx.fillStyle = '#facc15';
+            ctx.shadowColor = '#facc15';
+            ctx.shadowBlur = 20;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 6 * pulse, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.restore();
+        }
+    }
+    
+    function init() {
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.height * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        
+        const width = rect.width;
+        const height = rect.height;
+        const padding = 60;
+        const colonyArea = Math.min(width, height) - padding * 2;
+        const colonySize = colonyArea / GRID_SIZE;
+        
+        colonies = [];
+        for (let gy = 0; gy < GRID_SIZE; gy++) {
+            for (let gx = 0; gx < GRID_SIZE; gx++) {
+                const x = padding + gx * colonySize;
+                const y = padding + gy * colonySize;
+                colonies.push(new Colony(gx, gy, x, y, colonySize));
+            }
+        }
+        
+        particles = [];
+        stats = { photonsFired: 0, carriersTransferred: 0 };
+        updateStats();
+    }
+    
+    function firePhoton() {
+        const activeColonies = colonies.filter(c => c.hasActiveCarrier);
+        if (activeColonies.length === 0) {
+            showNotification('No carriers available to excite!');
+            return;
+        }
+        
+        const sourceColony = activeColonies[Math.floor(Math.random() * activeColonies.length)];
+        
+        // Find adjacent colonies
+        const neighbors = colonies.filter(c => {
+            if (c === sourceColony) return false;
+            const dx = Math.abs(c.gridX - sourceColony.gridX);
+            const dy = Math.abs(c.gridY - sourceColony.gridY);
+            return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
+        });
+        
+        if (neighbors.length === 0) return;
+        
+        // Fire photon from random edge
+        const rect = canvas.getBoundingClientRect();
+        const side = Math.floor(Math.random() * 4);
+        let px, py;
+        
+        switch(side) {
+            case 0: px = Math.random() * rect.width; py = 0; break;
+            case 1: px = rect.width; py = Math.random() * rect.height; break;
+            case 2: px = Math.random() * rect.width; py = rect.height; break;
+            case 3: px = 0; py = Math.random() * rect.height; break;
+        }
+        
+        const photon = new Photon(px, py, sourceColony);
+        particles.push({ type: 'photon', obj: photon, sourceColony, neighbors });
+        
+        stats.photonsFired++;
+        updateStats();
+        fireBtn.disabled = true;
+    }
+    
+    function showNotification(text) {
+        notification.textContent = text;
+        notification.classList.add('show');
+        setTimeout(() => notification.classList.remove('show'), 2000);
+    }
+    
+    function updateStats() {
+        photonsFiredEl.textContent = stats.photonsFired;
+        carriersTransferredEl.textContent = stats.carriersTransferred;
+    }
+    
+    let lastTime = 0;
+    function animate(time) {
+        const deltaTime = Math.min((time - lastTime) / 1000, 0.1);
+        lastTime = time;
+        
+        const rect = canvas.getBoundingClientRect();
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        
+        // Update colonies
+        colonies.forEach(colony => {
+            colony.update(deltaTime);
+            colony.draw(ctx);
+        });
+        
+        // Update particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            
+            if (p.type === 'photon') {
+                const hit = p.obj.update(deltaTime);
+                p.obj.draw(ctx);
+                
+                if (hit) {
+                    // Photon hit - excite carrier
+                    const carrier = p.sourceColony.excite();
+                    if (carrier) {
+                        const target = p.neighbors[Math.floor(Math.random() * p.neighbors.length)];
+                        const electron = new CarrierElectron(
+                            carrier.baseX, 
+                            carrier.baseY, 
+                            target, 
+                            p.sourceColony
+                        );
+                        p.sourceColony.removeCarrier();
+                        particles.push({ type: 'carrier', obj: electron });
+                        stats.carriersTransferred++;
+                        updateStats();
+                    }
+                    particles.splice(i, 1);
+                    fireBtn.disabled = false;
+                }
+            } else if (p.type === 'carrier') {
+                const arrived = p.obj.update(deltaTime);
+                p.obj.draw(ctx);
+                
+                if (arrived) {
+                    p.obj.targetColony.receiveCarrier();
+                    particles.splice(i, 1);
+                    showNotification('Carrier transferred!');
+                }
+            }
+        }
+        
+        animationFrame = requestAnimationFrame(animate);
+    }
+    
+    function reset() {
+        particles = [];
+        colonies.forEach(colony => {
+            colony.hasActiveCarrier = true;
+            colony.glowIntensity = 0;
+            colony.electrons.forEach(e => {
+                if (e.spin === 'carrier') e.active = true;
+            });
+        });
+        stats = { photonsFired: 0, carriersTransferred: 0 };
+        updateStats();
+        fireBtn.disabled = false;
+    }
+    
+    // Event listeners
+    fireBtn.addEventListener('click', firePhoton);
+    resetBtn.addEventListener('click', reset);
+    speedSlider.addEventListener('input', (e) => {
+        animationSpeed = parseFloat(e.target.value);
+        speedValue.textContent = animationSpeed.toFixed(1) + 'x';
+    });
+    
+    window.addEventListener('resize', () => {
+        if (animationFrame) cancelAnimationFrame(animationFrame);
+        init();
+        lastTime = performance.now();
+        animate(lastTime);
+    });
+    
+    // Initialize
+    init();
+    lastTime = performance.now();
+    animate(lastTime);
+})();
+</script>
+
+</body></html>

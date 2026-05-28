@@ -1,0 +1,61 @@
+{
+  "name": "42-Prim Gravity Kernel Breadboard Prototype v2.0",
+  "power": "3.3V, 96uA avg @ 10kHz",
+  "cost_usd": 98.46,
+  "components": [
+    {
+      "ref": "U1-U42",
+      "part": "LTC6993-1 TimerBlox",
+      "desc": "Ag2S memristor emulator, 1us-33s",
+      "qty": 42
+    },
+    {
+      "ref": "U43-U46",
+      "part": "74HC14",
+      "desc": "Schmitt for Live tensors L0-L3",
+      "qty": 4
+    },
+    {
+      "ref": "U47",
+      "part": "MCP4921 DAC 12-bit",
+      "desc": "IN: set D_target for G0-G41",
+      "qty": 1
+    },
+    {
+      "ref": "U48",
+      "part": "MCP3204 ADC 12-bit",
+      "desc": "OUT: read L0-L3",
+      "qty": 1
+    },
+    {
+      "ref": "U49",
+      "part": "RP2040",
+      "desc": "Dual core, runs r*F*dD @ 10kHz",
+      "qty": 1
+    },
+    {
+      "ref": "R1-R42",
+      "part": "1M 1% 0603",
+      "desc": "R0 base",
+      "qty": 42
+    },
+    {
+      "ref": "C1-C42",
+      "part": "1nF 0603",
+      "desc": "C0 ion cap",
+      "qty": 42
+    },
+    {
+      "ref": "R_DLY",
+      "part": "50k 0603",
+      "desc": "25us RC delay",
+      "qty": 4
+    },
+    {
+      "ref": "C_DLY",
+      "part": "470pF 0603",
+      "desc": "25us RC delay",
+      "qty": 4
+    }
+  ]
+}

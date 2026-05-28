@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<!-- saved from url=(0165)https://4368076180174521.a.metaaiusercontent.com/html?artifact_uuid=04b12ef8-c550-433a-a634-1a98774ec3d6&ext=1779385095&hash=Q5fpDAFBIqcFRIKfWUYNCfK5Bo_7&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Stacked Kernel Board - Ar Gas Gap Design</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --bg-primary: #0a0e1a;
+        --bg-secondary: #111827;
+        --bg-panel: #1a1f2e;
+        --text-primary: #f3f4f6;
+        --text-secondary: #9ca3af;
+        --border: #2d3548;
+        --accent: #3b82f6;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --ar-color: #38bdf8;
+        --si-color: #fbbf24;
+        --ti-color: #a78bfa;
+        --cu-color: #fb923c;
+        --zn-color: #94a3b8;
+        --ag-color: #e5e7eb;
+        --au-color: #facc15;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        overflow-x: hidden;
+        min-height: 100vh;
+    }
+
+    .app {
+        display: grid;
+        grid-template-columns: 320px 1fr 320px;
+        grid-template-rows: 64px 1fr;
+        height: 100vh;
+        gap: 1px;
+        background: var(--border);
+    }
+
+    header {
+        grid-column: 1 / -1;
+        background: var(--bg-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 18px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .header-stats {
+        display: flex;
+        gap: 24px;
+        font-size: 13px;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+        font-weight: 600;
+        font-size: 16px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .sidebar {
+        background: var(--bg-panel);
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+    }
+
+    .panel {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+    }
+
+    .panel-title {
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-secondary);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .control-group {
+        margin-bottom: 16px;
+    }
+
+    .control-group:last-child {
+        margin-bottom: 0;
+    }
+
+    label {
+        display: block;
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px 16px;
+        background: linear-gradient(135deg, var(--accent), #2563eb);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px -1px rgba(59, 130, 246, 0.4);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    button.secondary {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        box-shadow: none;
+        color: var(--text-primary);
+    }
+
+    button.secondary:hover {
+        background: #222938;
+        box-shadow: none;
+    }
+
+    button.danger {
+        background: linear-gradient(135deg, var(--danger), #dc2626);
+        box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+    }
+
+    button.success {
+        background: linear-gradient(135deg, var(--success), #059669);
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        background: var(--bg-panel);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+    }
+
+    .slider-value {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+    }
+
+    .slider-current {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .element-legend {
+        display: grid;
+        gap: 8px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+    }
+
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+    }
+
+    .legend-details {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .legend-name {
+        font-weight: 500;
+    }
+
+    .legend-config {
+        color: var(--text-secondary);
+        font-size: 11px;
+        font-family: 'Monaco', 'Courier New', monospace;
+    }
+
+    .main-view {
+        background: var(--bg-primary);
+        position: relative;
+        overflow: hidden;
+    }
+
+    #canvas3d {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .canvas-overlay {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(17, 24, 39, 0.9);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        min-width: 200px;
+    }
+
+    .overlay-title {
+        font-size: 12px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+    }
+
+    .metric-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+
+    .metric-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .metric-label {
+        color: var(--text-secondary);
+    }
+
+    .metric-val {
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .metric-val.active {
+        color: var(--success);
+    }
+
+    .metric-val.warning {
+        color: var(--warning);
+    }
+
+    .metric-val.danger {
+        color: var(--danger);
+    }
+
+    .instructions {
+        font-size: 12px;
+        line-height: 1.6;
+        color: var(--text-secondary);
+    }
+
+    .instructions h4 {
+        color: var(--text-primary);
+        font-size: 13px;
+        margin-bottom: 8px;
+        margin-top: 12px;
+    }
+
+    .instructions h4:first-child {
+        margin-top: 0;
+    }
+
+    .instructions ul {
+        margin-left: 16px;
+        margin-bottom: 8px;
+    }
+
+    .instructions li {
+        margin-bottom: 4px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-badge.safe {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .status-badge.warning {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    .status-badge.danger {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+    }
+
+    .pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .grid-label {
+        position: absolute;
+        font-size: 10px;
+        color: var(--text-secondary);
+        font-family: 'Monaco', monospace;
+        pointer-events: none;
+    }
+
+    @media (max-width: 1200px) {
+        .app {
+            grid-template-columns: 280px 1fr 280px;
+        }
+    }
+
+    @media (max-width: 968px) {
+        .app {
+            grid-template-columns: 1fr;
+            grid-template-rows: 64px 1fr auto;
+        }
+        .sidebar {
+            display: none;
+        }
+        .sidebar.active {
+            display: flex;
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="app">
+    <header>
+        <div class="logo">
+            <div class="logo-icon">⚛</div>
+            <span>3D Kernel Board: Ar Gas Gap</span>
+        </div>
+        <div class="header-stats">
+            <div class="stat-item">
+                <span class="stat-label">Grid Size</span>
+                <span class="stat-value" id="headerSize">8×8×8</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Cores</span>
+                <span class="stat-value" id="headerCores">512</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Pressure</span>
+                <span class="stat-value" id="headerPressure">0 MPa</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Status</span>
+                <span class="status-badge danger pulse" id="headerStatus">LEAKING</span>
+            </div>
+        </div>
+    </header>
+
+    <aside class="sidebar">
+        <div class="panel">
+            <div class="panel-title">⚙️ Board Controls</div>
+            <div class="control-group">
+                <div class="btn-row">
+                    <button id="btnBuild">Build 10×10×10</button>
+                    <button id="btnStack" class="secondary">Add Layer</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="btn-row">
+                    <button id="btnIN" class="success">IN Pulse</button>
+                    <button id="btnClock" class="secondary">10kHz Clock</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="btn-row">
+                    <button id="btnO1" class="danger">O1 Inject</button>
+                    <button id="btnReset" class="secondary">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">🌡️ Ar Pressure Control</div>
+            <div class="control-group">
+                <label>Ar Gas Pressure: <span class="slider-current" id="pressureVal">0.1 MPa</span></label>
+                <input type="range" id="pressureSlider" min="0" max="2000" value="100" step="50">
+                <div class="slider-value">
+                    <span>0 MPa</span>
+                    <span>2.0 GPa</span>
+                </div>
+            </div>
+            <div class="control-group" style="font-size: 11px; color: var(--text-secondary);">
+                <strong>1.0 GPa Target:</strong> Ar density ↑, photon tunneling blocked, O1 diffusion stopped
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">📊 Element Legend</div>
+            <div class="element-legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--si-color);"></div>
+                    <div class="legend-details">
+                        <span class="legend-name">Si</span>
+                        <span class="legend-config">3s2 3p2</span>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--ti-color);"></div>
+                    <div class="legend-details">
+                        <span class="legend-name">Ti</span>
+                        <span class="legend-config">4s2 3d2</span>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--cu-color);"></div>
+                    <div class="legend-details">
+                        <span class="legend-name">Cu</span>
+                        <span class="legend-config">4s1 3d10</span>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--zn-color);"></div>
+                    <div class="legend-details">
+                        <span class="legend-name">Zn</span>
+                        <span class="legend-config">4s2 3d10</span>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--ag-color);"></div>
+                    <div class="legend-details">
+                        <span class="legend-name">Ag</span>
+                        <span class="legend-config">5s1 4d10</span>
+                    </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--au-color);"></div>
+                    <div class="legend-details">
+                        <span class="legend-name">Au</span>
+                        <span class="legend-config">6s1 5d10</span>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--ar-color); opacity: 0.6;"></div>
+                    <div class="legend-details">
+                        <span class="legend-name">Ar</span>
+                        <span class="legend-config">3s2 3p6 (0 lasers)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div></aside>
+
+    <main class="main-view">
+        <canvas id="canvas3d" width="602" height="662"></canvas>
+        <div class="canvas-overlay">
+            <div class="overlay-title">System Metrics</div>
+            <div class="metric-row">
+                <span class="metric-label">D per Core</span>
+                <span class="metric-val" id="metricD">0.000</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">OUT Current</span>
+                <span class="metric-val" id="metricOUT">0.0000 A</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Leak Rate</span>
+                <span class="metric-val danger" id="metricLeak">99.99%</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Photon Block</span>
+                <span class="metric-val " id="metricBlock">0.0%</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Ar Density</span>
+                <span class="metric-val" id="metricDensity">0.00180 g/cm³</span>
+            </div>
+        </div>
+    </main>
+
+    <aside class="sidebar">
+        <div class="panel">
+            <div class="panel-title">📖 README - Wet Chip Design</div>
+            <div class="instructions">
+                <h4>Ar Gas Isolation Layer</h4>
+                <ul>
+                    <li>Ar (3s² 3p⁶) has 0 unpaired electrons = 0 lasers</li>
+                    <li>Fills capsid gaps between Ti3SiC2 cores</li>
+                    <li>At 1 GPa: density increases 100×, becomes photon barrier</li>
+                    <li>Prevents O1 diffusion and electrical shorts</li>
+                </ul>
+
+                <h4>Wet Chip Stack Logic</h4>
+                <ul>
+                    <li>Ti3SiC2 stack: 3 Ti atom layers + 1 SiC atomic ribbon</li>
+                    <li>Ar capsid surrounds each stack as inert insulator</li>
+                    <li>Cu/Zn/Ag/Au provide conduction paths</li>
+                    <li>1 GPa pressure = diamond anvil cell equivalent</li>
+                </ul>
+
+                <h4>Operation</h4>
+                <ul>
+                    <li><strong>Build:</strong> Create 10×10×10 lattice with Ar gaps</li>
+                    <li><strong>Stack:</strong> Add Ti3SiC2 + Ar isolation layer</li>
+                    <li><strong>IN Pulse:</strong> Inject electron carriers</li>
+                    <li><strong>10kHz:</strong> Toggle clock for D computation</li>
+                    <li><strong>O1:</strong> Oxygen test injection (blocked by Ar at 1GPa)</li>
+                    <li><strong>Pressure:</strong> Control Ar density 0-2 GPa</li>
+                </ul>
+
+                <h4>Physics Model</h4>
+                <ul>
+                    <li>Leak = 100% at 0.1MPa, 0% at 1.0GPa+</li>
+                    <li>D = d_toggled / total_cores per 100ms</li>
+                    <li>OUT = D × conduction_factor × num_cores</li>
+                    <li>Photon tunneling ∝ 1/Ar_density²</li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // State
+    const state = {
+        grid: { x: 0, y: 0, z: 0 },
+        cores: [],
+        pressure: 0.1, // MPa, target 1000 MPa = 1 GPa
+        clockRunning: false,
+        clockInterval: null,
+        clockFreq: 10000, // 10kHz
+        o1Active: false,
+        totalD: 0,
+        toggledCores: 0,
+        lastDUpdate: Date.now(),
+        camera: { rotX: -0.5, rotY: 0.8, zoom: 300, panX: 0, panY: 0 },
+        mouse: { x: 0, y: 0, down: false, lastX: 0, lastY: 0 },
+        particles: []
+    };
+
+    // Canvas
+    const canvas = document.getElementById('canvas3d');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Element configs
+    const ELEMENTS = {
+        Si: { color: '#fbbf24', lasers: 2, config: '3s2 3p2' },
+        Ti: { color: '#a78bfa', lasers: 2, config: '4s2 3d2' },
+        Cu: { color: '#fb923c', lasers: 1, config: '4s1 3d10' },
+        Zn: { color: '#94a3b8', lasers: 0, config: '4s2 3d10' },
+        Ag: { color: '#e5e7eb', lasers: 1, config: '5s1 4d10' },
+        Au: { color: '#facc15', lasers: 1, config: '6s1 5d10' },
+        Ar: { color: '#38bdf8', lasers: 0, config: '3s2 3p6' }
+    };
+
+    // Core structure: Ti3SiC2 + Ar capsid
+    class Core {
+        constructor(x, y, z, idx) {
+            this.gridPos = { x, y, z };
+            this.idx = idx;
+            this.elements = {
+                Ti: 3,  // 3 Ti atoms
+                SiC: 1, // 1 SiC ribbon
+                Ar: 6,  // Ar capsid atoms
+                Cu: Math.random() > 0.7 ? 1 : 0,
+                Zn: Math.random() > 0.7 ? 1 : 0,
+                Ag: Math.random() > 0.8 ? 1 : 0,
+                Au: Math.random() > 0.9 ? 1 : 0
+            };
+            this.state = 'idle'; // idle, charged, toggled, blocked
+            this.charge = 0;
+            this.o1Blocked = false;
+            this.lastToggle = 0;
+            this.worldPos = this.calculateWorldPos();
+        }
+
+        calculateWorldPos() {
+            const spacing = 40;
+            return {
+                x: (this.gridPos.x - state.grid.x / 2) * spacing,
+                y: (this.gridPos.y - state.grid.y / 2) * spacing + (this.gridPos.z * 15), // Stack offset
+                z: (this.gridPos.z - state.grid.z / 2) * spacing
+            };
+        }
+
+        update() {
+            // Ar density affects O1 blocking
+            const arDensity = this.getArDensity();
+            this.o1Blocked = arDensity > 0.5; // Threshold at ~0.5 GPa
+
+            // Decay charge
+            if (this.charge > 0) {
+                this.charge *= 0.95;
+                if (this.charge < 0.01) this.charge = 0;
+            }
+
+            // Update state
+            if (state.o1Active && !this.o1Blocked) {
+                this.state = 'blocked';
+            } else if (this.charge > 0.5) {
+                this.state = 'charged';
+            } else if (Date.now() - this.lastToggle < 200) {
+                this.state = 'toggled';
+            } else {
+                this.state = 'idle';
+            }
+        }
+
+        getArDensity() {
+            // Ar density increases with pressure: ρ = ρ0 * (1 + P/B) where B is bulk modulus
+            // Simplified: linear approximation, saturates at 1 GPa
+            const P_gpa = state.pressure / 1000;
+            return Math.min(1.0, P_gpa * 1.5); // 1.0 = max density at ~0.67 GPa
+        }
+
+        injectCharge() {
+            this.charge = 1.0;
+        }
+
+        toggle() {
+            if (this.state === 'charged' && !this.o1Blocked) {
+                this.lastToggle = Date.now();
+                this.charge = 0;
+                state.toggledCores++;
+                return true;
+            }
+            return false;
+        }
+
+        getPhotonBlock() {
+            return this.getArDensity() * 100;
+        }
+    }
+
+    // Build grid
+    function buildGrid(size = 10) {
+        state.grid = { x: size, y: size, z: size };
+        state.cores = [];
+        let idx = 0;
+        for (let z = 0; z < size; z++) {
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    state.cores.push(new Core(x, y, z, idx++));
+                }
+            }
+        }
+        updateHeader();
+    }
+
+    function addLayer() {
+        if (state.grid.z === 0) {
+            buildGrid(10);
+            return;
+        }
+        const z = state.grid.z;
+        const size = state.grid.x;
+        let idx = state.cores.length;
+        for (let y = 0; y < size; y++) {
+            for (let x = 0; x < size; x++) {
+                state.cores.push(new Core(x, y, z, idx++));
+            }
+        }
+        state.grid.z++;
+        updateHeader();
+    }
+
+    // 3D projection
+    function project(point) {
+        const cosX = Math.cos(state.camera.rotX);
+        const sinX = Math.sin(state.camera.rotX);
+        const cosY = Math.cos(state.camera.rotY);
+        const sinY = Math.sin(state.camera.rotY);
+
+        let x = point.x;
+        let y = point.y;
+        let z = point.z;
+
+        // Rotate Y
+        let tx = x * cosY - z * sinY;
+        let tz = x * sinY + z * cosY;
+        x = tx; z = tz;
+
+        // Rotate X
+        let ty = y * cosX - z * sinX;
+        tz = y * sinX + z * cosX;
+        y = ty; z = tz;
+
+        // Project
+        const scale = state.camera.zoom / (state.camera.zoom + z);
+        return {
+            x: canvas.width / 2 + x * scale + state.camera.panX,
+            y: canvas.height / 2 + y * scale + state.camera.panY,
+            z: z,
+            scale: scale
+        };
+    }
+
+    // Render
+    function render() {
+        ctx.fillStyle = '#0a0e1a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Sort cores by depth
+        const sortedCores = [...state.cores].map(core => {
+            const p = project(core.worldPos);
+            return { core, ...p };
+        }).sort((a, b) => b.z - a.z);
+
+        // Draw connections between adjacent cores
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < sortedCores.length; i++) {
+            const core = sortedCores[i];
+            for (let j = i + 1; j < Math.min(i + 6, sortedCores.length); j++) {
+                const other = sortedCores[j];
+                const dist = Math.abs(core.core.gridPos.x - other.core.gridPos.x) + 
+                            Math.abs(core.core.gridPos.y - other.core.gridPos.y) + 
+                            Math.abs(core.core.gridPos.z - other.core.gridPos.z);
+                if (dist === 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(core.x, core.y);
+                    ctx.lineTo(other.x, other.y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Draw cores
+        sortedCores.forEach(p => {
+            const core = p.core;
+            const size = 12 * p.scale;
+            
+            // Ar capsid (blue translucent)
+            const arDensity = core.getArDensity();
+            ctx.fillStyle = `rgba(56, 189, 248, ${0.3 + arDensity * 0.4})`;
+            ctx.strokeStyle = `rgba(56, 189, 248, ${0.5 + arDensity * 0.5})`;
+            ctx.lineWidth = 2 * p.scale;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, size * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Core state color
+            let coreColor = '#1a1f2e';
+            if (core.state === 'charged') coreColor = '#10b981';
+            else if (core.state === 'toggled') coreColor = '#f59e0b';
+            else if (core.state === 'blocked') coreColor = '#ef4444';
+
+            ctx.fillStyle = coreColor;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ti3SiC2 elements indicator
+            ctx.fillStyle = ELEMENTS.Ti.color;
+            ctx.fillRect(p.x - size/2, p.y - size/2, 3* p.scale, 3 * p.scale);
+            ctx.fillStyle = ELEMENTS.Si.color;
+            ctx.fillRect(p.x + size/2 - 3* p.scale, p.y - size/2, 3* p.scale, 3 * p.scale);
+
+            // Conduction elements
+            if (core.elements.Cu) {
+                ctx.fillStyle = ELEMENTS.Cu.color;
+                ctx.beginPath();
+                ctx.arc(p.x - size/2, p.y + size/2, 2 * p.scale, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            if (core.elements.Au) {
+                ctx.fillStyle = ELEMENTS.Au.color;
+                ctx.beginPath();
+                ctx.arc(p.x + size/2, p.y + size/2, 2 * p.scale, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // O1 blocked indicator
+            if (core.o1Blocked) {
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 2 * p.scale;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, size * 1.2, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        });
+
+        // Draw particles
+        state.particles = state.particles.filter(p => {
+            p.life -= 0.02;
+            if (p.life <= 0) return false;
+            p.x += p.vx;
+            p.y += p.vy;
+            ctx.fillStyle = `rgba(${p.color}, ${p.life})`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            return true;
+        });
+
+        // Update metrics
+        updateMetrics();
+    }
+
+    // Physics calculations
+    function calculateMetrics() {
+        if (state.cores.length === 0) return { d: 0, out: 0, leak: 0, block: 0, density: 0 };
+
+        const now = Date.now();
+        const dt = (now - state.lastDUpdate) / 1000; // seconds
+        if (dt >= 0.1) { // Update every 100ms
+            state.totalD = state.toggledCores / state.cores.length / dt;
+            state.toggledCores = 0;
+            state.lastDUpdate = now;
+        }
+
+        // Leak rate: 100% at 0.1 MPa, 0% at 1 GPa
+        const pressure_gpa = state.pressure / 1000;
+        let leak = Math.max(0, 100 * (1 - pressure_gpa));
+        if (pressure_gpa >= 1.0) leak = 0;
+
+        // Photon block: increases with Ar density
+        const block = Math.min(100, pressure_gpa * 150);
+
+        // Ar density: g/cm³, STP = 0.001784, at 1GPa ~ 0.178
+        const density = 0.001784 * (1 + pressure_gpa * 99);
+
+        // OUT current: D * conduction factor * cores
+        const conductionFactor = state.cores.reduce((sum, c) => 
+            sum + c.elements.Cu + c.elements.Ag + c.elements.Au * 1.5, 0) / state.cores.length;
+        const out = state.totalD * conductionFactor * state.cores.length * 0.001; // Amperes
+
+        return { d: state.totalD, out, leak, block, density };
+    }
+
+    function updateMetrics() {
+        const m = calculateMetrics();
+        document.getElementById('metricD').textContent = m.d.toFixed(3);
+        document.getElementById('metricOUT').textContent = m.out.toFixed(4) + ' A';
+        
+        const leakEl = document.getElementById('metricLeak');
+        leakEl.textContent = m.leak.toFixed(2) + '%';
+        leakEl.className = 'metric-val ' + (m.leak > 50 ? 'danger' : m.leak > 10 ? 'warning' : 'active');
+        
+        const blockEl = document.getElementById('metricBlock');
+        blockEl.textContent = m.block.toFixed(1) + '%';
+        blockEl.className = 'metric-val ' + (m.block > 90 ? 'active' : m.block > 50 ? 'warning' : '');
+        
+        document.getElementById('metricDensity').textContent = m.density.toFixed(5) + ' g/cm³';
+    }
+
+    function updateHeader() {
+        document.getElementById('headerSize').textContent = `${state.grid.x}×${state.grid.y}×${state.grid.z}`;
+        document.getElementById('headerCores').textContent = state.cores.length.toLocaleString();
+        document.getElementById('headerPressure').textContent = state.pressure >= 1000 
+            ? `${(state.pressure/1000).toFixed(1)} GPa` 
+            : `${state.pressure.toFixed(0)} MPa`;
+        
+        const status = document.getElementById('headerStatus');
+        const pressure_gpa = state.pressure / 1000;
+        if (pressure_gpa >= 1.0) {
+            status.textContent = 'SAFE';
+            status.className = 'status-badge safe';
+        } else if (pressure_gpa >= 0.5) {
+            status.textContent = 'WARNING';
+            status.className = 'status-badge warning';
+        } else {
+            status.textContent = 'LEAKING';
+            status.className = 'status-badge danger pulse';
+        }
+    }
+
+    // Controls
+    document.getElementById('btnBuild').onclick = () => buildGrid(10);
+    document.getElementById('btnStack').onclick = addLayer;
+    
+    document.getElementById('btnIN').onclick = () => {
+        state.cores.forEach(core => {
+            if (Math.random() > 0.7) {
+                core.injectCharge();
+                // Particle effect
+                const p = project(core.worldPos);
+                state.particles.push({
+                    x: p.x, y: p.y, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2,
+                    size: 3, life: 1.0, color: '16, 185, 129'
+                });
+            }
+        });
+    };
+
+    document.getElementById('btnClock').onclick = (e) => {
+        state.clockRunning = !state.clockRunning;
+        e.target.textContent = state.clockRunning ? 'Stop Clock' : '10kHz Clock';
+        e.target.classList.toggle('success', state.clockRunning);
+        e.target.classList.toggle('secondary', !state.clockRunning);
+        
+        if (state.clockRunning) {
+            state.clockInterval = setInterval(() => {
+                state.cores.forEach(core => {
+                    if (core.toggle()) {
+                        const p = project(core.worldPos);
+                        state.particles.push({
+                            x: p.x, y: p.y, vx: 0, vy: -2,
+                            size: 2, life: 0.8, color: '245, 158, 11'
+                        });
+                    }
+                });
+            }, 100); // 10Hz visual, representing 10kHz
+        } else {
+            clearInterval(state.clockInterval);
+        }
+    };
+
+    document.getElementById('btnO1').onclick = (e) => {
+        state.o1Active = !state.o1Active;
+        e.target.textContent = state.o1Active ? 'O1 Active' : 'O1 Inject';
+        e.target.classList.toggle('danger', state.o1Active);
+        
+        if (state.o1Active) {
+            state.cores.forEach(core => {
+                if (!core.o1Blocked) {
+                    const p = project(core.worldPos);
+                    state.particles.push({
+                        x: p.x, y: p.y, vx: (Math.random()-0.5)*3, vy: (Math.random()-0.5)*3,
+                        size: 4, life: 1.0, color: '239, 68, 68'
+                    });
+                }
+            });
+        }
+    };
+
+    document.getElementById('btnReset').onclick = () => {
+        state.grid = { x: 0, y: 0, z: 0 };
+        state.cores = [];
+        state.pressure = 0.1;
+        state.totalD = 0;
+        state.toggledCores = 0;
+        state.o1Active = false;
+        if (state.clockRunning) document.getElementById('btnClock').click();
+        document.getElementById('pressureSlider').value = 100;
+        document.getElementById('pressureVal').textContent = '0.1 MPa';
+        updateHeader();
+    };
+
+    document.getElementById('pressureSlider').oninput = (e) => {
+        state.pressure = parseInt(e.target.value);
+        document.getElementById('pressureVal').textContent = state.pressure >= 1000 
+            ? `${(state.pressure/1000).toFixed(1)} GPa` 
+            : `${state.pressure.toFixed(0)} MPa`;
+        updateHeader();
+        state.cores.forEach(c => c.update());
+    };
+
+    // Mouse controls for 3D view
+    canvas.addEventListener('mousedown', (e) => {
+        state.mouse.down = true;
+        state.mouse.lastX = e.clientX;
+        state.mouse.lastY = e.clientY;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (!state.mouse.down) return;
+        const dx = e.clientX - state.mouse.lastX;
+        const dy = e.clientY - state.mouse.lastY;
+        state.camera.rotY += dx * 0.005;
+        state.camera.rotX += dy * 0.005;
+        state.camera.rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, state.camera.rotX));
+        state.mouse.lastX = e.clientX;
+        state.mouse.lastY = e.clientY;
+    });
+
+    canvas.addEventListener('mouseup', () => state.mouse.down = false);
+    canvas.addEventListener('mouseleave', () => state.mouse.down = false);
+
+    canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        state.camera.zoom += e.deltaY * 0.5;
+        state.camera.zoom = Math.max(100, Math.min(800, state.camera.zoom));
+    });
+
+    // Animation loop
+    function animate() {
+        state.cores.forEach(c => c.update());
+        render();
+        requestAnimationFrame(animate);
+    }
+
+    // Init
+    buildGrid(8);
+    animate();
+})();
+</script>
+
+</body></html>

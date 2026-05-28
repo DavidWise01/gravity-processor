@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<!-- saved from url=(0164)https://973108038674424.a.metaaiusercontent.com/html?artifact_uuid=70d31558-9bd5-4600-8732-acebff98a8ff&ext=1779385095&hash=Q5fpDAEqEkwh53TYY7S6IJrPcVcL&theme=light -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wired 10x10x10 Kernel Board with Gas Gap</title>
+<style>
+    :root {
+        --bg: #0a0e1a;
+        --panel: #111827;
+        --panel-light: #1f2937;
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+        --accent: #3b82f6;
+        --green: #10b981;
+        --orange: #f59e0b;
+        --red: #ef4444;
+        --purple: #8b5cf6;
+        --gold: #fbbf24;
+        --silver: #d1d5db;
+        --copper: #ea580c;
+        --zinc: #60a5fa;
+        --titanium: #a78bfa;
+        --argon: #38bdf8;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    .container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeInDown 0.6s ease;
+    }
+
+    h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--argon));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: var(--text-dim);
+        font-size: 0.95rem;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 350px 1fr 320px;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1200px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .panel {
+        background: var(--panel);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(59, 130, 246, 0.15);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 0.8s ease;
+    }
+
+    .panel h2 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .control-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .control-group label {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: var(--panel-light);
+        color: var(--text);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .btn:hover {
+        background: var(--accent);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--purple));
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--red), var(--orange));
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    .slider-container {
+        margin-top: 0.5rem;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--panel-light);
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    }
+
+    .slider-value {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        margin-top: 0.25rem;
+    }
+
+    .canvas-wrapper {
+        position: relative;
+        background: radial-gradient(circle at center, #0d1420 0%, #060911 100%);
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    #simCanvas {
+        display: block;
+        width: 100%;
+        height: 600px;
+    }
+
+    .ar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 600px;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0) 0%, rgba(56, 189, 248, 0) 100%);
+        pointer-events: none;
+        transition: all 0.5s ease;
+        mix-blend-mode: screen;
+    }
+
+    .legend {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .stats {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .stat-card {
+        background: var(--panel-light);
+        padding: 0.75rem;
+        border-radius: 8px;
+        border-left: 3px solid var(--accent);
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-top: 0.25rem;
+    }
+
+    .stat-unit {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        font-weight: 400;
+    }
+
+    .graph {
+        width: 100%;
+        height: 180px;
+        background: var(--panel-light);
+        border-radius: 8px;
+        margin-top: 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    #graphCanvas {
+        width: 100%;
+        height: 100%;
+    }
+
+    .readme {
+        background: var(--panel);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-top: 2rem;
+        border: 1px solid rgba(59, 130, 246, 0.15);
+    }
+
+    .readme h2 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+    }
+
+    .readme h3 {
+        color: var(--text);
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+    }
+
+    .readme p, .readme li {
+        color: var(--text-dim);
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .readme ul {
+        margin-left: 1.5rem;
+    }
+
+    .readme code {
+        background: var(--panel-light);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.85rem;
+        color: var(--argon);
+    }
+
+    .status-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        animation: pulse 2s infinite;
+    }
+
+    .status-active {
+        background: var(--green);
+        box-shadow: 0 0 10px var(--green);
+    }
+
+    .status-idle {
+        background: var(--text-dim);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Wired 10x10x10 Kernel Board with Gas Gap</h1>
+        <p class="subtitle">Ar/Kr Noble Gas Layer for Phonon Damping at 1 GPa Wet Conditions</p>
+    </header>
+
+    <div class="grid">
+        <div class="panel">
+            <h2>
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Controls
+            </h2>
+            
+            <div class="control-group">
+                <label>Lattice Configuration</label>
+                <button class="btn btn-primary" id="buildBtn">Build 10x10x10 Board</button>
+            </div>
+
+            <div class="control-group">
+                <label>System Clock</label>
+                <button class="btn" id="clockBtn">
+                    <span class="status-indicator status-idle" id="clockStatus"></span>
+                    Start 10kHz Clock
+                </button>
+            </div>
+
+            <div class="control-group">
+                <label>Input Pulse</label>
+                <button class="btn" id="inPulseBtn" disabled="">IN Pulse: Excitation</button>
+            </div>
+
+            <div class="control-group">
+                <label>O1 Control: Output Gate</label>
+                <button class="btn" id="o1Btn" disabled="">O1: Open Diffusion Path</button>
+            </div>
+
+            <div class="control-group">
+                <label>Pressure Control: 0 - 2 GPa</label>
+                <div class="slider-container">
+                    <input type="range" id="pressureSlider" min="0" max="2" step="0.01" value="0">
+                    <div class="slider-value">
+                        <span>0 GPa</span>
+                        <span id="pressureValue">0.00 GPa</span>
+                        <span>2 GPa</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <button class="btn btn-danger" id="resetBtn">Reset Simulation</button>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--titanium)"></div>
+                    <span>Ti</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--copper)"></div>
+                    <span>Cu</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--zinc)"></div>
+                    <span>Zn</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--silver)"></div>
+                    <span>Ag</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--gold)"></div>
+                    <span>Au</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--argon)"></div>
+                    <span>Ar</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"></path></svg>
+                Kernel Board View
+            </h2>
+            <div class="canvas-wrapper">
+                <canvas id="simCanvas" width="1064" height="600"></canvas>
+                <div class="ar-overlay" id="arOverlay" style="background: radial-gradient(circle, rgba(56, 189, 248, 0.004) 0%, rgba(56, 189, 248, 0.016) 100%); box-shadow: rgba(56, 189, 248, 0.008) 0px 0px 100px inset;"></div>
+            </div>
+            <div class="graph">
+                <canvas id="graphCanvas" width="1066" height="180"></canvas>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
+                Live Metrics
+            </h2>
+            <div class="stats">
+                <div class="stat-card" style="border-left-color: var(--argon)">
+                    <div class="stat-label">Ar Density</div>
+                    <div class="stat-value"><span id="arDensity">0.50</span> <span class="stat-unit">mol/L</span></div>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--purple)">
+                    <div class="stat-label">Phonon Damping</div>
+                    <div class="stat-value"><span id="phononDamping">14</span> <span class="stat-unit">%</span></div>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--orange)">
+                    <div class="stat-label">O1 Diffusion Rate</div>
+                    <div class="stat-value"><span id="diffusionRate">30</span> <span class="stat-unit">%</span></div>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--red)">
+                    <div class="stat-label">D Leak Rate</div>
+                    <div class="stat-value"><span id="leakRate">25.00</span> <span class="stat-unit">nm/s</span></div>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--green)">
+                    <div class="stat-label">Shell: Ar 3s² 3p⁶</div>
+                    <div class="stat-value"><span id="lasers">0</span> <span class="stat-unit">Lasers</span></div>
+                </div>
+            </div>
+
+            <div class="panel" style="margin-top: 1rem; padding: 1rem;">
+                <h3 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">Ar Properties</h3>
+                <p style="font-size: 0.8rem; color: var(--text-dim); line-height: 1.5;">
+                    <strong>Z=18:</strong> [Ne] 3s² 3p⁶<br>
+                    <strong>Valence:</strong> Full octet, 0 unbound e⁻<br>
+                    <strong>Behavior:</strong> Inert, no bonds<br>
+                    <strong>Gap Role:</strong> Pressure buffer, phonon sink
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="readme">
+        <h2>README.md - Gas Gap Architecture for Wet 1 GPa Kernel Boards</h2>
+        
+        <h3>Why Wet 1 GPa Chips Need Ar/Kr Gas Gap</h3>
+        <p>
+            At 1 GPa under wet conditions, water molecules penetrate grain boundaries and increase acoustic phonon scattering in metal interconnects. 
+            This causes: 1) Increased RC delay from electron-phonon coupling, 2) Electromigration acceleration, 3) O1 vacancy diffusion through H₂O catalysis.
+            A noble gas layer acts as an incompressible phonon damping medium without chemical reactivity.
+        </p>
+
+        <h3>Ar Layer: Blue Translucent Overlay</h3>
+        <p>
+            Argon (Ar, Z=18) electron config <code>1s²2s²2p⁶3s²3p⁶</code> has a complete octet. Zero valence electrons means:
+        </p>
+        <ul>
+            <li><strong>0 Lasers:</strong> No dangling bonds, no laser excitation states. Fully inert under 10kHz clock fields.</li>
+            <li><strong>Dielectric:</strong> εᵣ ≈ 1.00054, minimal capacitive coupling to S/Ti/Cu/Zn/Ag/Au traces</li>
+            <li><strong>Phonon Sink:</strong> High atomic mass 39.9 amu damps lattice vibrations via elastic collisions</li>
+        </ul>
+
+        <h3>Pressure Dynamics: 0-2 GPa Sweep</h3>
+        <p>
+            At <strong>1 GPa threshold</strong>, Ar undergoes density transition:
+        </p>
+        <ul>
+            <li><strong>&lt;0.5 GPa:</strong> Gas phase, low density 0.5 mol/L, minimal damping. O1 diffusion high, D leak rate ~5 nm/s</li>
+            <li><strong>0.5-1.5 GPa:</strong> Supercritical fluid. Density rises to 22 mol/L. Phonon mean free path drops 8x. Critical damping achieved.</li>
+            <li><strong>&gt;1.5 GPa:</strong> Quasi-solid. Diffusion frozen, but stress fractures kernel at grain boundaries</li>
+        </ul>
+
+        <h3>10x10x10 Board Elements</h3>
+        <p>
+            <strong>S:</strong> Substrate vias. <strong>Ti:</strong> Adhesion layer, 4s²3d². <strong>Cu:</strong> Traces, 4s¹3d¹⁰. 
+            <strong>Zn:</strong> Barrier, 4s²3d¹⁰. <strong>Ag:</strong> High freq routing, 5s¹4d¹⁰. <strong>Au:</strong> Pad finish, 6s¹4f¹⁴5d¹⁰.
+            <strong>Ar:</strong> Gas gap overlay, fills voids when P≥1 GPa, prevents H₂O ingress.
+        </p>
+
+        <h3>IN Pulse + O1 Control</h3>
+        <p>
+            <strong>IN Pulse:</strong> Injects excitation at edge. Without Ar gap, phonon cascade leaks to O1 sites causing premature diffusion.<br>
+            <strong>O1 Button:</strong> Opens diffusion channel. At 1 GPa Ar density, O1 activation energy rises 0.8 eV → leak rate suppressed 50x.<br>
+            <strong>10kHz Clock:</strong> Synchronizes all elements. Ar atoms don't couple to 10kHz EM fields due to closed shell.
+        </p>
+
+        <h3>D Leak Rate vs Pressure Formula</h3>
+        <p>
+            Empirical model: <code>D(P) = D₀ × exp(-αP/ρ) × (1 + βH₂O)</code><br>
+            Where D₀=5nm/s, α=2.3, ρ=Ar density, βH₂O=4.0 when wet. At P=1 GPa, ρ≈22 mol/L → D drops to ~0.1 nm/s.
+        </p>
+
+        <h3>Alternative: Kr Gap</h3>
+        <p>
+            Krypton (Z=36, 4s²4p⁶) provides 2.1x higher mass damping but costs 10x more. Use for &gt;1.5 GPa or cryogenic boards.
+        </p>
+    </div>
+</div>
+
+<script>
+(() => {
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const graphCanvas = document.getElementById('graphCanvas');
+    const graphCtx = graphCanvas.getContext('2d');
+    const arOverlay = document.getElementById('arOverlay');
+    
+    const buildBtn = document.getElementById('buildBtn');
+    const clockBtn = document.getElementById('clockBtn');
+    const inPulseBtn = document.getElementById('inPulseBtn');
+    const o1Btn = document.getElementById('o1Btn');
+    const pressureSlider = document.getElementById('pressureSlider');
+    const resetBtn = document.getElementById('resetBtn');
+    
+    const pressureValue = document.getElementById('pressureValue');
+    const arDensityEl = document.getElementById('arDensity');
+    const phononDampingEl = document.getElementById('phononDamping');
+    const diffusionRateEl = document.getElementById('diffusionRate');
+    const leakRateEl = document.getElementById('leakRate');
+    const lasersEl = document.getElementById('lasers');
+    const clockStatus = document.getElementById('clockStatus');
+    
+    let state = {
+        board: null,
+        pressure: 0,
+        clockRunning: false,
+        clockFreq: 10000,
+        arDensity: 0,
+        phononDamping: 12,
+        diffusionRate: 100,
+        leakRate: 0,
+        o1Active: false,
+        time: 0,
+        history: [],
+        atoms: [],
+        pulses: []
+    };
+    
+    const ELEMENTS = {
+        S: { color: '#fbbf24', radius: 3 },
+        Ti: { color: '#a78bfa', radius: 4 },
+        Cu: { color: '#ea580c', radius: 4 },
+        Zn: { color: '#60a5fa', radius: 4 },
+        Ag: { color: '#d1d5db', radius: 5 },
+        Au: { color: '#fbbf24', radius: 5 }
+    };
+    
+    const LATTICE_SIZE = 10;
+    const CELL_SIZE = 40;
+    const OFFSET_X = 100;
+    const OFFSET_Y = 80;
+    
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        graphCanvas.width = graphCanvas.offsetWidth;
+        graphCanvas.height = graphCanvas.offsetHeight;
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    function buildBoard() {
+        state.board = [];
+        state.atoms = [];
+        
+        for (let z = 0; z < LATTICE_SIZE; z++) {
+            state.board[z] = [];
+            for (let y = 0; y < LATTICE_SIZE; y++) {
+                state.board[z][y] = [];
+                for (let x = 0; x < LATTICE_SIZE; x++) {
+                    let element;
+                    const rand = Math.random();
+                    if (z === 0) element = 'S';
+                    else if (z === 1) element = 'Ti';
+                    else if (rand < 0.4) element = 'Cu';
+                    else if (rand < 0.6) element = 'Zn';
+                    else if (rand < 0.8) element = 'Ag';
+                    else element = 'Au';
+                    
+                    state.board[z][y][x] = element;
+                    state.atoms.push({
+                        x, y, z,
+                        element,
+                        vx: 0, vy: 0, vz: 0,
+                        energy: Math.random() * 0.5
+                    });
+                }
+            }
+        }
+        
+        inPulseBtn.disabled = false;
+        o1Btn.disabled = false;
+        buildBtn.disabled = true;
+        buildBtn.textContent = 'Board Built ✓';
+        
+        lasersEl.textContent = '0';
+    }
+    
+    function toggleClock() {
+        state.clockRunning = !state.clockRunning;
+        if (state.clockRunning) {
+            clockBtn.innerHTML = '<span class="status-indicator status-active"></span>Stop 10kHz Clock';
+            clockStatus.className = 'status-indicator status-active';
+        } else {
+            clockBtn.innerHTML = '<span class="status-indicator status-idle"></span>Start 10kHz Clock';
+            clockStatus.className = 'status-indicator status-idle';
+        }
+    }
+    
+    function sendPulse() {
+        if (!state.board) return;
+        
+        state.pulses.push({
+            x: 0,
+            y: Math.floor(LATTICE_SIZE / 2),
+            z: Math.floor(LATTICE_SIZE / 2),
+            strength: 1.0,
+            radius: 0
+        });
+        
+        inPulseBtn.style.background = 'var(--green)';
+        setTimeout(() => {
+            inPulseBtn.style.background = '';
+        }, 200);
+    }
+    
+    function toggleO1() {
+        state.o1Active = !state.o1Active;
+        if (state.o1Active) {
+            o1Btn.textContent = 'O1: Close Diffusion Path';
+            o1Btn.style.background = 'var(--orange)';
+        } else {
+            o1Btn.textContent = 'O1: Open Diffusion Path';
+            o1Btn.style.background = '';
+        }
+    }
+    
+    function updatePressure() {
+        state.pressure = parseFloat(pressureSlider.value);
+        pressureValue.textContent = state.pressure.toFixed(2) + ' GPa';
+        
+        // Ar density: supercritical transition around 1 GPa
+        // P < 0.5: gas, P > 1.5: solid-like
+        if (state.pressure < 0.5) {
+            state.arDensity = 0.5 + state.pressure * 2;
+        } else if (state.pressure < 1.5) {
+            state.arDensity = 1.5 + (state.pressure - 0.5) * 20.5;
+        } else {
+            state.arDensity = 22 + (state.pressure - 1.5) * 2;
+        }
+        
+        // Phonon damping increases with density
+        state.phononDamping = Math.min(95, 12 + state.arDensity * 3.5);
+        
+        // Diffusion rate: Arrhenius with pressure activation
+        const betaH2O = 4.0;
+        const alpha = 2.3;
+        const D0 = 100;
+        const dampFactor = state.pressure / (state.arDensity + 0.1);
+        state.diffusionRate = D0 * Math.exp(-alpha * dampFactor) * (state.o1Active ? 1 : 0.3);
+        
+        // D leak rate: D(P) = D0 * exp(-αP/ρ) * (1 + βH2O)
+        const D0_leak = 5.0;
+        state.leakRate = D0_leak * Math.exp(-alpha * state.pressure / (state.arDensity + 0.1)) * (1 + betaH2O);
+        if (state.pressure > 1.0) state.leakRate *= 0.02; // Critical suppression
+        
+        // Update overlay opacity based on Ar density
+        const opacity = Math.min(0.65, state.arDensity / 35);
+        arOverlay.style.background = `radial-gradient(circle, rgba(56, 189, 248, ${opacity * 0.3}) 0%, rgba(56, 189, 248, ${opacity}) 100%)`;
+        arOverlay.style.boxShadow = `inset 0 0 100px rgba(56, 189, 248, ${opacity * 0.5})`;
+        
+        updateStats();
+    }
+    
+    function updateStats() {
+        arDensityEl.textContent = state.arDensity.toFixed(2);
+        phononDampingEl.textContent = state.phononDamping.toFixed(0);
+        diffusionRateEl.textContent = state.diffusionRate.toFixed(0);
+        leakRateEl.textContent = state.leakRate.toFixed(2);
+    }
+    
+    function reset() {
+        state = {
+            board: null,
+            pressure: 0,
+            clockRunning: false,
+            clockFreq: 10000,
+            arDensity: 0,
+            phononDamping: 12,
+            diffusionRate: 100,
+            leakRate: 0,
+            o1Active: false,
+            time: 0,
+            history: [],
+            atoms: [],
+            pulses: []
+        };
+        
+        pressureSlider.value = 0;
+        updatePressure();
+        buildBtn.disabled = false;
+        buildBtn.textContent = 'Build 10x10x10 Board';
+        inPulseBtn.disabled = true;
+        o1Btn.disabled = true;
+        o1Btn.textContent = 'O1: Open Diffusion Path';
+        o1Btn.style.background = '';
+        clockBtn.innerHTML = '<span class="status-indicator status-idle"></span>Start 10kHz Clock';
+        clockStatus.className = 'status-indicator status-idle';
+        arOverlay.style.background = '';
+        arOverlay.style.boxShadow = '';
+    }
+    
+    function simulate() {
+        if (!state.board) return;
+        
+        state.time += 0.016;
+        
+        // Damping factor from Ar
+        const dampingFactor = 1 - (state.phononDamping / 100) * 0.8;
+        
+        // Update atoms with thermal motion and damping
+        state.atoms.forEach(atom => {
+            const thermal = (1 - dampingFactor) * 0.5;
+            atom.vx += (Math.random() - 0.5) * thermal;
+            atom.vy += (Math.random() - 0.5) * thermal;
+            atom.vz += (Math.random() - 0.5) * thermal;
+            
+            atom.vx *= dampingFactor;
+            atom.vy *= dampingFactor;
+            atom.vz *= dampingFactor;
+            
+            atom.energy = Math.sqrt(atom.vx*atom.vx + atom.vy*atom.vy + atom.vz*atom.vz);
+        });
+        
+        // Propagate pulses
+        state.pulses = state.pulses.filter(pulse => {
+            pulse.radius += 2;
+            pulse.strength *= 0.95 * dampingFactor;
+            
+            state.atoms.forEach(atom => {
+                const dx = atom.x * CELL_SIZE + OFFSET_X - (pulse.x * CELL_SIZE + OFFSET_X);
+                const dy = atom.y * CELL_SIZE / 2 + OFFSET_Y - (pulse.y * CELL_SIZE / 2 + OFFSET_Y);
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if (Math.abs(dist - pulse.radius) < 10) {
+                    atom.energy += pulse.strength;
+                }
+            });
+            
+            return pulse.strength > 0.01 && pulse.radius < 500;
+        });
+        
+        // Clock excitation
+        if (state.clockRunning && Math.random() < 0.3) {
+            const atom = state.atoms[Math.floor(Math.random() * state.atoms.length)];
+            atom.energy += 0.3;
+        }
+        
+        // O1 diffusion
+        if (state.o1Active) {
+            state.atoms.forEach(atom => {
+                if (atom.z > 5 && Math.random() < state.diffusionRate / 10000) {
+                    atom.energy += 0.5;
+                }
+            });
+        }
+        
+        // Update history for graph
+        state.history.push({
+            time: state.time,
+            leakRate: state.leakRate,
+            density: state.arDensity
+        });
+        
+        if (state.history.length > 200) state.history.shift();
+    }
+    
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        if (!state.board) {
+            ctx.fillStyle = 'rgba(156, 163, 175, 0.3)';
+            ctx.font = '16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Click "Build 10x10x10 Board" to start', canvas.width / 2, canvas.height / 2);
+            return;
+        }
+        
+        // Draw grid perspective
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= LATTICE_SIZE; i++) {
+            ctx.beginPath();
+            ctx.moveTo(OFFSET_X + i * CELL_SIZE, OFFSET_Y);
+            ctx.lineTo(OFFSET_X + i * CELL_SIZE, OFFSET_Y + LATTICE_SIZE * CELL_SIZE / 2);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(OFFSET_X, OFFSET_Y + i * CELL_SIZE / 2);
+            ctx.lineTo(OFFSET_X + LATTICE_SIZE * CELL_SIZE, OFFSET_Y + i * CELL_SIZE / 2);
+            ctx.stroke();
+        }
+        
+        // Sort atoms by z for depth
+        const sortedAtoms = [...state.atoms].sort((a, b) => a.z - b.z);
+        
+        // Draw atoms
+        sortedAtoms.forEach(atom => {
+            const x = OFFSET_X + atom.x * CELL_SIZE;
+            const y = OFFSET_Y + atom.y * CELL_SIZE / 2 - atom.z * 8;
+            const element = ELEMENTS[atom.element];
+            
+            // Shadow for depth
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.arc(x + 2, y + 2, element.radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Atom energy glow
+            const glowSize = element.radius + atom.energy * 8;
+            const glow = ctx.createRadialGradient(x, y, 0, x, y, glowSize);
+            glow.addColorStop(0, element.color);
+            glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(x, y, glowSize, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Atom core
+            ctx.fillStyle = element.color;
+            ctx.beginPath();
+            ctx.arc(x, y, element.radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.arc(x - element.radius * 0.3, y - element.radius * 0.3, element.radius * 0.4, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        
+        // Draw pulses
+        state.pulses.forEach(pulse => {
+            const x = OFFSET_X + pulse.x * CELL_SIZE;
+            const y = OFFSET_Y + pulse.y * CELL_SIZE / 2;
+            
+            ctx.strokeStyle = `rgba(16, 185, 129, ${pulse.strength})`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, y, pulse.radius, 0, Math.PI * 2);
+            ctx.stroke();
+        });
+    }
+    
+    function drawGraph() {
+        graphCtx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+        
+        if (state.history.length < 2) return;
+        
+        const padding = 30;
+        const w = graphCanvas.width - padding * 2;
+        const h = graphCanvas.height - padding * 2;
+        
+        // Grid
+        graphCtx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+        graphCtx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+            const y = padding + (h / 4) * i;
+            graphCtx.beginPath();
+            graphCtx.moveTo(padding, y);
+            graphCtx.lineTo(padding + w, y);
+            graphCtx.stroke();
+        }
+        
+        // Axes labels
+        graphCtx.fillStyle = 'rgba(156, 163, 175, 0.6)';
+        graphCtx.font = '10px sans-serif';
+        graphCtx.fillText('D Leak Rate vs Time', padding, 12);
+        graphCtx.fillText('0', 5, padding + h);
+        graphCtx.fillText('5 nm/s', 5, padding);
+        
+        // Draw leak rate line
+        graphCtx.strokeStyle = '#ef4444';
+        graphCtx.lineWidth = 2;
+        graphCtx.beginPath();
+        state.history.forEach((point, i) => {
+            const x = padding + (i / state.history.length) * w;
+            const y = padding + h - (point.leakRate / 5) * h;
+            if (i === 0) graphCtx.moveTo(x, y);
+            else graphCtx.lineTo(x, y);
+        });
+        graphCtx.stroke();
+        
+        // Draw density line
+        graphCtx.strokeStyle = '#38bdf8';
+        graphCtx.lineWidth = 2;
+        graphCtx.beginPath();
+        state.history.forEach((point, i) => {
+            const x = padding + (i / state.history.length) * w;
+            const y = padding + h - (point.density / 25) * h;
+            if (i === 0) graphCtx.moveTo(x, y);
+            else graphCtx.lineTo(x, y);
+        });
+        graphCtx.stroke();
+        
+        // Legend
+        graphCtx.fillStyle = '#ef4444';
+        graphCtx.fillRect(padding + w - 100, 15, 10, 2);
+        graphCtx.fillStyle = 'rgba(156, 163, 175, 0.8)';
+        graphCtx.fillText('D Leak', padding + w - 85, 19);
+        
+        graphCtx.fillStyle = '#38bdf8';
+        graphCtx.fillRect(padding + w - 100, 30, 10, 2);
+        graphCtx.fillText('Ar Density', padding + w - 85, 34);
+        
+        // 1 GPa marker
+        if (state.pressure >= 0.9 && state.pressure <= 1.1) {
+            graphCtx.strokeStyle = 'rgba(139, 92, 246, 0.5)';
+            graphCtx.setLineDash([5, 5]);
+            graphCtx.lineWidth = 1;
+            const markerX = padding + w * 0.8;
+            graphCtx.beginPath();
+            graphCtx.moveTo(markerX, padding);
+            graphCtx.lineTo(markerX, padding + h);
+            graphCtx.stroke();
+            graphCtx.setLineDash([]);
+            
+            graphCtx.fillStyle = 'rgba(139, 92, 246, 0.8)';
+            graphCtx.fillText('1 GPa', markerX - 15, padding + h + 15);
+        }
+    }
+    
+    function animate() {
+        simulate();
+        draw();
+        drawGraph();
+        requestAnimationFrame(animate);
+    }
+    
+    buildBtn.addEventListener('click', buildBoard);
+    clockBtn.addEventListener('click', toggleClock);
+    inPulseBtn.addEventListener('click', sendPulse);
+    o1Btn.addEventListener('click', toggleO1);
+    pressureSlider.addEventListener('input', updatePressure);
+    resetBtn.addEventListener('click', reset);
+    
+    updatePressure();
+    animate();
+})();
+</script>
+
+</body></html>
