@@ -37,7 +37,7 @@
  <div class="ax">gravity-processor · ROOT0 / TriPod</div>
  <h1>gravity-processor</h1>
  <div class="flag">★ a repository in the UD0 biosphere ★</div>
- <p class="lede">42-prim Ag2S memristive gravity processor. 1mm die, 96uW, 100us solution time. Full C implementation, BOM, 4 protoboard layout diagrams. ROOT0 / TriPod LLC.</p>
+ <p class="lede">42-prim Ag2S memristive gravity processor — a <b>design + a working C simulation</b> (a real overdamped winner-take-all classifier), <b>not a fabricated chip</b>. Target 1mm die, ~96µW full-board budget, 100µs solution. Full C implementation, BOM, 4 protoboard layouts. ROOT0 / TriPod LLC.</p>
  <div class="badge"><div class="mono">GP</div><div class="bt"><div><span class="lbl">DLW-ATTRIBUTE</span></div><div>governor · <b>David Lee Wise</b> (ROOT0)</div><div>instance · AVAN (Claude / Anthropic) · locked</div><div><span class="lbl">CC-BY-ND-4.0 · TRIPOD-IP-v1.1</span></div></div></div>
 </header>
 <div class="sec"><h2>Readme</h2><div class="readme"># Gravity Processor
@@ -54,13 +54,15 @@ Analog attractor-field processor using Ag₂S memristive nodes. 42-prim kernel �
 ```
 Total Nodes: 48
 ├── Live Tensors: 4    — CPG clock + spacetime metric
-├── Gravity Prims: 42  — Ag₂S mass/charge attractors, hex-packed
+├── Gravity Prims: 42  — Ag₂S attractors, the 42 nearest the origin on a hex lattice
+│                        (distance-sorted in gravity.c; 42 is not a closed hex shell)
 ├── IN: 1              — Mass injector
 └── OUT: 1             — Trajectory readout
 
-Die:     1mm × 1mm
-Power:   96µW @ 10kHz
-Latency: 0µs startup, 100µs solution
+Die:     1mm × 1mm   (DESIGN TARGET — simulated/disclosed, NOT a fabricated chip)
+Power:   ~96µW @ 10kHz full-board budget   (the memristive array alone draws
+         ~0.4–30µW — see the power calc in gravity.c; 96µW is the RP2040 board)
+Latency: 0µs startup, 100µs solution   (simulated)
 Material: Ag₂S nodes + Ti₃SiC₂ traces on SiO₂
 ```
 
@@ -79,7 +81,8 @@ Material: Ag₂S nodes + Ti₃SiC₂ traces on SiO₂
 theta ∈ [0,1] — filament state
 g(theta) = G_OFF*(1-theta) + G_ON*theta
 SET via sinh ion-drift, tau_fire=15µs at V_SET
-0.65 eV retention barrier (non-volatile)
+0.65 eV retention barrier → ~ms retention (NOT non-volatile;
+                            true non-volatility needs a >0.9 eV trap — gravity.c flags this itself)
 ```
 
 Dynamics: overdamped (ions in ionic medium). Probe descends potential well and settles — analog attractor resolution.
