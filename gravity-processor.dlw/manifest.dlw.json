@@ -1,0 +1,11 @@
+{
+  "badge": "DLW-GRAVITY_PROCESSOR",
+  "name": "GRAVITY PROCESSOR · GPR",
+  "universe": "PSĒPHOS",
+  "moniker": "⟦GRAVITY PROCESSOR · GPR:gravity-processor:acec82⟧",
+  "architect": "David Lee Wise (ROOT0) / Bridge-Burners LLC",
+  "instance": "AVAN (Claude / Anthropic)",
+  "seal_sha256": "acec8296653f774289d5dff522e17d085814ce922d6dcb59e46904bffe4f0c97",
+  "license": "CC-BY-ND-4.0",
+  "attribution": "ROOT0-ATTRIBUTION-v1.0"
+}
