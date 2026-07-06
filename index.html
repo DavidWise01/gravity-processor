@@ -1,527 +1,121 @@
-<!-- THE GRAVITY PROCESSOR — HEUREMA · ROOT0 -->
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THE GRAVITY PROCESSOR · HEUREMA · ROOT0</title>
-<meta name="description" content="An analog memristive-crossbar winner-take-all classifier: an input vector 'falls' to the output whose stored pattern pulls hardest — a one-step vector-matrix multiply by Ohm's and Kirchhoff's laws. A ROOT0 hardware disclosure. HEUREMA.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="gravity-processor — a ROOT0/TriPod repository in the UD0 biosphere. 42-prim Ag2S memristive gravity processor. 1mm die, 96uW, 100us solution time. Full C implementation, BOM, 4 protoboard layout diagrams. ROOT0 / TriPo">
+<title>gravity-processor · ROOT0 · UD0</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%23a7a3c8' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%238a5fe0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#17120d; --ink:#ece3d5; --dim:#a99a86;
-    --copper:#c8843a; --copper2:#b5733a;
-    --cyan:#6bb0c0; --green:#6fbf8a;
-    --line:rgba(200,132,58,.32); --line2:rgba(200,132,58,.16);
-    --panel:rgba(40,31,22,.55);
-    --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
-    --serif:'Newsreader',Georgia,serif;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0}
-  body{
-    background:
-      radial-gradient(1200px 700px at 50% -8%, rgba(200,132,58,.16), transparent 60%),
-      radial-gradient(900px 500px at 82% 20%, rgba(107,176,192,.06), transparent 60%),
-      var(--bg);
-    color:var(--ink); font-family:var(--serif);
-    line-height:1.55; padding:22px 16px 60px; overflow-x:hidden;
-    -webkit-text-size-adjust:100%;
-  }
-  .wrap{max-width:960px;margin:0 auto}
-  a{color:var(--copper)}
-  .back{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-decoration:none;color:var(--dim)}
-  .back:hover{color:var(--copper)}
-  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--copper);
-    text-transform:uppercase;margin:18px 0 6px}
-  h1{font-family:var(--serif);font-weight:500;font-size:clamp(30px,6vw,52px);
-    line-height:1.02;margin:0 0 8px;letter-spacing:-.01em}
-  h1 b{font-weight:600;color:var(--ink)}
-  .lede{font-size:clamp(16px,2.4vw,19px);color:var(--dim);max-width:62ch;margin:0 0 4px}
-  .rule{height:1px;background:linear-gradient(90deg,var(--copper),transparent);margin:18px 0 22px;opacity:.7}
-  section{border:1px solid var(--line);border-radius:12px;background:var(--panel);
-    padding:18px 18px 20px;margin:18px 0}
-  h2{font-family:var(--mono);font-weight:600;font-size:13px;letter-spacing:.16em;
-    text-transform:uppercase;color:var(--copper);margin:0 0 12px}
-  p{margin:.5em 0}
-  .mono{font-family:var(--mono)}
-  .small{font-size:13px;color:var(--dim)}
-  canvas{width:100%;height:auto;display:block;touch-action:none;border-radius:10px;
-    background:#120e09;border:1px solid var(--line2)}
-  .controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-start;margin-top:16px}
-  .ctl{display:flex;flex-direction:column;gap:6px;min-width:150px}
-  .ctl label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
-  input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:3px;
-    background:linear-gradient(90deg,var(--copper2),var(--copper));outline:none;width:170px}
-  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;
-    background:var(--ink);border:2px solid var(--copper);cursor:pointer}
-  input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;
-    background:var(--ink);border:2px solid var(--copper);cursor:pointer}
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  button.chip{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--ink);
-    background:rgba(200,132,58,.08);border:1px solid var(--line);border-radius:20px;
-    padding:7px 13px;cursor:pointer;transition:.12s}
-  button.chip:hover{border-color:var(--copper);background:rgba(200,132,58,.18)}
-  button.chip.on{background:var(--copper);color:#17120d;border-color:var(--copper);font-weight:600}
-  .readout{font-family:var(--mono);font-size:13px;color:var(--ink);margin-top:14px;
-    border-top:1px dashed var(--line2);padding-top:12px}
-  .readout b{color:var(--green)}
-  .eqn{font-family:var(--mono);font-size:14px;background:rgba(107,176,192,.07);
-    border-left:2px solid var(--cyan);padding:10px 14px;border-radius:0 8px 8px 0;
-    overflow-x:auto;white-space:nowrap;color:var(--ink)}
-  .two-layer{border:1px solid var(--green);background:rgba(111,191,138,.06)}
-  .two-layer h2{color:var(--green)}
-  .tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
-    padding:2px 7px;border-radius:4px;text-transform:uppercase;margin-right:6px;vertical-align:middle}
-  .tag.real{background:rgba(111,191,138,.18);color:var(--green);border:1px solid var(--green)}
-  .tag.design{background:rgba(200,132,58,.16);color:var(--copper);border:1px solid var(--copper)}
-  .tag.toy{background:rgba(107,176,192,.14);color:var(--cyan);border:1px solid var(--cyan)}
-  .two-layer ul{margin:6px 0 6px;padding-left:8px;list-style:none}
-  .two-layer li{margin:10px 0;padding-left:2px}
-  .closer{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink);
-    margin-top:14px;border-top:1px solid var(--line2);padding-top:12px}
-  footer{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--dim);
-    text-align:center;margin-top:34px;line-height:1.8}
-  .cite{font-size:12.5px;color:var(--dim)}
-  .cite a{color:var(--cyan)}
-  .hint{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:8px}
-</style>
+ *{box-sizing:border-box;margin:0;padding:0} html,body{min-height:100%}
+ body{background:#ece6f2;color:#2a2440;font-family:'Newsreader',serif;line-height:1.55;
+  background-image:radial-gradient(circle at 18% 12%,rgba(138,95,224,0.07),transparent 42%),radial-gradient(circle at 82% 8%,rgba(127,119,221,0.06),transparent 38%)}
+ .wrap{max-width:900px;margin:0 auto;padding:0 20px 64px}
+ .marquee{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:11px 0;border-bottom:1px solid #cdc6dc;color:#6a5fb0}
+ .marquee a{color:#7a52d0;text-decoration:none} .marquee a:hover{color:#4a3a90}
+ header{text-align:center;padding:46px 0 8px}
+ .ax{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:3px;color:#8a5fe0;opacity:.85}
+ h1{font-family:'Press Start 2P',monospace;font-size:clamp(17px,4.6vw,32px);color:#5a4fb0;line-height:1.35;margin:16px 0 12px;word-break:break-word}
+ .flag{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;color:#7a52d0;opacity:.9}
+ .lede{font-size:clamp(16px,2.4vw,22px);font-weight:300;max-width:660px;margin:18px auto 0}
+ .badge{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;
+  background:rgba(255,255,255,0.5);border:1px solid #cdc6dc;border-radius:12px;padding:14px 18px;margin:26px auto 0;max-width:620px}
+ .mono{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;
+  background:linear-gradient(135deg,#8a5fe0,#6a4fc0);color:#fff;font-family:'Press Start 2P',monospace;font-size:14px}
+ .bt{font-family:'Space Mono',monospace;font-size:11px;line-height:1.7;text-align:left;color:#4a4060}
+ .bt .lbl{color:#8a5fe0;letter-spacing:1px} .bt b{color:#2a2440}
+ .sec{margin-top:32px}
+ h2{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;color:#8a5fe0;text-transform:uppercase;margin-bottom:12px}
+ .readme{white-space:pre-wrap;font-family:'Space Mono',monospace;font-size:13px;line-height:1.7;background:rgba(127,119,221,0.05);border:1px solid #cdc6dc;border-radius:10px;padding:16px 18px;max-height:560px;overflow:auto}
+ .muted{opacity:.6;font-style:italic}
+ .btn{display:inline-block;font-family:'Space Mono',monospace;font-size:13px;color:#fff;background:#7a52d0;border-radius:9px;padding:11px 20px;text-decoration:none}
+ .btn:hover{background:#5a3ab0}
+ footer{font-family:'Space Mono',monospace;font-size:11px;color:#6a5fb0;opacity:.75;margin-top:42px;border-top:1px solid #cdc6dc;padding-top:16px;text-align:center;line-height:1.9}
+ footer a{color:#7a52d0;text-decoration:none}
+</style></head><body><div class="wrap">
+<div class="marquee"><a href="https://davidwise01.github.io/ud0/">◄ UD0</a> &nbsp;·&nbsp; <a href="https://davidwise01.github.io/atlas/">THE ATLAS</a> &nbsp;·&nbsp; ROOT0 / TriPod &nbsp;·&nbsp; the biosphere</div>
+<header>
+ <div class="ax">gravity-processor · ROOT0 / TriPod</div>
+ <h1>gravity-processor</h1>
+ <div class="flag">★ a repository in the UD0 biosphere ★</div>
+ <p class="lede">42-prim Ag2S memristive gravity processor — a <b>design + a working C simulation</b> (a real overdamped winner-take-all classifier), <b>not a fabricated chip</b>. Target 1mm die, ~96µW full-board budget, 100µs solution. Full C implementation, BOM, 4 protoboard layouts. ROOT0 / TriPod LLC.</p>
+ <div class="badge"><div class="mono">GP</div><div class="bt"><div><span class="lbl">DLW-ATTRIBUTE</span></div><div>governor · <b>David Lee Wise</b> (ROOT0)</div><div>instance · AVAN (Claude / Anthropic) · locked</div><div><span class="lbl">CC-BY-ND-4.0 · TRIPOD-IP-v1.1</span></div></div></div>
+</header>
+<div class="sec"><h2>Readme</h2><div class="readme"># Gravity Processor
 
-<div class="wrap">
-  <a class="back" href="https://davidwise01.github.io/ud0/">&#9668; UD0</a>
-  <div class="eyebrow">HEUREMA · &#949;&#8016;&#961;&#951;&#956;&#945; · an invention</div>
-  <h1><b>The Gravity Processor</b></h1>
-  <p class="lede">An analog memristive-crossbar Winner-Take-All classifier. Inputs &ldquo;fall&rdquo; toward the stored pattern that pulls hardest &mdash; a one-step vector&ndash;matrix multiply by Ohm&rsquo;s and Kirchhoff&rsquo;s laws.</p>
-  <div class="rule"></div>
+**Author:** David Wise (ROOT0) / TriPod LLC  
+**License:** CC-BY-ND-4.0 · TRIPOD-IP-v1.1
 
-  <section>
-    <h2>The Crossbar</h2>
-    <p class="small">Rows are input lines held at voltages <span class="mono">V<sub>i</sub></span>. Columns are output neurons. At each junction sits a memristor of conductance <span class="mono">G<sub>ij</sub></span> (brightness = conductance). Each column sums its junction currents in <em>one physical step</em>; the winner-take-all lights the column drawing the most current &mdash; the stored pattern nearest your input.</p>
-    <div class="eqn">column current&nbsp;&nbsp;I<sub>j</sub> = &Sigma;<sub>i</sub> V<sub>i</sub> &middot; G<sub>ij</sub>&nbsp;&nbsp;(Ohm + Kirchhoff)&nbsp;&nbsp;&middot;&nbsp;&nbsp;winner = argmax<sub>j</sub> I<sub>j</sub></div>
+Analog attractor-field processor using Ag₂S memristive nodes. 42-prim kernel — analog nearest-attractor / winner-take-all classifier. 1mm×1mm die, 96µW @ 10kHz, 100µs solution time.
 
-    <canvas id="cv" width="920" height="540" aria-label="Memristive crossbar classifier"></canvas>
+---
 
-    <div class="controls">
-      <div class="ctl">
-        <label>Input pattern</label>
-        <div class="chips" id="presets"></div>
-        <div class="hint">or click the input grid (top-left) to scribble</div>
-      </div>
-      <div class="ctl">
-        <label>Input noise &sigma;</label>
-        <input type="range" id="noise" min="0" max="60" value="0">
-        <div class="hint"><span id="noiseVal">0</span>% bit-flip / analog jitter</div>
-      </div>
-      <div class="ctl">
-        <label>Stored patterns (columns)</label>
-        <div class="chips" id="stores"></div>
-      </div>
-      <div class="ctl">
-        <label>Actions</label>
-        <div class="chips">
-          <button class="chip" id="clearBtn">Clear input</button>
-          <button class="chip" id="animBtn">&#9658; Animate</button>
-        </div>
-      </div>
-    </div>
+## 42-Prim Kernel — Spec
 
-    <div class="readout" id="readout"></div>
-  </section>
+```
+Total Nodes: 48
+├── Live Tensors: 4    — CPG clock + spacetime metric
+├── Gravity Prims: 42  — Ag₂S attractors, the 42 nearest the origin on a hex lattice
+│                        (distance-sorted in gravity.c; 42 is not a closed hex shell)
+├── IN: 1              — Mass injector
+└── OUT: 1             — Trajectory readout
 
-  <section class="two-layer">
-    <h2>Honest two-layer</h2>
-    <ul>
-      <li><span class="tag real">real physics</span> A memristive crossbar computes an <b>analog vector&ndash;matrix multiply in a single step</b>. Driving rows at voltages <span class="mono">V<sub>i</sub></span> and reading column currents gives <span class="mono">I<sub>j</sub> = &Sigma;<sub>i</sub> V<sub>i</sub> G<sub>ij</sub></span> directly from <b>Ohm&rsquo;s law</b> (<span class="mono">I=VG</span>) at each junction and <b>Kirchhoff&rsquo;s current law</b> (currents sum on the shared column). This is exactly the dot-product / matched-filter classifier computed on this page &mdash; the numbers in the bars and the winner are the true <span class="mono">&Sigma; V<sub>i</sub>G<sub>ij</sub></span>, not an animation cheat.</li>
-      <li><span class="tag real">real physics</span> <b>Memristive analog weights</b> and <b>hardware winner-take-all</b> are established: analog VMM in metal-oxide crossbars (Hu&nbsp;et&nbsp;al., <em>Adv.&nbsp;Mater.</em> 2018), TiO&#8322; memristor training (Prezioso&nbsp;et&nbsp;al., <em>Nature</em> 2015), Ag&#8322;S/Ag atomic-switch synapses, and current-mode WTA circuits (Lazzaro&nbsp;et&nbsp;al., 1988).</li>
-      <li><span class="tag design">design / disclosure</span> The <b>&ldquo;Gravity Processor&rdquo; name and the falling-toward-the-well framing</b> are a ROOT0 conceptual disclosure &mdash; a way to picture argmax as a potential well. This specific packaged device is <b>not a fabricated chip and not a granted patent</b>.</li>
-      <li><span class="tag toy">symbolic toy</span> The word <b>&ldquo;gravity&rdquo;</b> here is a <em>metaphor</em>, not a force in the circuit. Nothing gravitational happens; the pull is the dot-product <span class="mono">V&middot;G</span>. Junction conductances are shown on a clean linear scale (0&rarr;G<sub>max</sub>); real devices have I&ndash;V nonlinearity, wire (IR) drop, and write stochasticity not modeled here.</li>
-    </ul>
-    <p class="closer">To disclose a design is real work; it is not a granted patent or a fabricated device.</p>
-  </section>
+Die:     1mm × 1mm   (DESIGN TARGET — simulated/disclosed, NOT a fabricated chip)
+Power:   ~96µW @ 10kHz full-board budget   (the memristive array alone draws
+         ~0.4–30µW — see the power calc in gravity.c; 96µW is the RP2040 board)
+Latency: 0µs startup, 100µs solution   (simulated)
+Material: Ag₂S nodes + Ti₃SiC₂ traces on SiO₂
+```
 
-  <section>
-    <h2>References</h2>
-    <p class="cite">Hu, M. et al. &ldquo;Memristor-Based Analog Computation and Neural Network Classification with a Dot-Product Engine.&rdquo; <em>Advanced Materials</em> 30, 1705914 (2018).</p>
-    <p class="cite">Prezioso, M. et al. &ldquo;Training and operation of an integrated neuromorphic network based on metal-oxide memristors.&rdquo; <em>Nature</em> 521, 61&ndash;64 (2015).</p>
-    <p class="cite">Lazzaro, J. et al. &ldquo;Winner-Take-All Networks of O(N) Complexity.&rdquo; <em>NIPS</em> (1988).</p>
-    <p class="cite">Chua, L. &ldquo;Memristor &mdash; The Missing Circuit Element.&rdquo; <em>IEEE Trans. Circuit Theory</em> 18, 507&ndash;519 (1971).</p>
-  </section>
+### Live Tensor Cores (CPG Clock)
 
-  <footer>
-    David Lee Wise / ROOT0 / TriPod LLC &middot; CC-BY-ND-4.0<br>
-    HEUREMA &mdash; the hardware-invention workshop
-  </footer>
+| Node | Phase | Role |
+|------|-------|------|
+| L0 | 0° | Time axis `g_tt` |
+| L1 | 90° | X-axis `g_xx` |
+| L2 | 180° | Y-axis `g_yy` |
+| L3 | 270° | Z-axis `g_zz` |
+
+### Ag₂S ECM Cell
+
+```
+theta ∈ [0,1] — filament state
+g(theta) = G_OFF*(1-theta) + G_ON*theta
+SET via sinh ion-drift, tau_fire=15µs at V_SET
+0.65 eV retention barrier → ~ms retention (NOT non-volatile;
+                            true non-volatility needs a >0.9 eV trap — gravity.c flags this itself)
+```
+
+Dynamics: overdamped (ions in ionic medium). Probe descends potential well and settles — analog attractor resolution.
+
+---
+
+## Files
+
+| File | Description |
+|------|-------------|
+| `gravity.c` | Full 42-prim kernel implementation in C |
+| `memristive_kernel_128.c` | 128-node memristive kernel |
+| `memristive_seed_v2.c` | Memristive seed v2 |
+| `memristive_dashboard.jsx` | React dashboard for memristive state |
+| `Makefile` | Build file |
+| `gravity-bom/` | Bill of materials + 4 protoboard layout diagrams |
+| `boron/` | Boron single-chip design |
+| `liquid-proc/` | Liquid processor variant |
+
+## gravity-bom — Physical Build
+
+The `gravity-bom/` folder contains:
+- `42 prim.md` — complete spec in markdown
+- `BOM_42prim.json` — full bill of materials
+- `BOM_42prim 00.json` — BOM variant 00
+- 4× protoboard layout diagram JPEGs (detailed physical build reference)
+
+---
+
+*&quot;Gravity = analog ATTRACTOR FIELD, not Newtonian gravity.&quot;*  
+*&quot;A charged probe drifts through superposed wells; where it settles is the result.&quot;*</div></div>
+<div class="sec" style="text-align:center"><a class="btn" href="https://github.com/DavidWise01/gravity-processor">view the source ↗</a></div>
+<footer><a href="https://davidwise01.github.io/ud0/">← the biosphere</a> &nbsp;·&nbsp; <a href="https://davidwise01.github.io/atlas/">the atlas</a> &nbsp;·&nbsp; gravity-processor</footer>
 </div>
-
-<script>
-(function(){
-  "use strict";
-  var cv = document.getElementById('cv');
-  var ctx = cv.getContext('2d');
-  var W = cv.width, H = cv.height;
-
-  // ---- model dimensions ----
-  var N = 5;              // grid is N x N  => ROWS = N*N input lines
-  var ROWS = N*N;         // 25 input lines
-  var COLS = 3;           // 3 output neurons / stored patterns
-
-  // Stored target patterns (5x5), value 1 = high conductance, 0 = low.
-  // These become the column conductances G_ij.
-  var PATTERNS = {
-    'X': [
-      1,0,0,0,1,
-      0,1,0,1,0,
-      0,0,1,0,0,
-      0,1,0,1,0,
-      1,0,0,0,1],
-    'O': [
-      0,1,1,1,0,
-      1,0,0,0,1,
-      1,0,0,0,1,
-      1,0,0,0,1,
-      0,1,1,1,0],
-    'T': [
-      1,1,1,1,1,
-      0,0,1,0,0,
-      0,0,1,0,0,
-      0,0,1,0,0,
-      0,0,1,0,0],
-    'I': [
-      1,1,1,1,1,
-      0,0,1,0,0,
-      0,0,1,0,0,
-      0,0,1,0,0,
-      1,1,1,1,1],
-    'H': [
-      1,0,0,0,1,
-      1,0,0,0,1,
-      1,1,1,1,1,
-      1,0,0,0,1,
-      1,0,0,0,1]
-  };
-  var PNAMES = ['X','O','T','I','H'];
-
-  // which three patterns are currently stored as columns
-  var storedKeys = ['X','O','T'];
-
-  // conductance scale
-  var Gmax = 1.0, Gmin = 0.02;   // siemens (arbitrary units)
-  function condOf(bit){ return bit ? Gmax : Gmin; }
-
-  // input voltages: each cell 0 or 1 -> V (volts, arbitrary)
-  var Vhi = 1.0;
-  var input = new Array(ROWS).fill(0);
-
-  // noise level 0..1
-  var noise = 0;
-
-  // ---- deterministic PRNG so noise redraws are stable per frame ----
-  var seed = 1234567;
-  function rng(){ seed = (seed*1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
-
-  // Build the effective (noisy) input vector actually applied to rows.
-  function effectiveInput(){
-    seed = 1234567; // reproducible per computed frame
-    var v = new Array(ROWS);
-    for(var i=0;i<ROWS;i++){
-      var val = input[i];
-      if(noise>0){
-        // bit-flip with prob ~ noise, plus small analog jitter on the voltage
-        if(rng() < noise*0.6) val = 1-val;
-        var jitter = (rng()-0.5)*2*noise*0.35;
-        v[i] = Math.max(0, Math.min(1, val + jitter)) * Vhi;
-      } else {
-        v[i] = val * Vhi;
-      }
-    }
-    return v;
-  }
-
-  // Compute column currents I_j = sum_i V_i * G_ij  (real VMM)
-  function computeCurrents(v){
-    var I = new Array(COLS).fill(0);
-    for(var j=0;j<COLS;j++){
-      var patt = PATTERNS[storedKeys[j]];
-      var s=0;
-      for(var i=0;i<ROWS;i++){
-        s += v[i] * condOf(patt[i]);
-      }
-      I[j]=s;
-    }
-    return I;
-  }
-
-  // ---- layout geometry ----
-  var GRID = {x:36, y:70, cell:44};                 // input grid (top-left)
-  var xbRowH = 15;                                   // px per crossbar row
-  var xbTop  = 78;
-  var xbColW = 90;
-  var xbLeft = 470;
-
-  var animT = -1;   // animation progress; <0 = static
-  var animRAF = null;
-
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#120e09';
-    ctx.fillRect(0,0,W,H);
-
-    var v = effectiveInput();
-    var I = computeCurrents(v);
-    // winner
-    var win=0; for(var j=1;j<COLS;j++) if(I[j]>I[win]) win=j;
-    var Imax = Math.max(1e-9, Math.max.apply(null,I));
-
-    drawInputGrid(v);
-    drawCrossbar(v, I, win, Imax);
-    drawColumnBars(I, win, Imax);
-    updateReadout(I, win);
-  }
-
-  // -- input grid (clickable NxN) --
-  function drawInputGrid(v){
-    ctx.font = "11px 'IBM Plex Mono', monospace";
-    ctx.fillStyle = '#c8843a';
-    ctx.textAlign='left';
-    ctx.fillText('INPUT  Vi  (click to toggle)', GRID.x, GRID.y-14);
-    var c = GRID.cell;
-    for(var r=0;r<N;r++){
-      for(var col=0;col<N;col++){
-        var idx=r*N+col;
-        var x=GRID.x+col*c, y=GRID.y+r*c;
-        var val = v[idx]/Vhi;              // effective (noisy) shown
-        ctx.fillStyle = 'rgba(200,132,58,'+(0.06+0.72*val)+')';
-        ctx.fillRect(x+1,y+1,c-2,c-2);
-        ctx.strokeStyle='rgba(200,132,58,.28)';
-        ctx.lineWidth=1;
-        ctx.strokeRect(x+1,y+1,c-2,c-2);
-        if(input[idx]!==Math.round(val) && noise>0){
-          // mark cells altered by noise
-          ctx.strokeStyle='rgba(107,176,192,.8)';
-          ctx.strokeRect(x+3,y+3,c-6,c-6);
-        }
-      }
-    }
-    ctx.strokeStyle='rgba(200,132,58,.5)';
-    ctx.lineWidth=1.5;
-    ctx.strokeRect(GRID.x,GRID.y,N*c,N*c);
-  }
-
-  // -- crossbar schematic (rows -> columns, junctions=memristors) --
-  function drawCrossbar(v, I, win, Imax){
-    var left = xbLeft, top = xbTop;
-    var rowsShown = ROWS;
-    ctx.font="10px 'IBM Plex Mono', monospace";
-    ctx.textAlign='left';
-    ctx.fillStyle='#c8843a';
-    ctx.fillText('CROSSBAR  Gij  -  brightness = conductance', left-2, top-16);
-
-    // column header labels
-    for(var j=0;j<COLS;j++){
-      var cx = left + 70 + j*xbColW;
-      ctx.fillStyle = (j===win)?'#6fbf8a':'#a99a86';
-      ctx.textAlign='center';
-      ctx.font="600 15px 'IBM Plex Mono', monospace";
-      ctx.fillText(storedKeys[j], cx, top-2);
-      ctx.font="9px 'IBM Plex Mono', monospace";
-      ctx.fillText('col '+j, cx, top+8);
-    }
-    ctx.textAlign='left';
-
-    // row lines + input voltage marker
-    for(var r=0;r<rowsShown;r++){
-      var y = top + 14 + r*xbRowH;
-      var vv = v[r]/Vhi;
-      ctx.strokeStyle = 'rgba(200,132,58,'+(0.10+0.35*vv)+')';
-      ctx.lineWidth = 0.6+1.6*vv;
-      ctx.beginPath();
-      ctx.moveTo(left, y);
-      ctx.lineTo(left+70+(COLS-1)*xbColW+18, y);
-      ctx.stroke();
-      ctx.fillStyle = vv>0.05 ? 'rgba(200,132,58,'+(0.35+0.6*vv)+')' : 'rgba(160,150,130,.25)';
-      ctx.beginPath(); ctx.arc(left-3, y, 2.4, 0, 7); ctx.fill();
-    }
-
-    // column wires (vertical) + junctions
-    for(var j2=0;j2<COLS;j2++){
-      var patt = PATTERNS[storedKeys[j2]];
-      var cx2 = left + 70 + j2*xbColW;
-      var glow = (j2===win) ? 0.9 : 0.35;
-      ctx.strokeStyle = (j2===win) ? 'rgba(111,191,138,'+glow+')' : 'rgba(107,176,192,'+glow+')';
-      ctx.lineWidth = (j2===win)?2.4:1.2;
-      ctx.beginPath();
-      ctx.moveTo(cx2, top+8);
-      ctx.lineTo(cx2, top+14+(rowsShown-1)*xbRowH+8);
-      ctx.stroke();
-
-      for(var r2=0;r2<rowsShown;r2++){
-        var y2 = top + 14 + r2*xbRowH;
-        var g = condOf(patt[r2]) / Gmax;        // 0..1 brightness
-        var vv2 = v[r2]/Vhi;
-        var rad = 2.2 + 3.0*g;
-        ctx.fillStyle = 'rgba(200,132,58,'+(0.10+0.8*g)+')';
-        ctx.beginPath(); ctx.arc(cx2, y2, rad, 0, 7); ctx.fill();
-        var contrib = vv2*g;
-        if(contrib>0.15){
-          ctx.fillStyle='rgba(111,191,138,'+(0.15+0.5*contrib)+')';
-          ctx.beginPath(); ctx.arc(cx2, y2, rad+2.2, 0, 7); ctx.fill();
-        }
-      }
-    }
-
-    // animated current "droplets" falling down columns (optional overlay)
-    if(animT>=0){
-      for(var j3=0;j3<COLS;j3++){
-        var cx3 = left + 70 + j3*xbColW;
-        var frac = I[j3]/Imax;
-        var yTop = top+8, yBot = top+14+(rowsShown-1)*xbRowH+8;
-        var prog = (animT + j3*0.13) % 1;
-        var yd = yTop + prog*(yBot-yTop);
-        var col = (j3===win)?'111,191,138':'107,176,192';
-        ctx.fillStyle='rgba('+col+','+(0.25+0.6*frac)+')';
-        ctx.beginPath(); ctx.arc(cx3, yd, 3+3*frac, 0,7); ctx.fill();
-      }
-    }
-  }
-
-  // -- output current bars I_j + winner --
-  function drawColumnBars(I, win, Imax){
-    var bx = 470, by = H-140, bw = 300, gap=18;
-    var barW = (bw-(COLS-1)*gap)/COLS;
-    ctx.font="10px 'IBM Plex Mono', monospace";
-    ctx.textAlign='left';
-    ctx.fillStyle='#c8843a';
-    ctx.fillText('COLUMN CURRENT  Ij = SUM Vi*Gij', bx, by-14);
-
-    var maxH=90;
-    for(var j=0;j<COLS;j++){
-      var x = bx + j*(barW+gap);
-      var h = (I[j]/Imax)*maxH;
-      ctx.strokeStyle='rgba(200,132,58,.25)';
-      ctx.strokeRect(x, by-maxH, barW, maxH);
-      var g = ctx.createLinearGradient(0,by,0,by-h);
-      if(j===win){ g.addColorStop(0,'#3e7d55'); g.addColorStop(1,'#6fbf8a'); }
-      else { g.addColorStop(0,'#3a5b63'); g.addColorStop(1,'#6bb0c0'); }
-      ctx.fillStyle=g;
-      ctx.fillRect(x, by-h, barW, h);
-      ctx.fillStyle = (j===win)?'#6fbf8a':'#a99a86';
-      ctx.textAlign='center';
-      ctx.font="600 12px 'IBM Plex Mono', monospace";
-      ctx.fillText(I[j].toFixed(2), x+barW/2, by+16);
-      ctx.font="10px 'IBM Plex Mono', monospace";
-      ctx.fillText(storedKeys[j], x+barW/2, by-h-6);
-    }
-    ctx.textAlign='left';
-    ctx.font="600 15px 'IBM Plex Mono', monospace";
-    ctx.fillStyle='#6fbf8a';
-    ctx.fillText('WINNER: '+storedKeys[win]+'  (col '+win+')', bx, by+40);
-  }
-
-  function updateReadout(I, win){
-    var el=document.getElementById('readout');
-    var sorted = I.slice().sort(function(a,b){return b-a;});
-    var margin = sorted[0]-sorted[1];
-    var txt = 'I = [ ';
-    for(var j=0;j<COLS;j++){ txt += storedKeys[j]+':'+I[j].toFixed(3)+(j<COLS-1?'  ':' '); }
-    txt += ']  ->  argmax = <b>'+storedKeys[win]+'</b>   (margin '+margin.toFixed(3)+')';
-    el.innerHTML = txt + '<br><span class="small">The input current flows hardest into the stored column whose conductance pattern best overlaps your input voltages &mdash; a real matched-filter dot product, computed in one crossbar step.</span>';
-  }
-
-  // ---- interaction: click input grid ----
-  function gridHit(px,py){
-    var c=GRID.cell;
-    if(px<GRID.x||py<GRID.y||px>GRID.x+N*c||py>GRID.y+N*c) return -1;
-    var col=Math.floor((px-GRID.x)/c), r=Math.floor((py-GRID.y)/c);
-    if(col<0||col>=N||r<0||r>=N) return -1;
-    return r*N+col;
-  }
-  function canvasPos(ev){
-    var rect=cv.getBoundingClientRect();
-    var sx=cv.width/rect.width, sy=cv.height/rect.height;
-    return {x:(ev.clientX-rect.left)*sx, y:(ev.clientY-rect.top)*sy};
-  }
-  var painting=false, paintVal=1;
-  cv.addEventListener('pointerdown',function(ev){
-    var p=canvasPos(ev); var idx=gridHit(p.x,p.y);
-    if(idx>=0){
-      painting=true; paintVal = input[idx]?0:1;
-      input[idx]=paintVal;
-      try{cv.setPointerCapture(ev.pointerId);}catch(e){}
-      draw();
-    }
-  });
-  cv.addEventListener('pointermove',function(ev){
-    if(!painting) return;
-    var p=canvasPos(ev); var idx=gridHit(p.x,p.y);
-    if(idx>=0 && input[idx]!==paintVal){ input[idx]=paintVal; draw(); }
-  });
-  function endPaint(){ painting=false; }
-  cv.addEventListener('pointerup',endPaint);
-  cv.addEventListener('pointercancel',endPaint);
-  cv.addEventListener('pointerleave',endPaint);
-
-  // ---- controls ----
-  var presetsEl=document.getElementById('presets');
-  PNAMES.forEach(function(k){
-    var b=document.createElement('button');
-    b.className='chip'; b.textContent=k;
-    b.addEventListener('click',function(){
-      input = PATTERNS[k].slice();
-      draw();
-    });
-    presetsEl.appendChild(b);
-  });
-
-  var storesEl=document.getElementById('stores');
-  function renderStores(){
-    storesEl.innerHTML='';
-    storedKeys.forEach(function(k,slot){
-      var b=document.createElement('button');
-      b.className='chip on';
-      b.textContent='col'+slot+': '+k;
-      b.addEventListener('click',function(){
-        var i=PNAMES.indexOf(storedKeys[slot]);
-        for(var step=1;step<=PNAMES.length;step++){
-          var cand=PNAMES[(i+step)%PNAMES.length];
-          if(storedKeys.indexOf(cand)===-1){
-            storedKeys[slot]=cand; break;
-          }
-        }
-        renderStores(); draw();
-      });
-      storesEl.appendChild(b);
-    });
-  }
-  renderStores();
-
-  var noiseEl=document.getElementById('noise');
-  noiseEl.addEventListener('input',function(){
-    noise = (+noiseEl.value)/100;
-    document.getElementById('noiseVal').textContent=noiseEl.value;
-    draw();
-  });
-
-  document.getElementById('clearBtn').addEventListener('click',function(){
-    input = new Array(ROWS).fill(0); draw();
-  });
-
-  var animBtn=document.getElementById('animBtn');
-  var running=false;
-  function loop(){
-    if(!running) return;
-    animT = (animT<0?0:animT) + 0.012;
-    if(animT>10) animT=0;
-    draw();
-    animRAF=requestAnimationFrame(loop);
-  }
-  animBtn.addEventListener('click',function(){
-    running=!running;
-    if(running){ animBtn.textContent='Stop'; animBtn.classList.add('on'); if(animT<0)animT=0; loop(); }
-    else { animBtn.textContent='Animate'; animBtn.classList.remove('on'); if(animRAF)cancelAnimationFrame(animRAF); animT=-1; draw(); }
-  });
-
-  // ---- initial state: load 'O', static first paint ----
-  input = PATTERNS['O'].slice();
-  draw();          // synchronous first paint (no rAF dependency)
-})();
-</script>
+<!-- ROOT0-AUTOLANDING-v2 -->
+</body></html>
