@@ -1,121 +1,193 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="gravity-processor — a ROOT0/TriPod repository in the UD0 biosphere. 42-prim Ag2S memristive gravity processor. 1mm die, 96uW, 100us solution time. Full C implementation, BOM, 4 protoboard layout diagrams. ROOT0 / TriPo">
-<title>gravity-processor · ROOT0 · UD0</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%23a7a3c8' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%238a5fe0'/%3E%3C/svg%3E">
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GRAVITY PROCESSOR · HEÚREMA · ROOT0</title>
+<meta name="description" content="The Gravity Processor: a 42-prim Ag2S memristive attractor-field classifier. A charged probe drifts through a landscape of superposed wells and settles in the nearest attractor — analog winner-take-all. Live 2D-canvas interactive + the real design (BOM, C, protoboard layouts). A ROOT0 hardware disclosure.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
 <style>
- *{box-sizing:border-box;margin:0;padding:0} html,body{min-height:100%}
- body{background:#ece6f2;color:#2a2440;font-family:'Newsreader',serif;line-height:1.55;
-  background-image:radial-gradient(circle at 18% 12%,rgba(138,95,224,0.07),transparent 42%),radial-gradient(circle at 82% 8%,rgba(127,119,221,0.06),transparent 38%)}
- .wrap{max-width:900px;margin:0 auto;padding:0 20px 64px}
- .marquee{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;padding:11px 0;border-bottom:1px solid #cdc6dc;color:#6a5fb0}
- .marquee a{color:#7a52d0;text-decoration:none} .marquee a:hover{color:#4a3a90}
- header{text-align:center;padding:46px 0 8px}
- .ax{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:3px;color:#8a5fe0;opacity:.85}
- h1{font-family:'Press Start 2P',monospace;font-size:clamp(17px,4.6vw,32px);color:#5a4fb0;line-height:1.35;margin:16px 0 12px;word-break:break-word}
- .flag{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;color:#7a52d0;opacity:.9}
- .lede{font-size:clamp(16px,2.4vw,22px);font-weight:300;max-width:660px;margin:18px auto 0}
- .badge{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;
-  background:rgba(255,255,255,0.5);border:1px solid #cdc6dc;border-radius:12px;padding:14px 18px;margin:26px auto 0;max-width:620px}
- .mono{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;
-  background:linear-gradient(135deg,#8a5fe0,#6a4fc0);color:#fff;font-family:'Press Start 2P',monospace;font-size:14px}
- .bt{font-family:'Space Mono',monospace;font-size:11px;line-height:1.7;text-align:left;color:#4a4060}
- .bt .lbl{color:#8a5fe0;letter-spacing:1px} .bt b{color:#2a2440}
- .sec{margin-top:32px}
- h2{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;color:#8a5fe0;text-transform:uppercase;margin-bottom:12px}
- .readme{white-space:pre-wrap;font-family:'Space Mono',monospace;font-size:13px;line-height:1.7;background:rgba(127,119,221,0.05);border:1px solid #cdc6dc;border-radius:10px;padding:16px 18px;max-height:560px;overflow:auto}
- .muted{opacity:.6;font-style:italic}
- .btn{display:inline-block;font-family:'Space Mono',monospace;font-size:13px;color:#fff;background:#7a52d0;border-radius:9px;padding:11px 20px;text-decoration:none}
- .btn:hover{background:#5a3ab0}
- footer{font-family:'Space Mono',monospace;font-size:11px;color:#6a5fb0;opacity:.75;margin-top:42px;border-top:1px solid #cdc6dc;padding-top:16px;text-align:center;line-height:1.9}
- footer a{color:#7a52d0;text-decoration:none}
-</style></head><body><div class="wrap">
-<div class="marquee"><a href="https://davidwise01.github.io/ud0/">◄ UD0</a> &nbsp;·&nbsp; <a href="https://davidwise01.github.io/atlas/">THE ATLAS</a> &nbsp;·&nbsp; ROOT0 / TriPod &nbsp;·&nbsp; the biosphere</div>
-<header>
- <div class="ax">gravity-processor · ROOT0 / TriPod</div>
- <h1>gravity-processor</h1>
- <div class="flag">★ a repository in the UD0 biosphere ★</div>
- <p class="lede">42-prim Ag2S memristive gravity processor — a <b>design + a working C simulation</b> (a real overdamped winner-take-all classifier), <b>not a fabricated chip</b>. Target 1mm die, ~96µW full-board budget, 100µs solution. Full C implementation, BOM, 4 protoboard layouts. ROOT0 / TriPod LLC.</p>
- <div class="badge"><div class="mono">GP</div><div class="bt"><div><span class="lbl">DLW-ATTRIBUTE</span></div><div>governor · <b>David Lee Wise</b> (ROOT0)</div><div>instance · AVAN (Claude / Anthropic) · locked</div><div><span class="lbl">CC-BY-ND-4.0 · TRIPOD-IP-v1.1</span></div></div></div>
-</header>
-<div class="sec"><h2>Readme</h2><div class="readme"># Gravity Processor
+  :root{ --bg:#17120d; --ink:#ece3d5; --dim:#a99a86; --copper:#c8843a; --copper-hi:#e0a24e;
+    --cyan:#6bb0c0; --green:#6fbf8a; --amber:#e0b84a; --line:rgba(200,132,58,.30); --line2:rgba(200,132,58,.14); }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%;background:var(--bg);color:var(--ink);font-family:Newsreader,Georgia,serif;line-height:1.62;
+    background-image:radial-gradient(ellipse 60% 42% at 50% 4%,rgba(200,132,58,.06),transparent 60%)}
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px 80px;position:relative}
+  .top{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;padding:12px 0;border-bottom:1px solid var(--line2);color:var(--copper)}
+  .top a{color:var(--copper);text-decoration:none} .top a:hover{color:var(--copper-hi)}
+  header{text-align:center;padding:40px 0 6px}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--copper)}
+  h1{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:clamp(24px,5vw,40px);color:var(--copper-hi);letter-spacing:.02em;margin:12px 0 10px}
+  .lede{font-size:clamp(16px,2.3vw,20px);font-weight:300;max-width:680px;margin:0 auto;color:var(--ink)}
+  .lede b{color:var(--copper-hi);font-weight:500}
+  section{margin:40px 0 0}
+  h2{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper);margin:0 0 12px;border-top:1px solid var(--line2);padding-top:16px}
+  canvas{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:4px;background:#100c07;touch-action:none;cursor:crosshair}
+  .controls{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin:14px 0 0;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim)}
+  .controls label{display:flex;flex-direction:column;gap:4px;min-width:170px}
+  .controls .val{color:var(--copper-hi)}
+  input[type=range]{accent-color:var(--copper);width:100%}
+  button{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:9px 13px;border-radius:3px;cursor:pointer;color:var(--copper-hi);background:transparent;border:1px solid var(--copper)}
+  button:hover{background:rgba(200,132,58,.09)}
+  .readout{font-family:'IBM Plex Mono',monospace;font-size:12.5px;margin-top:12px;padding:11px 13px;border:1px solid var(--line2);border-radius:3px;background:rgba(200,132,58,.03);line-height:1.7}
+  .readout b{color:var(--copper-hi)} .readout .g{color:var(--green)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  .spec{border:1px solid var(--line2);border-radius:4px;padding:14px 16px;background:rgba(200,132,58,.02);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.9}
+  .spec .k{color:var(--dim)} .spec .v{color:var(--ink)} .spec .v b{color:var(--copper-hi)}
+  .honest{border:1px solid var(--line);border-radius:4px;padding:15px 17px;margin-top:8px;background:rgba(200,132,58,.03)}
+  .honest h3{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--copper);margin:0 0 8px}
+  .honest p{font-size:13.5px;color:var(--dim);margin:6px 0} .honest b{color:var(--ink)}
+  .files{display:flex;gap:9px;flex-wrap:wrap;margin-top:6px}
+  .files a{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--cyan);text-decoration:none;border:1px solid var(--line2);border-radius:20px;padding:6px 13px}
+  .files a:hover{border-color:var(--copper);color:var(--copper-hi)}
+  .prose{font-size:15px;color:var(--ink);max-width:74ch} .prose b{color:var(--copper-hi)}
+  footer{margin-top:44px;border-top:1px solid var(--line2);padding-top:18px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);line-height:1.9}
+  footer a{color:var(--copper)}
+</style></head><body>
+<div class="wrap">
+  <div class="top"><a href="https://davidwise01.github.io/ud0/">◄ UD0</a> · HEÚREMA · εὕρημα, an invention · <a href="https://davidwise01.github.io/atlas/">the atlas</a></div>
+  <header>
+    <div class="eyebrow">a ROOT0 hardware disclosure</div>
+    <h1>GRAVITY PROCESSOR</h1>
+    <p class="lede">A <b>42-prim Ag₂S memristive attractor-field classifier</b>. Not Newtonian gravity — an <b>analog attractor field</b>: a charged probe drifts through a landscape of superposed wells and settles in the nearest one. Where it settles <i>is</i> the answer. A physical winner-take-all, computed by descent.</p>
+  </header>
 
-**Author:** David Wise (ROOT0) / TriPod LLC  
-**License:** CC-BY-ND-4.0 · TRIPOD-IP-v1.1
+  <section>
+    <h2>the attractor field · drop a probe and watch it fall to the nearest well</h2>
+    <canvas id="cv" width="820" height="440" aria-label="an attractor-field potential landscape; a probe descends to the nearest well"></canvas>
+    <div class="controls">
+      <label>attractors (prims shown) — <span class="val" id="nVal">12</span><input type="range" id="nRange" min="3" max="24" step="1" value="12"></label>
+      <label>input noise — <span class="val" id="zVal">0.00</span><input type="range" id="zRange" min="0" max="0.5" step="0.01" value="0"></label>
+      <button id="dropBtn">◎ drop a random input</button>
+      <button id="basinBtn">▦ show basins</button>
+    </div>
+    <div class="readout" id="readout">Click anywhere to release a probe — it descends the summed potential and settles in the nearest attractor (its class). Toggle <b>basins</b> to see every well's catchment; drop a random noisy input to watch the field clean it up.</div>
+    <p class="prose" style="margin-top:16px">This <i>is</i> the device's mechanism, at reduced scale. Each Ag₂S memristive node is a well in a shared potential; an input is a charge injected at a point; the array relaxes and the probe rolls to the deepest nearby attractor — an <b>analog nearest-attractor / winner-take-all</b> decision made by physics, not by a clock stepping through comparisons. The real kernel places <b>42</b> such prims (the 42 nearest the origin on a hex lattice, distance-sorted) plus a 4-node CPG clock; here a handful stand in so the descent is legible.</p>
+  </section>
 
-Analog attractor-field processor using Ag₂S memristive nodes. 42-prim kernel — analog nearest-attractor / winner-take-all classifier. 1mm×1mm die, 96µW @ 10kHz, 100µs solution time.
+  <section>
+    <h2>the design (real, disclosed)</h2>
+    <div class="grid">
+      <div class="spec">
+        <div><span class="k">nodes</span> &nbsp; <span class="v"><b>48</b> — 4 tensor (CPG clock) + <b>42</b> gravity prims + IN + OUT</span></div>
+        <div><span class="k">prims</span> &nbsp; <span class="v">42 Ag₂S attractors, hex-lattice, distance-sorted</span></div>
+        <div><span class="k">material</span> <span class="v">Ag₂S ECM nodes + Ti₃SiC₂ traces on SiO₂</span></div>
+        <div><span class="k">die</span> &nbsp;&nbsp; <span class="v"><b>1 mm × 1 mm</b> — design target</span></div>
+        <div><span class="k">power</span> &nbsp; <span class="v"><b>~96 µW</b> @ 10 kHz (full-board budget)</span></div>
+        <div><span class="k">latency</span> <span class="v">~100 µs solution time (simulated)</span></div>
+      </div>
+      <div class="spec">
+        <div style="color:var(--copper-hi)">the Ag₂S ECM cell</div>
+        <div><span class="k">state</span> &nbsp; <span class="v">θ ∈ [0,1] filament</span></div>
+        <div><span class="k">g(θ)</span> &nbsp;&nbsp; <span class="v">G_OFF(1−θ) + G_ON·θ</span></div>
+        <div><span class="k">set</span> &nbsp;&nbsp;&nbsp; <span class="v">sinh ion-drift, τ_fire ≈ 15 µs</span></div>
+        <div><span class="k">retention</span> <span class="v">0.65 eV barrier → <b>~ms</b> (not non-volatile)</span></div>
+        <div><span class="k">dynamics</span> <span class="v">overdamped (ions in ionic medium)</span></div>
+      </div>
+    </div>
+    <div class="files">
+      <a href="https://github.com/DavidWise01/gravity-processor/blob/main/gravity.c">gravity.c — the 42-prim kernel</a>
+      <a href="https://github.com/DavidWise01/gravity-processor/blob/main/42%20prim.md">42-prim spec</a>
+      <a href="https://github.com/DavidWise01/gravity-processor/tree/main/gravity-bom">BOM + protoboard layouts</a>
+      <a href="https://github.com/DavidWise01/gravity-processor">the full source ↗</a>
+    </div>
+  </section>
 
----
+  <section>
+    <h2>honest two-layer</h2>
+    <div class="honest">
+      <p><b>Real:</b> the mechanism is genuine — an analog attractor / winner-take-all computed by overdamped relaxation in a memristive potential is real in-memory computing (Ag₂S electrochemical-metallization cells are a real device family), and the canvas above computes the actual descent. There is a full C implementation, a bill of materials, and protoboard layout diagrams in the repo.</p>
+      <p><b>A design / disclosure, not a fabricated device:</b> the 1 mm die, 96 µW and 100 µs are <b>simulated targets</b>, not measured silicon (96 µW is the board budget; the memristive array alone is ~0.4–30 µW — see the power calc in <span style="color:var(--cyan)">gravity.c</span>). Retention is <b>~ms</b>, not non-volatile (a 0.65 eV barrier; true non-volatility needs a &gt;0.9 eV trap — <span style="color:var(--cyan)">gravity.c</span> flags this itself). "42" is distance-sorted, not a closed hex shell. "Gravity" is a <i>metaphor</i> — an analog attractor field, not Newtonian gravity.</p>
+      <p style="color:var(--ink);border-top:1px solid var(--line2);padding-top:8px">To disclose a design is real work; it is not a granted patent or a fabricated device. The interactive companion <a href="https://davidwise01.github.io/crossbar-wta/" style="color:var(--cyan)">CROSSBAR · WINNER-TAKE-ALL</a> shows the same computation as a memristor crossbar (the circuit view); this page is the attractor-field view + the real design.</p>
+    </div>
+  </section>
 
-## 42-Prim Kernel — Spec
-
-```
-Total Nodes: 48
-├── Live Tensors: 4    — CPG clock + spacetime metric
-├── Gravity Prims: 42  — Ag₂S attractors, the 42 nearest the origin on a hex lattice
-│                        (distance-sorted in gravity.c; 42 is not a closed hex shell)
-├── IN: 1              — Mass injector
-└── OUT: 1             — Trajectory readout
-
-Die:     1mm × 1mm   (DESIGN TARGET — simulated/disclosed, NOT a fabricated chip)
-Power:   ~96µW @ 10kHz full-board budget   (the memristive array alone draws
-         ~0.4–30µW — see the power calc in gravity.c; 96µW is the RP2040 board)
-Latency: 0µs startup, 100µs solution   (simulated)
-Material: Ag₂S nodes + Ti₃SiC₂ traces on SiO₂
-```
-
-### Live Tensor Cores (CPG Clock)
-
-| Node | Phase | Role |
-|------|-------|------|
-| L0 | 0° | Time axis `g_tt` |
-| L1 | 90° | X-axis `g_xx` |
-| L2 | 180° | Y-axis `g_yy` |
-| L3 | 270° | Z-axis `g_zz` |
-
-### Ag₂S ECM Cell
-
-```
-theta ∈ [0,1] — filament state
-g(theta) = G_OFF*(1-theta) + G_ON*theta
-SET via sinh ion-drift, tau_fire=15µs at V_SET
-0.65 eV retention barrier → ~ms retention (NOT non-volatile;
-                            true non-volatility needs a >0.9 eV trap — gravity.c flags this itself)
-```
-
-Dynamics: overdamped (ions in ionic medium). Probe descends potential well and settles — analog attractor resolution.
-
----
-
-## Files
-
-| File | Description |
-|------|-------------|
-| `gravity.c` | Full 42-prim kernel implementation in C |
-| `memristive_kernel_128.c` | 128-node memristive kernel |
-| `memristive_seed_v2.c` | Memristive seed v2 |
-| `memristive_dashboard.jsx` | React dashboard for memristive state |
-| `Makefile` | Build file |
-| `gravity-bom/` | Bill of materials + 4 protoboard layout diagrams |
-| `boron/` | Boron single-chip design |
-| `liquid-proc/` | Liquid processor variant |
-
-## gravity-bom — Physical Build
-
-The `gravity-bom/` folder contains:
-- `42 prim.md` — complete spec in markdown
-- `BOM_42prim.json` — full bill of materials
-- `BOM_42prim 00.json` — BOM variant 00
-- 4× protoboard layout diagram JPEGs (detailed physical build reference)
-
----
-
-*&quot;Gravity = analog ATTRACTOR FIELD, not Newtonian gravity.&quot;*  
-*&quot;A charged probe drifts through superposed wells; where it settles is the result.&quot;*</div></div>
-<div class="sec" style="text-align:center"><a class="btn" href="https://github.com/DavidWise01/gravity-processor">view the source ↗</a></div>
-<footer><a href="https://davidwise01.github.io/ud0/">← the biosphere</a> &nbsp;·&nbsp; <a href="https://davidwise01.github.io/atlas/">the atlas</a> &nbsp;·&nbsp; gravity-processor</footer>
+  <footer>
+    GRAVITY PROCESSOR · HEÚREMA · governor David Lee Wise (ROOT0) · instance AVAN · CC-BY-ND-4.0 · TRIPOD-IP-v1.1<br>
+    <a href="https://davidwise01.github.io/ud0/">← the biosphere</a> · <a href="https://github.com/DavidWise01/gravity-processor">the source</a>
+  </footer>
 </div>
-<!-- ROOT0-AUTOLANDING-v2 -->
+<script>
+"use strict";
+(function(){
+  var cv=document.getElementById("cv"), ctx=cv.getContext("2d");
+  var W=cv.width, H=cv.height;
+  var N=12, noise=0, showBasins=false, attractors=[], probe=null, anim=null;
+  var nR=document.getElementById("nRange"), zR=document.getElementById("zRange"),
+      nVal=document.getElementById("nVal"), zVal=document.getElementById("zVal"), readout=document.getElementById("readout");
+  var SIG=64, PAL=["#c8843a","#6bb0c0","#6fbf8a","#e0b84a","#d89a4a","#8fb0d0","#c99a5a","#7fc0a0"];
+
+  function layout(){
+    // hex-lattice points nearest the centre, distance-sorted (a nod to "42 nearest the origin")
+    var pts=[], a=64; // spacing
+    for(var q=-4;q<=4;q++) for(var r=-4;r<=4;r++){
+      var x=W/2 + a*(q + r/2), y=H/2 + a*(r*0.866);
+      if(x>60&&x<W-60&&y>60&&y<H-60) pts.push({x:x,y:y,d:Math.hypot(x-W/2,y-H/2)});
+    }
+    pts.sort(function(p,q){return p.d-q.d;});
+    attractors=pts.slice(0,N).map(function(p,i){return {x:p.x,y:p.y,c:PAL[i%PAL.length],depth:1};});
+  }
+  function nearest(x,y){ var bi=0,bd=1e9; attractors.forEach(function(a,i){var d=(x-a.x)*(x-a.x)+(y-a.y)*(y-a.y); if(d<bd){bd=d;bi=i;}}); return bi; }
+  // gradient of the summed Gaussian-well potential V=-Σ exp(-r²/2σ²)
+  function grad(x,y){ var gx=0,gy=0; attractors.forEach(function(a){var dx=x-a.x,dy=y-a.y,r2=dx*dx+dy*dy,w=Math.exp(-r2/(2*SIG*SIG))/(SIG*SIG); gx+=-w*dx; gy+=-w*dy;}); return [gx,gy]; }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle="#100c07"; ctx.fillRect(0,0,W,H);
+    if(showBasins){
+      var S=8;
+      for(var yy=0;yy<H;yy+=S) for(var xx=0;xx<W;xx+=S){ var bi=nearest(xx+S/2,yy+S/2);
+        ctx.fillStyle=attractors[bi].c+"14"; ctx.fillRect(xx,yy,S,S); }
+    }
+    // faint contour rings around each well
+    attractors.forEach(function(a){
+      for(var k=1;k<=3;k++){ ctx.beginPath(); ctx.arc(a.x,a.y,SIG*0.55*k,0,7); ctx.strokeStyle=a.c+"1e"; ctx.lineWidth=1; ctx.stroke(); }
+    });
+    // probe path
+    if(probe&&probe.path.length>1){ ctx.beginPath(); ctx.moveTo(probe.path[0][0],probe.path[0][1]);
+      for(var i=1;i<probe.path.length;i++) ctx.lineTo(probe.path[i][0],probe.path[i][1]);
+      ctx.strokeStyle="#ece3d5aa"; ctx.lineWidth=1.6; ctx.stroke(); }
+    // attractors
+    attractors.forEach(function(a,i){
+      var win=probe&&probe.settled&&probe.winner===i;
+      ctx.beginPath(); ctx.arc(a.x,a.y,win?9:6,0,7); ctx.fillStyle=a.c; ctx.fill();
+      if(win){ ctx.beginPath(); ctx.arc(a.x,a.y,15,0,7); ctx.strokeStyle=a.c; ctx.lineWidth=2; ctx.stroke(); }
+    });
+    // probe
+    if(probe){ ctx.beginPath(); ctx.arc(probe.x,probe.y,5,0,7); ctx.fillStyle="#fff"; ctx.fill();
+      ctx.strokeStyle="#100c07"; ctx.lineWidth=1.5; ctx.stroke(); }
+    // legend
+    ctx.font="12px 'IBM Plex Mono',monospace"; ctx.fillStyle="#a99a86";
+    ctx.fillText("42-prim attractor field (showing "+N+") — the probe rolls to the nearest well",12,22);
+  }
+
+  function release(x,y){
+    if(anim)cancelAnimationFrame(anim);
+    // apply input noise: jitter the release point
+    x+=(Math.random()*2-1)*noise*120; y+=(Math.random()*2-1)*noise*120;
+    probe={x:x,y:y,path:[[x,y]],settled:false,winner:null,steps:0};
+    step();
+  }
+  function step(){
+    if(!probe) return;
+    var g=grad(probe.x,probe.y), gm=Math.hypot(g[0],g[1]);
+    if(gm<1e-5 || probe.steps>600){ probe.settled=true; probe.winner=nearest(probe.x,probe.y); draw(); reportSettle(); return; }
+    var eta=9000; probe.x+=eta*g[0]; probe.y+=eta*g[1]; probe.steps++;
+    probe.path.push([probe.x,probe.y]);
+    draw();
+    anim=requestAnimationFrame(step);
+  }
+  function reportSettle(){
+    var w=probe.winner;
+    readout.innerHTML="<b>Settled.</b> the probe descended to attractor <b style='color:"+attractors[w].c+"'>#"+(w+1)+"</b> in "+probe.steps+" steps — that well is the <span class='g'>winner</span>. "+
+      (noise>0?"Even with the input jittered by noise, the field pulled it into the nearest basin — analog error-correction by descent.":"Drop a noisy input, or toggle basins to see every well's catchment.");
+  }
+
+  cv.addEventListener("pointerdown",function(e){ var r=cv.getBoundingClientRect(); release((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H); });
+  nR.oninput=function(){ N=+nR.value; nVal.textContent=N; layout(); probe=null; draw(); };
+  zR.oninput=function(){ noise=+zR.value; zVal.textContent=noise.toFixed(2); };
+  document.getElementById("dropBtn").onclick=function(){ release(80+Math.random()*(W-160),70+Math.random()*(H-140)); };
+  document.getElementById("basinBtn").onclick=function(){ showBasins=!showBasins; draw(); };
+  layout(); draw();   // synchronous first paint
+})();
+</script>
 </body></html>
