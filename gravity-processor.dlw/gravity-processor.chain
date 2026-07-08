@@ -4,6 +4,6 @@ slug  : gravity-processor
 seal  : acec8296653f774289d5dff522e17d085814ce922d6dcb59e46904bffe4f0c97
 prev  : 1972fd6277f9a30ba5dfb80a2c6419686c465af8cf28e09cd882839891c69b85
 link  : be6a4a53ce6ada7454c5f07f09aa62d082ea14275acefdfa50b2d682614d24ea
-head  : 3447d3a0533aaf1e29a8bdc67a9774884fb3ae9dbc8a17064b7a008ca3c4ec90
+head  : 13f9ace173ef2e60af38912ba329b4afcb5a38b84a0e4495e8d30327f8c99cc2
 
 — the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
