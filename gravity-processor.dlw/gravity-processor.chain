@@ -1,9 +1,9 @@
 ROOT0-DLW-CHAIN-v1
 index : 933
 slug  : gravity-processor
-seal  : acec8296653f774289d5dff522e17d085814ce922d6dcb59e46904bffe4f0c97
-prev  : 1972fd6277f9a30ba5dfb80a2c6419686c465af8cf28e09cd882839891c69b85
-link  : be6a4a53ce6ada7454c5f07f09aa62d082ea14275acefdfa50b2d682614d24ea
-head  : 13f9ace173ef2e60af38912ba329b4afcb5a38b84a0e4495e8d30327f8c99cc2
+seal  : b2632177ac891dcf43425ec222c3d455bf31a20b6396a9dedf51e994d05e8962
+prev  : 4464e6c2640b0c15605063a1ee75fa4b5c58be54ef8c86e60bd12d4279d0d34a
+link  : 27fcf2d2ced50cf1a26720f1280441857210bf65a03212fb76fd3e17755b391e
+head  : c4d41afeaef76470528856d54d86cf480a0e1c2fc8ebc60fbb9eb8e442585f2b
 
 — the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
